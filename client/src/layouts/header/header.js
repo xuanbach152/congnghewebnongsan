@@ -8,7 +8,7 @@ import { AiOutlineFacebook,
 } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import { formatter } from "utils/formatter";
-import { ROUTERS } from "utils/router";
+import { ROUTERS } from "utils/routers";
 
 const Header = () => {
     const [menu, setMenu] = useState([
