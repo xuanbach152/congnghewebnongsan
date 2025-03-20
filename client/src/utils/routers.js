@@ -1,7 +1,7 @@
 const routers = {
-  HOME: "",
-  PROFILE: "profile",
-  PRODUCTS: "products",
-};
+  HOME: '',
+  PROFILE: 'profile',
+  PRODUCTS: 'products',
+}
 
-export default routers;
+export default routers

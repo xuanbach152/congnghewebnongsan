@@ -1,6 +1,6 @@
-import { memo } from "react";
+import { memo } from 'react'
 const ProfilePage = () => {
-    return <h1>ProfilePage</h1>;
-};
+  return <h1>ProfilePage</h1>
+}
 
-export default memo(ProfilePage);
+export default memo(ProfilePage)

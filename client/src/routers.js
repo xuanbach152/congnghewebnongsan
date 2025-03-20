@@ -1,8 +1,8 @@
-import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/homePage/homePage";
-import ProfilePage from "./pages/profilePage/profilePage";
-import routers from "./utils/routers";
-import MasterLayout from "./layouts/masterLayout/masterLayout";
+import { Routes, Route } from 'react-router-dom'
+import HomePage from './pages/homePage/homePage'
+import ProfilePage from './pages/profilePage/profilePage'
+import routers from './utils/routers'
+import MasterLayout from './layouts/masterLayout/masterLayout'
 
 const renderRouter = () => {
   const allRouters = [
@@ -14,7 +14,7 @@ const renderRouter = () => {
       path: routers.PROFILE,
       component: <ProfilePage />,
     },
-  ];
+  ]
 
   return (
     <MasterLayout>
@@ -24,7 +24,7 @@ const renderRouter = () => {
         ))}
       </Routes>
     </MasterLayout>
-  );
-};
+  )
+}
 
-export default renderRouter;
+export default renderRouter

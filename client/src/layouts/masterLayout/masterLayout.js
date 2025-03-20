@@ -1,6 +1,6 @@
-import { memo } from "react";
-import Header from "../header/header";
-import Footer from "../footer/footer";
+import { memo } from 'react'
+import Header from '../header/header'
+import Footer from '../footer/footer'
 const MasterLayout = ({ children, ...props }) => {
   return (
     <div {...props}>
@@ -8,7 +8,7 @@ const MasterLayout = ({ children, ...props }) => {
       {children}
       <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default memo(MasterLayout);
+export default memo(MasterLayout)
