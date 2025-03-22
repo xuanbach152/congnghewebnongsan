@@ -1,35 +1,30 @@
-import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/customer/homePage";
-import ProfilePage from "./pages/customer/profilePage";
-import { ROUTERS } from "./utils/router";
-import MasterLayout from "./pages/customer/theme/masterLayout";
+import { Routes, Route } from 'react-router-dom'
+import HomePage from './pages/homePage/homePage'
+import ProfilePage from './pages/profilePage/profilePage'
+import routers from './utils/routers'
+import MasterLayout from './layouts/masterLayout/masterLayout'
 
-const renderCostumerRouter = () => {
-    const customerRouters = [ 
-        {
-            path: ROUTERS.USER.HOME,
-            component: <HomePage/>,
-        },
-        {
-            path: ROUTERS.USER.PROFILE,
-            component: <ProfilePage/>,
-        },
-    ];
+const renderRouter = () => {
+  const allRouters = [
+    {
+      path: routers.HOME,
+      component: <HomePage />,
+    },
+    {
+      path: routers.PROFILE,
+      component: <ProfilePage />,
+    },
+  ]
 
-    return (
-        <MasterLayout>
-            <Routes>
-                {customerRouters.map((route, index) => (
-                    <Route key={index} path={route.path} element={route.component} />
-                ))}
-            </Routes>
-        </MasterLayout>
-    );
-}  
+  return (
+    <MasterLayout>
+      <Routes>
+        {allRouters.map((route, index) => (
+          <Route key={index} path={route.path} element={route.component} />
+        ))}
+      </Routes>
+    </MasterLayout>
+  )
+}
 
-
-const RouterCustom = () => {
-  return renderCostumerRouter();
-};
-
-export default RouterCustom;
+export default renderRouter
