@@ -24,7 +24,7 @@ const getUsers = async () => {
     return users;
 }
 
-const deleteUserById = async (userId) => {
+const deleteUser = async (userId) => {
     await UserModel.findByIdAndDelete(userId);
 }
  
@@ -33,5 +33,5 @@ export default {
     updateUser,
     getUserById,
     getUsers,
-    deleteUserById,
+    deleteUser,
 }

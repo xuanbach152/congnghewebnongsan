@@ -70,9 +70,9 @@ export const updateUser = async (req, res) => {
     }
   };
 
-  export const deleteUserById = async (req, res) => {
+  export const deleteUser = async (req, res) => {
     try {
-      await userService.deleteUserById(req.params.id);
+      await userService.deleteUser(req.params.id);
       res.status(httpStatus.OK).send({
         code: httpStatus.OK,
         message: Message.OK,
