@@ -1,4 +1,4 @@
-import './style.scss'
+import './header.scss'
 import { memo, useState } from 'react'
 import {
   AiOutlineFacebook,
