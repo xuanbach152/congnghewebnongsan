@@ -22,12 +22,6 @@ const itemSchema = new Schema({
         type: Number,
         required: true,
     },
-    comments: [
-        {
-            type: Schema.ObjectId,
-            ref: 'Comment',            
-        }
-    ],
     quantity: {
         type: Number,
         required: true,
