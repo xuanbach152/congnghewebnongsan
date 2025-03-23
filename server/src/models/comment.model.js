@@ -7,11 +7,16 @@ const commentSchema = Schema(
       required: true,
       ref: "User",
     },
+    itemId: {
+      type: Schema.ObjectId,
+      required: true,
+      ref: "Item",
+    },
     content: {
       type: String,
       required: true,
     },
-    image: {
+    imageUrl: {
       type: String,
       required: true,
     },
