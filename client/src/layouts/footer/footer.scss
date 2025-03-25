@@ -1,0 +1,42 @@
+@use 'sass:map';
+@import '../../style/pages/theme.scss';
+
+.footer {
+  .container-fluid {
+    background-color: rgb(249, 249, 242);
+    padding: 10px 0; 
+  }
+
+  .row {
+    display: flex;
+    justify-content: center; 
+    .col {
+      flex: 1;
+      text-align: left;
+        max-width: 300px;
+      ul {
+        margin-bottom: 0;
+        margin-left: 20px;
+      }
+
+      h5 {
+        margin-top: 0;
+        margin-left: 20px;
+      }
+    }
+
+    .no-bullet-list {
+      list-style: none;
+      padding: 0;
+      color: rgb(107, 113, 113);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .row {
+      flex-direction: column; 
+      gap: 20px; 
+      max-width: 100%;
+    }
+  }
+}

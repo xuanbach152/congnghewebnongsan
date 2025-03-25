@@ -76,7 +76,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-      <div className="container">
+      <div className="container-fluid">
         <div className="row">
           <div className="col-xl-3">
             <div className="header_logo">
