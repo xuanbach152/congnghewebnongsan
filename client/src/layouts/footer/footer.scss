@@ -3,7 +3,7 @@
 
 .footer {
   .container-fluid {
-    background-color: rgb(249, 249, 242);
+    background-color: rgb(253, 251, 251);
     padding: 10px 0; 
   }
 
@@ -17,18 +17,26 @@
       ul {
         margin-bottom: 0;
         margin-left: 20px;
+        li {
+          font-size: 14px;
+          transition: color 0.3s case;
+          &:hover {
+            color: rgb(2, 23, 66);
+          }
+        }
       }
 
       h5 {
         margin-top: 0;
         margin-left: 20px;
+        font-size: 16px;
       }
     }
 
     .no-bullet-list {
       list-style: none;
       padding: 0;
-      color: rgb(107, 113, 113);
+      color: rgb(138, 141, 141);
     }
   }
 
