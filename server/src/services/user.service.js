@@ -1,7 +1,7 @@
 import UserModel from '../models/user.model.js';
 import { throwBadRequest } from '../utils/error.util.js';
 import Message from '../utils/message.js';
-
+import { comparePassword } from './auth.service.js';
 const createUser = async (userData) => {
     const newUser = await UserModel.create(userData);
     return newUser;
@@ -27,11 +27,18 @@ const getUsers = async () => {
 const deleteUser = async (userId) => {
     await UserModel.findByIdAndDelete(userId);
 }
- 
+const getUserByName = async (userName) => {
+    const user
+        = await UserModel.findOne({ userName });
+    throwBadRequest(!user, Message.userNotFound);
+    return user;
+}
+
 export default {
     createUser,
     updateUser,
     getUserById,
     getUsers,
     deleteUser,
+    getUserByName,
 }

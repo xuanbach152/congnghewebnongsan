@@ -46,4 +46,4 @@ const orderSchema = new Schema({
   },
 });
 
-export default model("Item", itemSchema);
+export default model("Order", orderSchema);

@@ -15,7 +15,8 @@ const itemSchema = new Schema({
         required: true,
     },
     type: {
-        type: ItemTypeEnum,
+        type: String,
+        enum: ItemTypeEnum,
         required: true,
     },
     rate: {
@@ -26,6 +27,6 @@ const itemSchema = new Schema({
         type: Number,
         required: true,
     },
-})
+});
 
 export default model('Item', itemSchema);
