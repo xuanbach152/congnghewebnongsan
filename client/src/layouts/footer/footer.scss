@@ -1,0 +1,50 @@
+@use 'sass:map';
+@import '../../style/pages/theme.scss';
+
+.footer {
+  .container-fluid {
+    background-color: #f8f9fa;
+    padding: 10px 0; 
+  }
+
+  .row {
+    display: flex;
+    justify-content: center; 
+    .col {
+      flex: 1;
+      text-align: left;
+        max-width: 300px;
+      ul {
+        margin-bottom: 0;
+        margin-left: 20px;
+        li {
+          font-size: 14px;
+          transition: color 0.3s case;
+          &:hover {
+            color: rgb(2, 23, 66);
+          }
+        }
+      }
+
+      h5 {
+        margin-top: 0;
+        margin-left: 20px;
+        font-size: 16px;
+      }
+    }
+
+    .no-bullet-list {
+      list-style: none;
+      padding: 0;
+      color: rgb(138, 141, 141);
+    }
+  }
+
+  @media (max-width: 768px) {
+    .row {
+      flex-direction: column; 
+      gap: 20px; 
+      max-width: 100%;
+    }
+  }
+}
