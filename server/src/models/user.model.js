@@ -22,6 +22,7 @@ const userSchema = Schema(
     role: {
       type: String,
       enum: UserRoleEnum,
+      default: UserRoleEnum.BUYER,
       required: true,
     },
   },
