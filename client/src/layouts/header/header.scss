@@ -53,22 +53,73 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  position: relative;
+  
+  .notice {
+    display: flex;
+    align-items: center;
+    color: map.get($theme-colors, 'normal-text');
+    transition: color 0.3s;
+
+    svg {
+      font-size: 25px;
+    }
+
+    span {
+      position: absolute;
+      top: -5px;
+      right: -7px;
+      background: map.get($theme-colors, 'main');
+      color: #fff;
+      font-size: 12px;
+      font-weight: 500;
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &:hover {
+      color: map.get($theme-colors, 'main');
+    }
+  }
 
   ul {
     display: flex;
     column-gap: 15px;
     list-style: none;
     margin: 0;
+    padding: 0;
 
-    a {
-      font-size: 18px;
-      color: map.get($theme-colors, 'normal-text');
-      transition: color 0.3s;
+    li {
+      position: relative; 
+      display: flex;
+      align-items: center;
+      cursor: pointer;
 
-      &:hover {
-        color: map.get($theme-colors, 'main');
+      a {
+        font-size: 18px;
+        color: map.get($theme-colors, 'normal-text');
+        transition: color 0.3s;
+        display: flex;
+        align-items: center;
+
+        &:hover {
+          color: map.get($theme-colors, 'main');
+        }
       }
-    }
+
+      &:last-child {
+        position: relative;
+
+        .dropdown-arrow {
+          font-size: 12px !important;
+          margin-left: 5px;
+        }
+      }
+    }  
   }
 }
 
@@ -81,6 +132,12 @@
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 1px;
+  }
+  a {
+    text-decoration: none;
+    &:hover {
+      opacity: 0.9;
+    }
   }
 }
 
@@ -348,6 +405,128 @@
   }
 }
 
+.user_dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #fff;
+  border: none; // Xóa viền cũ
+  border-radius: 8px; // Bo góc mềm mại hơn
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); // Bóng đổ nhẹ và hiện đại
+  z-index: 1000;
+  min-width: 220px; // Tăng chiều rộng một chút để đẹp hơn
+  margin-top: 8px;
+  padding: 8px 0; // Thêm padding để không gian thoáng hơn
+  animation: slideDown 0.3s ease; // Thêm hiệu ứng trượt xuống
+
+  // Hiệu ứng trượt xuống khi mở dropdown
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column; // Đảm bảo các mục hiển thị theo chiều dọc
+
+    li {
+      padding: 12px 20px; // Tăng padding để dễ bấm hơn
+      cursor: pointer;
+      font-size: 14px;
+      color: map.get($theme-colors, 'bold-text');
+      transition: all 0.3s ease; // Hiệu ứng mượt mà khi hover
+      display: flex;
+      align-items: center;
+      gap: 10px; // Thêm khoảng cách giữa icon (nếu có) và text
+
+      &:hover {
+        background: map.get($theme-colors, 'main'); // Màu nền khi hover
+        color: #fff; // Đổi màu chữ khi hover
+        transform: translateX(5px); // Hiệu ứng dịch chuyển nhẹ khi hover
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+        width: 100%;
+      }
+
+      // Style riêng cho mục "Đăng xuất" để nổi bật
+      &:last-child {
+        border-top: 1px solid #e9ecef; // Thêm đường phân cách
+        margin-top: 5px;
+        padding-top: 12px;
+
+        &:hover {
+          background: #dc3545; // Màu đỏ cho "Đăng xuất" khi hover
+          color: #fff;
+        }
+      }
+    }
+  }
+}
+
+.filter_section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 0;
+
+  .filter_group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      color: map.get($theme-colors, 'normal-text');
+
+      input[type="radio"],
+      input[type="checkbox"] {
+        margin: 0;
+        accent-color: map.get($theme-colors, 'main');
+      }
+    }
+
+    select {
+      padding: 5px 10px;
+      border: 1px solid #e9ecef;
+      border-radius: 5px;
+      font-size: 14px;
+      color: map.get($theme-colors, 'normal-text');
+      background: #fff;
+      cursor: pointer;
+      transition: border-color 0.3s;
+
+      &:focus {
+        outline: none;
+        border-color: map.get($theme-colors, 'main');
+      }
+    }
+  }
+}
+
+.dropdown-arrow {
+  font-size: 12px !important;
+  margin-left: 5px;
+}
+
 .container {
   max-width: 1200px;
   width: 100%;
@@ -356,6 +535,246 @@
   margin: auto;
 }
 
+.auth_modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); // Tăng độ mờ của nền 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease; // Hiệu ứng mờ vào
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .auth_content {
+    background: #fff;
+    padding: 30px; // Tăng padding cho thoáng
+    width: 400px; // Tăng chiều rộng
+    border-radius: 12px; // Bo góc mềm hơn
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); // Bóng đổ đậm hơn
+    position: relative;
+    overflow: hidden;
+
+    // Gradient viền trang trí
+    &:before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #28a745, #007bff);
+      z-index: -1;
+      border-radius: 12px;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      font-size: 24px;
+      font-weight: 700;
+      color: map.get($theme-colors, 'main');
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .auth_form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px; // Tăng khoảng cách giữa các phần tử
+
+      input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+
+        &:focus {
+          border-color: map.get($theme-colors, 'main');
+          box-shadow: 0 0 5px rgba(40, 167, 69, 0.3);
+          outline: none;
+        }
+      }
+
+      .auth_submit_button {
+        background: linear-gradient(90deg, #28a745, #34c759); // Gradient cho nút
+        color: #fff;
+        border: none;
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: linear-gradient(90deg, #218838, #2db34a);
+          transform: scale(1.02);
+        }
+      }
+
+      .auth_separator {
+        position: relative;
+        margin: 20px 0;
+
+        span {
+          background: #fff;
+          padding: 0 10px;
+          font-size: 14px;
+          color: #6f6f6f;
+          position: relative;
+          z-index: 1;
+        }
+
+        &:before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 0;
+          right: 0;
+          height: 1px;
+          background: #e9ecef;
+        }
+      }
+
+      .auth_social_buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .social_button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          padding: 10px;
+          border: none;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 500;
+          color: #fff;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          svg, .google_icon, .instagram_icon {
+            font-size: 20px;
+          }
+
+          &:hover {
+            transform: scale(1.03);
+            filter: brightness(1.1);
+          }
+
+          &.facebook {
+            background: #1877F2; // Màu chính thức của Facebook
+            &:hover {
+              background: #165DDB; 
+              border-color: #165DDB; 
+            }
+          }
+      
+          &.google {
+            background: #eeeeee;
+            border: 1px solid #ffffff;
+            color: #ffffff;
+            .google_icon {
+              font-weight: 700; 
+            }
+            .google_text {
+              display: flex;
+              align-items: center;
+              font-weight: 500;
+      
+              .g1 {
+                color: #4285F4; // Xanh dương cho "G" đầu tiên
+              }
+              .o1 {
+                color: #EA4335; // Đỏ cho "o" thứ nhất
+              }
+              .o2 {
+                color: #FBBC05; // Vàng cho "o" thứ hai
+              }
+              .g2 {
+                color: #4285F4; // Xanh dương cho "g"
+              }
+              .l {
+                color: #34A853; // Xanh lá cho "l"
+              }
+              .e {
+                color: #EA4335; // Đỏ cho "e"
+              }
+            }
+            &:hover {
+              background: #a7a6a6;
+              border-color: #a7a6a6;
+            }
+          }
+      
+          &.instagram {
+            background: radial-gradient(
+              circle at 30% 107%,
+              #FDF497 0%,
+              #FDF497 5%,
+              #FD5949 45%,
+              #D6249F 60%,
+              #285AEB 90%
+            ); // Gradient chính thức của Instagram
+            .instagram_icon {
+              color: #fff;
+            }
+            &:hover {
+              filter: brightness(1.15); 
+            }
+          }
+        }
+      }
+    }
+
+    .switch_mode {
+      margin-top: 20px;
+      color: #6f6f6f;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: none;
+      transition: color 0.3s;
+
+      &:hover {
+        color: #0056b3;
+        text-decoration: underline;
+      }
+    }
+
+    .close_button {
+      margin-top: 20px;
+      background: #dc3545;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: #c82333;
+        transform: scale(1.02);
+      }
+    }
+  }
+}
+
+/* Flexbox grid system for rows */  
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -363,6 +782,7 @@
   margin-right: -15px;
 }
 
+/* Flexbox grid system for columns */
 [class*="col-"] {
   padding-left: 15px;
   padding-right: 15px;
