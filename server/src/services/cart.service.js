@@ -19,9 +19,25 @@ const getCartById = async (CartId) => {
   return Cart;
 };
 
-const getCarts = async () => {
-  const Carts = await CartModel.find();
-  return Carts;
+const getCarts = async (page, limit) => {
+  try {
+    const skip = (page - 1) * limit;
+    const carts = await CartModel.find()
+      .skip(skip)
+      .limit(Math.min(limit, 100))
+      .exec();
+
+    const totalcarts = await CartModel.countDocuments();
+    return {
+      carts,
+      totalcarts,
+      totalPages: Math.ceil(totalcarts / limit),
+      currentPage: parseInt(page),
+    };
+  } catch (error) {
+    console.error("Error in getCarts:", error.message);
+    throw error;
+  }
 };
 
 const deleteCart = async (CartId) => {

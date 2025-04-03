@@ -27,7 +27,9 @@ app.listen(process.env.PORT, () => {
 // Kết nối MongoDB
 connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB sucessfully !"))
-  .catch((err) => console.error(err));
+  .catch((err) => {
+console.error("MongoDB connection error:", err.message);
+  });
 
 app.use("/user", userRoutes);
 app.use("/item", itemRoutes);

@@ -6,6 +6,17 @@ const createUser = async (userData) => {
     const newUser = await UserModel.create(userData);
     return newUser;
 }
+const searchUsers = async (searchText) => {
+  const regex = new RegExp(searchText, "i");
+  return await UserModel.find({
+    $or: [
+      { userName:{$regex: regex}  },
+      { address: {$regex: regex} }
+    ],
+  });
+
+
+};
 
 const updateUser = async (userId, userData) => {
     const user = await UserModel.findById(userId);
@@ -19,9 +30,25 @@ const getUserById = async (userId) => {
     return user;
 }
 
-const getUsers = async () => {
-    const users = await UserModel.find();
-    return users;
+const getUsers = async (page, limit) => {
+  try {
+    const skip = (page - 1) * limit;
+    const users = await UserModel.find()
+      .skip(skip)
+      .limit(Math.min(limit, 100))
+      .exec();
+
+    const totalusers = await UserModel.countDocuments();
+    return {
+      users,
+      totalusers,
+      totalPages: Math.ceil(totalusers / limit),
+      currentPage: parseInt(page),
+    };
+  } catch (error) {
+    console.error("Error in getUsers:", error.message);
+    throw error;
+  }
 }
 
 const deleteUser = async (userId) => {
@@ -36,6 +63,7 @@ const getUserByName = async (userName) => {
 
 export default {
     createUser,
+    searchUsers,
     updateUser,
     getUserById,
     getUsers,
