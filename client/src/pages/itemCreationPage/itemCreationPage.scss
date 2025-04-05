@@ -1,0 +1,83 @@
+@use 'sass:map';
+@import '../../style/pages/theme.scss';
+
+.item-creation {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-bottom: 5px;
+
+  .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .nav-item-creation {
+      color: #0153a5;
+      &:hover {
+        color: #0153a5;
+      }
+    }
+
+    .item-creation-form {
+      position: relative;
+      flex: 1;
+      padding: 10px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .title-text {
+        color: rgb(8, 15, 157);
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .form-register {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+
+          label {
+            font-size: 14px;
+            font-weight: bold;
+          }
+
+          input {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          }
+
+          input[type="file"] {
+            margin-top: 5px;
+            padding: 5px;
+          }
+
+          button {
+            padding: 10px;
+            background-color: rgb(238, 28, 126);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 200px;
+            align-self: center;
+            font-weight: bold;
+
+            &:hover {
+              background-color: rgb(225, 21, 21);
+            }
+          }
+        }
+      }
+    }
+  }
+}
