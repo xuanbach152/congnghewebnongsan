@@ -3,3 +3,24 @@ $theme-colors: (
   'normal-text': #1c1c1c,
   'bold-text': #252525,
 );
+
+.navigation {
+  font-weight: 600;
+  border-bottom: 2px solid rgb(169, 168, 168);
+  margin-bottom: 5px;
+  font-size: 16px;
+
+  .nav-shop-management,
+  .nav-shop-registration,
+  .nav-item-creation {
+    color: rgb(162, 162, 162);
+    text-decoration: none;
+    &:hover {
+      color: rgb(92, 92, 92);
+    }
+  }
+
+  .nav-icon {
+    color: rgb(162, 162, 162);
+  }
+}
