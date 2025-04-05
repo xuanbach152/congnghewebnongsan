@@ -24,7 +24,9 @@ export const createCart = async (req, res) => {
 // Get all Carts
 export const getCarts = async (req, res) => {
     try {
-        const Carts = await CartService.getCarts();
+      const { page } = req.query;//lấy page từ query params
+      const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
+        const Carts = await CartService.getCarts(page, limit);
         res.status(httpStatus.OK).send({
             code: httpStatus.OK,
             message: Message.OK,

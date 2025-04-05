@@ -18,6 +18,7 @@ const userSchema = Schema(
     address: {
       type: String,
       required: true,
+      default: "none",
     },
     role: {
       type: String,
@@ -31,4 +32,4 @@ const userSchema = Schema(
   }
 );
 
-export default model('User', userSchema);
+export default model("User", userSchema);
