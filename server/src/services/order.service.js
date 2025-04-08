@@ -19,9 +19,25 @@ const getOrderById = async (OrderId) => {
   return Order;
 };
 
-const getOrders = async () => {
-  const Orders = await OrderModel.find();
-  return Orders;
+const getOrders = async (page, limit) => {
+  try {
+    const skip = (page - 1) * limit;
+    const orders = await OrderModel.find()
+      .skip(skip)
+      .limit(Math.min(limit, 100))
+      .exec();
+
+    const totalorders = await OrderModel.countDocuments();
+    return {
+      orders,
+      totalorders,
+      totalPages: Math.ceil(totalorders / limit),
+      currentPage: parseInt(page),
+    };
+  } catch (error) {
+    console.error("Error in getOrders:", error.message);
+    throw error;
+  }
 };
 
 const deleteOrder = async (OrderId) => {

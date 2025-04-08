@@ -24,7 +24,9 @@ export const createComment = async (req, res) => {
 // Get all Comments
 export const getComments = async (req, res) => {
     try {
-        const Comments = await CommentService.getComments();
+          const { page } = req.query;//lấy page từ query params
+          const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
+        const Comments = await CommentService.getComments(page, limit);
         res.status(httpStatus.OK).send({
             code: httpStatus.OK,
             message: Message.OK,
@@ -92,3 +94,4 @@ export const deleteComment = async (req, res) => {
         });
     }
 };
+  

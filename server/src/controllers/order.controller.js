@@ -24,7 +24,9 @@ export const createOrder = async (req, res) => {
 // Get all Orders
 export const getOrders = async (req, res) => {
     try {
-        const Orders = await OrderService.getOrders();
+      const { page } = req.query;//lấy page từ query params
+      const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
+        const Orders = await OrderService.getOrders(page, limit);
         res.status(httpStatus.OK).send({
             code: httpStatus.OK,
             message: Message.OK,

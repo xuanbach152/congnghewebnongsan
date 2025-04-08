@@ -6,6 +6,17 @@ const createShop = async (ShopData) => {
   const newShop = await ShopModel.create(ShopData);
   return newShop;
 };
+const searchShops = async (searchText) => {
+  const regex = new RegExp(searchText, "i");
+  return await ShopModel.find({
+    $or: [
+      { name:{$regex: regex}  },
+      { address: {$regex: regex} }
+    ],
+  });
+
+
+};
 
 const updateShop = async (ShopId, ShopData) => {
   const Shop = await ShopModel.findById(ShopId);
@@ -19,9 +30,25 @@ const getShopById = async (ShopId) => {
   return Shop;
 };
 
-const getShops = async () => {
-  const Shops = await ShopModel.find();
-  return Shops;
+const getShops = async (page, limit) => {
+   try {
+     const skip = (page - 1) * limit;
+     const shops = await ShopModel.find()
+       .skip(skip)
+       .limit(Math.min(limit, 100))
+       .exec();
+ 
+     const totalshops = await ShopModel.countDocuments();
+     return {
+       shops,
+       totalshops,
+       totalPages: Math.ceil(totalshops / limit),
+       currentPage: parseInt(page),
+     };
+   } catch (error) {
+     console.error("Error in getShops:", error.message);
+     throw error;
+   }
 };
 
 const deleteShop = async (ShopId) => {
@@ -30,6 +57,7 @@ const deleteShop = async (ShopId) => {
 
 export default {
   createShop,
+  searchShops,
   updateShop,
   getShopById,
   getShops,

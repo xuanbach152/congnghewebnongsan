@@ -18,10 +18,12 @@ const userSchema = Schema(
     address: {
       type: String,
       required: true,
+      default: "none",
     },
     role: {
       type: String,
       enum: UserRoleEnum,
+      default: UserRoleEnum.BUYER,
       required: true,
     },
   },
@@ -30,4 +32,4 @@ const userSchema = Schema(
   }
 );
 
-export default model('User', userSchema);
+export default model("User", userSchema);
