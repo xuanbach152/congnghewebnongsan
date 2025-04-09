@@ -4,6 +4,7 @@ import {
     createItem,
     getItems,
     getItemById,
+    getItemByShopId,
     searchItems,
     updateItem,
     deleteItem,
@@ -21,6 +22,8 @@ router.get("/", getItems);
 router.get("/search", searchItems);
 
 router.get("/:id", getItemById);
+
+router.get("/items/:shopId", getItemByShopId);
 
 router.put("/:id", updateItem);
 

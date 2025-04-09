@@ -112,3 +112,64 @@ export const deleteShop = async (req, res) => {
     });
   }
 };
+//upload image
+export const uploadImage = async (req, res) => {
+  try {
+    console.log("Request body:", req.body);
+    console.log("File received:", JSON.stringify(req.file, null, 2));
+
+    const imgUrl = await ItemService.uploadImageToCloudinary(req.file);
+    console.log("Image uploaded to Cloudinary:", imgUrl);
+
+    const updatedItem = await ItemService.saveImageToDatabase(
+      req.params.id,
+      imgUrl
+    );
+    console.log("Image URL saved to database:", updatedItem);
+
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: Message.OK,
+      data: updatedItem,
+    });
+  } catch (error) {
+    console.error("Error during upload:", error);
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).send({
+      code: httpStatus.INTERNAL_SERVER_ERROR,
+      message: Message.FAILED,
+      error: error.message,
+    });
+  }
+};
+
+export const getRevenueByMonth = async (req, res) => {
+  try {
+    const { shopId } = req.params;
+    const { month, year } = req.query;
+
+    if (!shopId || !month || !year) {
+      return res.status(400).send({
+        code: 400,
+        message: "Missing required fields: shopId, month, or year",
+      });
+    }
+
+    const revenueData = await ShopService.getRevenueByMonth(
+      shopId,
+      parseInt(month),
+      parseInt(year)
+    );
+
+    res.status(200).send({
+      code: 200,
+      message: "Revenue data retrieved successfully",
+      data: revenueData,
+    });
+  } catch (error) {
+    console.error("Error in getRevenueByMonth:", error.message);
+    res.status(500).send({
+      code: 500,
+      message: error.message || "Failed to retrieve revenue data",
+    });
+  }
+};

@@ -2,7 +2,7 @@ import { Schema, model } from "mongoose";
 
 const shopSchema = Schema(
   {
-    ownerId: {
+    userId: {
       type: Schema.ObjectId,
       required: true,
       ref: "User",
@@ -14,6 +14,11 @@ const shopSchema = Schema(
     address: {
       type: String,
       required: true,
+    },
+    imgUrl: {
+      type: String,
+      required: true,
+      default: "",
     },
   },
   {
