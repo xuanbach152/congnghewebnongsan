@@ -18,7 +18,10 @@ export const register = async (req, res) => {
       ...req.body,
       password: hashedPassword,
     });
-    res.status(httpStatus.CREATED).json({ user: newUser });
+    res.status(httpStatus.CREATED).json({ 
+      code: 200,
+      user: newUser 
+    });
   } catch (error) {
     res.status(httpStatus.BAD_REQUEST).json({ message: error.message });
   }

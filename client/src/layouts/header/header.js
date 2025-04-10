@@ -1,5 +1,6 @@
 import './header.scss';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
 import {
   AiOutlineFacebook,
   AiOutlineUser,
@@ -13,22 +14,202 @@ import {
 } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import { formatter } from 'utils/formatter';
+import routers from 'utils/routers';
+import { login, register, default as axiosInstance } from 'utils/api';
 
 const MainHeader = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
+  const [cartTotal, setCartTotal] = useState(0);
+  const [cartLoading, setCartLoading] = useState(false);
+  const [cartErrors, setCartErrors] = useState({});
   const [filterLocation, setFilterLocation] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterPrice, setFilterPrice] = useState('all');
   const [filterPromotion, setFilterPromotion] = useState(false);
   const [filterTrend, setFilterTrend] = useState(false);
   const [filterSth, setFilterSth] = useState(false)
+  const [user, setUser] = useState(null);
+
+  const userId = user?.userId;
+
+  const logout  = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    setUser(null);
+    setIsLoggedIn(false);
+    setCartItems([]);
+    setCartTotal(0);
+  }
+
+  const handleAuthSubmit = async (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    try {
+      if (isLogin) {
+        const result = await login(email, password);
+        console.log('Login result:', result); // Log kết quả để debug
+        if (result.code === 200) {
+          localStorage.setItem('accessToken', result.data.accessToken);
+          localStorage.setItem('refreshToken', result.data.refreshToken);
+          setUser(result.user);
+          setIsLoggedIn(true);
+          setIsAuthModalOpen(false);
+        } else {
+          alert(result.message || 'Đăng nhập thất bại! Vui lòng thử lại!');
+        }
+      } else {
+        const confirmPassword = e.target.confirmPassword.value;
+        if (password !== confirmPassword) {
+          alert('Mật khẩu không khớp!');
+          return;
+        }
+        const result = await register({email, password});
+        console.log('Register result:', result); // Log kết quả để debug
+        if (result.code === 200) {
+          alert('Đăng ký thành công! Vui lòng đăng nhập.');
+          setIsLogin(true);
+        } else {
+          alert(result.message || 'Đăng ký thất bại! Vui lòng thử lại!');
+        }
+      }
+    } catch (error) {
+      console.error('Auth error details: ', error);
+      alert('Có lỗi xảy ra, vui lòng thử lại!');
+    }
+  };
 
   const handleAssistantClick = () => {
     console.log('Gọi trợ lý ảo...');
   };
+
+  const fetchCartData = async () => {
+    if (!userId) return;
+    setCartLoading(true);
+    try {
+      const response = await axiosInstance.get(`/cart/${userId}`);
+      const result = await response.data;
+      if (result.code === 200) {
+        const items = result.data.items || [];
+        setCartItems(items);
+        calculateTotal(items);
+      } else {
+        setCartErrors({fetch: result.message || 'Không thể tải giỏ hàng'});
+      }
+    } catch (error) {
+      console.error('Lỗi khi tải giỏ hàng:', error.response?.data || error.message);
+      setCartErrors({fetch: 'Lỗi kết nối server'});
+    } finally {
+      setCartLoading(false);
+    }
+  }  
+
+  const calculateTotal = (items) => {
+    const total = items.reduce((sum,item) => sum + item.price * item.quantity, 0);
+    setCartTotal(total);
+  };
+
+  const handleAddToCart = async (product) => {
+    if (!userId) {
+      alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!');
+      setIsAuthModalOpen(true);
+      return;
+    }
+    setCartLoading(true);
+    setCartErrors({});
+    try {
+      // Kiểm tra giỏ hàng hiện tại
+      let cartResponse;
+      try {
+        cartResponse = await axiosInstance.get(`/cart/${userId}`);
+      } catch (error) {
+        // Nếu không tìm thấy giỏ hàng (404), tạo mới
+        if (error.response?.status === 404) {
+          cartResponse = { data: { code: 404, data: null } };
+        } else {
+          throw error; // Ném lỗi nếu không phải 404
+        }
+      }
+
+      console.log('Cart response:', cartResponse.data); // Log để debug
+
+      const cart = cartResponse.data;
+      const newItem = { productId: product.id, price: product.price, quantity: 1 };
+
+      if (cart.code === 200 && cart.data) {
+        // Cập nhật giỏ hàng nếu đã tồn tại
+        const updatedItems = cart.data.items || [];
+        const existingItemIndex = updatedItems.findIndex(
+          (item) => item.productId === product.id
+        );
+        if (existingItemIndex !== -1) {
+          updatedItems[existingItemIndex].quantity += 1;
+        } else {
+          updatedItems.push(newItem);
+        }
+
+        const response = await axiosInstance.put(`/cart/${userId}`, {
+          items: updatedItems,
+        });
+
+        const result = response.data;
+        console.log('Update cart response:', result);
+        if (result.code === 200) {
+          setCartItems(updatedItems);
+          calculateTotal(updatedItems);
+        } else {
+          setCartErrors({
+            submit: result.message || 'Không thể cập nhật giỏ hàng',
+          });
+        }
+      } else {
+        // Tạo giỏ hàng mới nếu chưa tồn tại
+        const response = await axiosInstance.post(`/cart/${userId}`, {
+          items: [newItem],
+        });
+
+        const result = response.data;
+        console.log('Create cart response:', result);
+        if (result.code === 200) {
+          setCartItems([newItem]);
+          calculateTotal([newItem]);
+        } else {
+          setCartErrors({
+            submit: result.message || 'Không thể tạo giỏ hàng mới',
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Add to cart error:', error.response?.data || error.message);
+      setCartErrors({
+        submit:
+          error.response?.data?.message ||
+          'Lỗi kết nối server khi thêm sản phẩm vào giỏ hàng',
+      });
+    } finally {
+      setCartLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setUser(decodedToken);
+        setIsLoggedIn(true);
+        fetchCartData();
+      } catch (error) {
+        console.error('Lỗi khi giải mã token:', error.message);
+        logout();
+      }
+    }
+  }, [userId]);
 
   const toggleAuthModal = () => {
     setIsAuthModalOpen(!isAuthModalOpen);
@@ -39,9 +220,18 @@ const MainHeader = () => {
   };
 
   const handleLogout = () => {
+    logout();
     setIsLoggedIn(false);
     setIsDropdownOpen(false);
+    setIsProfileOpen(false);
+    setCartItems([]);
+    setCartTotal(0);
   };
+
+  const testAddToCart = () => {
+    const product = { id: "67e2bdb31762e4f8f670d8bf", price: 100 };
+    handleAddToCart(product);
+  }
 
   return (
     <>
@@ -75,9 +265,11 @@ const MainHeader = () => {
                   {isLoggedIn && isDropdownOpen && (
                     <div className="user_dropdown">
                       <ul>
-                        <li><Link to="/profile">Thông tin cá nhân</Link></li>
-                        <li><Link to="/dashboard">Quản lý cửa hàng</Link></li>
-                        <li><Link to="/settings">Cài đặt</Link></li>
+                        <li onClick={() => setIsProfileOpen(!isProfileOpen)}>
+                          <Link to={routers.PROFILE}>Thông tin cá nhân</Link>
+                        </li>
+                        <li><Link to={routers.SHOP_MANAGEMENT}>Quản lý cửa hàng</Link></li>
+                        <li><Link to="#">Cài đặt</Link></li>
                         <li onClick={handleLogout}>Đăng xuất</li>
                       </ul>
                     </div>
@@ -118,16 +310,22 @@ const MainHeader = () => {
           <div className="col-xl-3">
             <div className="header_cart">
               <div className="header_cart_price">
-                <span>{formatter(1001230)}</span>
+                {cartLoading ? (<span>Đang tải...</span>) : (<span>{formatter(cartTotal)}</span>)}
               </div>
               <ul>
                 <li>
                   <Link to={'#'}>
                     <AiOutlineShoppingCart />
-                    <span>5</span>
+                    <span>{cartItems.length}</span>
                   </Link>
                 </li>
               </ul>
+              {/* Thêm nút test */}
+              <button onClick={testAddToCart} style={{ marginTop: '10px' }}>
+                Test Add to Cart
+              </button>
+              {cartErrors.fetch && <span className="error">{cartErrors.fetch}</span>}
+              {cartErrors.submit && <span className="error">{cartErrors.submit}</span>}
             </div>
           </div>
         </div>
@@ -220,10 +418,10 @@ const MainHeader = () => {
         <div className="auth_modal">
           <div className="auth_content">
             <h2>{isLogin ? 'Đăng nhập' : 'Đăng ký'}</h2>
-            <form onSubmit={(e) => e.preventDefault()} className="auth_form">
-              <input type="text" placeholder="Email hoặc số điện thoại" required />
-              <input type="password" placeholder="Mật khẩu" required />
-              {!isLogin && <input type="password" placeholder="Xác nhận mật khẩu" required />}
+            <form onSubmit={handleAuthSubmit} className="auth_form">
+              <input name="email" type="text" placeholder="Email hoặc số điện thoại" required />
+              <input name="password" type="password" placeholder="Mật khẩu" required />
+              {!isLogin && <input name="confirmPassword" type="password" placeholder="Xác nhận mật khẩu" required />}
               
               {/* Nút Submit */}
               <button type="submit" className="auth_submit_button">
