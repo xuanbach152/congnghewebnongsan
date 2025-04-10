@@ -7,16 +7,16 @@ const createCart = async (CartData) => {
   const newCart = await CartModel.create(CartData);
   return newCart;
 };
-const addToCart = async (userId, itemId, quantity) => {
+const addToCart = async (cartId, itemId, quantity) => {
   try {
     const item = await ItemModel.findById(itemId);
     if (!item) {
       throw new Error("Item not found");
     }
 
-    let cart = await CartModel.findOne({ userId });
+    let cart = await CartModel.findOne({ _id: cartId });
     if (!cart) {
-      cart = await CartModel.create({ userId, cartItems: [], totalPrice: 0 });
+      throw new Error("Cart not found");
     }
 
     const existingItem = cart.cartItems.find(
@@ -45,9 +45,9 @@ const addToCart = async (userId, itemId, quantity) => {
     throw error;
   }
 };
-const updateCartItem = async (userId, itemId, quantity) => {
+const updateCartItem = async (cartId, itemId, quantity) => {
   try {
-    const cart = await CartModel.findOne({ userId });
+    const cart = await CartModel.findOne({ _id: cartId });
     if (!cart) {
       throw new Error("Cart not found");
     }
@@ -75,7 +75,6 @@ const updateCartItem = async (userId, itemId, quantity) => {
   }
 };
 
-
 const getCartById = async (CartId) => {
   const Cart = await CartModel.findById(CartId);
   throwBadRequest(!Cart, Message.CartNotFound);
@@ -99,9 +98,26 @@ const getCart = async (userId) => {
     throw error;
   }
 };
-const removeCartItem = async (userId, itemId) => {
+const clearCart = async (cartId) => {
   try {
-    const cart = await CartModel.findOne({ userId });
+    const cart = await CartModel.findOne({ _id: cartId });
+    if (!cart) {
+      throw new Error("Cart not found");
+    }
+
+    cart.cartItems = [];
+    cart.totalPrice = 0;
+
+    await cart.save();
+    return cart;
+  } catch (error) {
+    console.error("Error in clearCart:", error.message);
+    throw error;
+  }
+};
+const removeCartItem = async (cartId, itemId) => {
+  try {
+    const cart = await CartModel.findOne({ _id: cartId });
     if (!cart) {
       throw new Error("Cart not found");
     }
@@ -134,4 +150,5 @@ export default {
   addToCart,
   deleteCart,
   removeCartItem,
+  clearCart,
 };

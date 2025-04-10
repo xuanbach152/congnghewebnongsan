@@ -23,16 +23,16 @@ export const createCart = async (req, res) => {
 // add item to cart
 export const addToCart = async (req, res) => {
   try {
-    const { userId, itemId, quantity } = req.body;
+    const { cartId, userId, itemId, quantity } = req.body;
 
-    if (!userId || !itemId || !quantity) {
+    if (!cartId || !userId || !itemId || !quantity) {
       return res.status(400).send({
         code: 400,
-        message: "Missing required fields: userId, itemId, quantity",
+        message: "Missing required fields: cartId, userId, itemId, quantity",
       });
     }
 
-    const cart = await CartService.addToCart(userId, itemId, quantity);
+    const cart = await CartService.addToCart(cartId, itemId, quantity);
     res.status(200).send({
       code: 200,
       message: "Item added to cart successfully",
@@ -67,7 +67,7 @@ export const getCartById = async (req, res) => {
 // Get all items in a user's cart
 export const getCart = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const userId = req.user.id;
 
     if (!userId) {
       return res.status(400).send({
@@ -93,16 +93,16 @@ export const getCart = async (req, res) => {
 // Update an Cart by ID
 export const updateCartItem = async (req, res) => {
   try {
-    const { userId, itemId, quantity } = req.body;
+    const { cartId,  itemId, quantity } = req.body;
 
-    if (!userId || !itemId || !quantity) {
+    if (!cartId  || !itemId || !quantity) {
       return res.status(400).send({
         code: 400,
-        message: "Missing required fields: userId, itemId, quantity",
+        message: "Missing required fields: cartId, itemId, quantity",
       });
     }
 
-    const cart = await CartService.updateCartItem(userId, itemId, quantity);
+    const cart = await CartService.updateCartItem(cartId, itemId, quantity);
     res.status(200).send({
       code: 200,
       message: "Cart item updated successfully",
@@ -136,16 +136,16 @@ export const deleteCart = async (req, res) => {
 // Remove an item from the cart
 export const removeCartItem = async (req, res) => {
   try {
-    const { userId, itemId } = req.body;
+    const { cartId, itemId } = req.body;
 
-    if (!userId || !itemId) {
+    if (!cartId || !itemId) {
       return res.status(400).send({
         code: 400,
-        message: "Missing required fields: userId, itemId",
+        message: "Missing required fields: cartId, itemId",
       });
     }
 
-    const cart = await CartService.removeCartItem(userId, itemId);
+    const cart = await CartService.removeCartItem(cartId, itemId);
     res.status(200).send({
       code: 200,
       message: "Cart item removed successfully",
@@ -159,3 +159,28 @@ export const removeCartItem = async (req, res) => {
     });
   }
 };
+
+export const clearCart = async(req, res) => {
+  try{
+    const { cartId } = req.body;
+    if (!cartId) {
+      return res.status(400).send({
+        code: 400,
+        message: "Missing required field: cartId",
+      });
+    }
+    const cart = await CartService.clearCart(cartId);
+    res.status(200).send({
+      code: 200,
+      message: "Cart cleared successfully",
+      data: cart,
+    });
+  }
+  catch(error) {
+    console.error("Error in clearCart:", error.message);
+    res.status(500).send({
+      code: 500,
+      message: error.message || "Failed to clear cart",
+    });
+  }
+}

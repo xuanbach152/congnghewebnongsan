@@ -32,10 +32,11 @@ const getShopById = async (ShopId) => {
   return Shop;
 };
 
-const getShops = async (page, limit) => {
+const getShops = async (page, limit, sortField = "createdAt", sortType = "desc") => {
    try {
      const skip = (page - 1) * limit;
      const shops = await ShopModel.find()
+       .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
        .skip(skip)
        .limit(Math.min(limit, 100))
        .exec();
@@ -124,12 +125,18 @@ const getRevenueByMonth = async (shopId, month, year) => {
   }
 };
 
-// lấy danh sách id sản phẩm của shop
-const getItemIdsByShop = async (shopId) => {
-  const items = await ItemModel.find({ shopId }).select("_id");
-  return items.map((item) => item._id);
-};
 
+const getItemByShopId = async (shopId) => {
+  const items = await ItemModel.find({ shopId });
+  throwBadRequest(!items, Message.ItemNotFound);
+  return items;
+  
+};
+const getShopByUserId = async (userId) => {
+  const shop = await ShopModel.findOne({ userId });
+  throwBadRequest(!shop, Message.ShopNotFound);
+  return shop;
+}
 export default {
   createShop,
   searchShops,
@@ -139,5 +146,7 @@ export default {
   deleteShop,
   saveImageToDatabase,
   uploadImageToCloudinary,
-  getRevenueByMonth
+  getRevenueByMonth,
+  getItemByShopId,
+  getShopByUserId
 };

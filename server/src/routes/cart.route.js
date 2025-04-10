@@ -7,15 +7,17 @@ import {
   removeCartItem,
   updateCartItem,
   deleteCart,
+  clearCart,
 } from "../controllers/cart.controller.js";
-
+import { verifyToken } from "../services/auth.service.js";
 const router = express.Router();
 
-router.post("/", createCart);
-router.post("/add", addToCart);
-router.put("/update", updateCartItem);
-router.delete("/remove", removeCartItem);
-router.get("/:userId", getCart);
-router.get("/getcart/:id", getCartById);
-router.delete("/:id", deleteCart);
+router.post("/",verifyToken, createCart);
+router.post("/add",verifyToken, addToCart);
+router.put("/update",verifyToken, updateCartItem);
+router.delete("/remove",verifyToken, removeCartItem);
+router.delete("/clear",verifyToken, clearCart);
+router.get("/getcart",verifyToken, getCart);
+router.get("/:id", verifyToken, getCartById);
+router.delete("/:id", verifyToken, deleteCart);
 export default router;

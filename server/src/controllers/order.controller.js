@@ -1,12 +1,12 @@
 import OrderService from "../services/order.service.js";
 import httpStatus from "http-status";
 import Message from "../utils/message.js";
-
+import { PaginationEnum } from "../utils/constant.js";
 // Create a new Order
 export const createOrder = async (req, res) => {
   try {
-    const { userId, deliveryAddress, paymentMethod } = req.body;
-
+    const { deliveryAddress, paymentMethod } = req.body;
+    const userId = req.user.id; 
     if (!userId || !deliveryAddress || !paymentMethod) {
       return res.status(400).send({
         code: 400,
@@ -56,15 +56,16 @@ export const cancelOrder = async (req, res) => {
 export const getOrders = async (req, res) => {
   try {
     const { page } = req.query; //lấy page từ query params
+    const { sortField, sortType } = req.query;
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
-    const Orders = await OrderService.getOrders(page, limit);
+    const Orders = await OrderService.getOrders(page, limit, sortField, sortType);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
       data: Orders,
     });
   } catch (error) {
-    console.log(error);
+    console.log("Error in getOrders:", error.message);
     res.status(httpStatus.BAD_REQUEST).send({
       code: httpStatus.BAD_REQUEST,
       message: Message.FAILED,
@@ -92,7 +93,7 @@ export const getOrderById = async (req, res) => {
 
 export const getOrdersByUser = async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.user.id; 
     const orders = await OrderService.getOrdersByUser(userId);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,

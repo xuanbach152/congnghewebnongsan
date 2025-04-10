@@ -17,7 +17,6 @@ const shopSchema = Schema(
     },
     imgUrl: {
       type: String,
-      required: true,
       default: "",
     },
   },

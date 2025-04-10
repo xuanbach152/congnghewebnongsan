@@ -1,7 +1,7 @@
 import UserService from "../services/user.service.js";
 import httpStatus from "http-status";
 import Message from "../utils/message.js";
-
+import { PaginationEnum } from "../utils/constant.js";
 export const createUser = async (req, res) => {
   try {
     const newUser = await UserService.createUser(req.body);

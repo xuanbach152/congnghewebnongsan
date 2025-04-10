@@ -1,16 +1,15 @@
 import express from "express";
 import { uploadImg, uploadVid } from "../utils/upload.middleware.js";
 import {
-    createItem,
-    getItems,
-    getItemById,
-    getItemByShopId,
-    searchItems,
-    updateItem,
-    deleteItem,
-    rateItem,
-    uploadImage,
-    uploadVideo,
+  createItem,
+  getItems,
+  getItemById,
+  searchItems,
+  updateItem,
+  deleteItem,
+  rateItem,
+  uploadImage,
+  uploadVideo,
 } from "../controllers/item.controller.js";
 
 const router = express.Router();
@@ -22,8 +21,6 @@ router.get("/", getItems);
 router.get("/search", searchItems);
 
 router.get("/:id", getItemById);
-
-router.get("/items/:shopId", getItemByShopId);
 
 router.put("/:id", updateItem);
 

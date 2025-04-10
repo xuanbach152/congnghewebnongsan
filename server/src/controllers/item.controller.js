@@ -62,9 +62,10 @@ export const searchItems = async (req, res) => {
 export const getItems = async (req, res) => {
   try {
     const { page } = req.query; //lấy page từ query params
+    const { sortField, sortType } = req.query;
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
 
-    const items = await ItemService.getItems(page, limit);
+    const items = await ItemService.getItems(page, limit, sortField, sortType);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
@@ -97,22 +98,6 @@ export const getItemById = async (req, res) => {
   }
 };
 
-export const getItemByShopId = async (req, res) => {
-  try {
-    const item = await ItemService.getItemByShopId(req.params.shopId);
-    res.status(httpStatus.OK).send({
-      code: httpStatus.OK,
-      message: Message.OK,
-      data: item,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(httpStatus.BAD_REQUEST).send({
-      code: httpStatus.BAD_REQUEST,
-      message: Message.FAILED,
-    });
-  }
-};
 
 // Update an item by ID
 export const updateItem = async (req, res) => {

@@ -72,12 +72,13 @@ const getOrderById = async (OrderId) => {
   return Order;
 };
 
-const getOrders = async (page, limit) => {
+const getOrders = async (page, limit, sortField = "createdAt", sortType = "desc") => {
   try {
     const skip = (page - 1) * limit;
     const orders = await OrderModel.find()
       .skip(skip)
       .limit(Math.min(limit, 100))
+      .sort({ [sortField]: sortType === "desc" ? -1 : 1 })
       .exec();
 
     const totalorders = await OrderModel.countDocuments();

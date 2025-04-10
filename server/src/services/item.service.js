@@ -53,21 +53,12 @@ const getItemById = async (itemId) => {
   }
 };
 
-const getItemByShopId = async (shopId) => {
-  try{
-    const item = await ItemModel.find({ shopId });
-    throwBadRequest(!item, Message.ItemNotFound);
-    return item;
-  }
-  catch (error) {
-    console.error("Error in getItemByShopId:", error.message);
-    throw error;
-  }
-}
-const getItems = async (page, limit) => {
+
+const getItems = async (page, limit,sortField = "createdAt", sortType = "desc") => {
   try {
     const skip = (page - 1) * limit; //tính toán số lượng item cần bỏ qua trong database
     const items = await ItemModel.find()
+      .sort({ [sortField]: sortType === "desc" ? -1 : 1 })
       .skip(skip)
       .limit(Math.min(limit, 100))
       .exec();
@@ -208,7 +199,7 @@ export default {
   searchItems,
   updateItem,
   getItemById,
-  getItemByShopId,
+
   getItems,
   deleteItem,
   rateItem,

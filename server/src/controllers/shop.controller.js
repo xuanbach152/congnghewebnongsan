@@ -1,11 +1,13 @@
 import ShopService from "../services/shop.service.js";
 import httpStatus from "http-status";
 import Message from "../utils/message.js";
-
+import { PaginationEnum } from "../utils/constant.js";
 // Create a new Shop
 export const createShop = async (req, res) => {
   try {
-    const newShop = await ShopService.createShop(req.body);
+    const { name, address } = req.body;
+    const userId = req.user.id; 
+    const newShop = await ShopService.createShop({ name, address, userId });
     res.status(httpStatus.CREATED).send({
       code: httpStatus.CREATED,
       message: Message.ShopCreated,
@@ -43,8 +45,9 @@ export const searchShops = async (req, res) => {
 export const getShops = async (req, res) => {
   try {
     const { page } = req.query; //lấy page từ query params
+    const {sortField,sortType} = req.query;
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
-    const Shops = await ShopService.getShops(page, limit);
+    const Shops = await ShopService.getShops(page, limit, sortField, sortType);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
@@ -173,3 +176,41 @@ export const getRevenueByMonth = async (req, res) => {
     });
   }
 };
+
+export const getItemByShopId = async (req,res) => {
+  try {
+    const shopid = req.params.id;
+
+    const items = await ShopService.getItemByShopId(shopid);
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: "Items retrieved successfully",
+      data: items,
+    });
+  }
+  catch (error) {
+    console.error("Error in getItemByShopId:", error.message);
+    res.status(500).send({
+      code: 500,
+      message: error.message || "Failed to retrieve items",
+    });
+  }
+}
+
+export const getShopByUserId = async(req,res) => {
+  try{const userId = req.user.id;
+    const shop = await ShopService.getShopByUserId(userId);
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: "Shop retrieved successfully",
+      data: shop,
+    });
+  }
+  catch(error){
+    console.error("Error in getShopByUserId:", error.message);
+    res.status(500).send({
+      code: 500,
+      message: error.message || "Failed to retrieve shop",
+    });
+  }
+}
