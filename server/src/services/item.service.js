@@ -1,4 +1,5 @@
 import ItemModel from "../models/item.model.js";
+import ShopModel from "../models/shop.model.js";
 import { throwBadRequest } from "../utils/error.util.js";
 import { validateFile } from "../utils/file.util.js";
 import Message from "../utils/message.js";
@@ -6,6 +7,11 @@ import cloudinary from "../configs/cloudinary.config.js";
 
 const createItem = async (itemData) => {
   try {
+    const shop = await ShopModel.findById(itemData.shopId);
+    if (!shop) {
+      throw new Error("Shop not found");
+    }
+    
     const newItem = await ItemModel.create(itemData);
     return newItem;
   } catch (error) {
@@ -18,13 +24,11 @@ const searchItems = async (searchText) => {
   const regex = new RegExp(searchText, "i");
   return await ItemModel.find({
     $or: [
-      { name:{$regex: regex}  },
-      { type: {$regex: regex} },
-      { description: {$regex: regex} }
+      { name: { $regex: regex } },
+      { type: { $regex: regex } },
+      { description: { $regex: regex } },
     ],
   });
-
-
 };
 
 const updateItem = async (itemId, itemData) => {
@@ -38,25 +42,34 @@ const updateItem = async (itemId, itemData) => {
   }
 };
 
-const getItemById = async (ItemId) => {
+const getItemById = async (itemId) => {
   try {
-    const Item = await ItemModel.findById(ItemId);
-    throwBadRequest(!Item, Message.ItemNotFound);
-    return Item;
+    const item = await ItemModel.findById(itemId);
+    throwBadRequest(!item, Message.ItemNotFound);
+    return item;
   } catch (error) {
     console.error("Error in getItemById:", error.message);
     throw error;
   }
 };
 
-const getItems = async ( page, limit) => {
-  try {
 
-    const skip = (page - 1) * limit;//tính toán số lượng item cần bỏ qua trong database
-    const items = await ItemModel.find().skip(skip).limit(Math.min(limit, 100)).exec();
+const getItems = async (page, limit,sortField = "createdAt", sortType = "desc") => {
+  try {
+    const skip = (page - 1) * limit; //tính toán số lượng item cần bỏ qua trong database
+    const items = await ItemModel.find()
+      .sort({ [sortField]: sortType === "desc" ? -1 : 1 })
+      .skip(skip)
+      .limit(Math.min(limit, 100))
+      .exec();
 
     const totalItems = await ItemModel.countDocuments();
-    return {items, totalItems,totalPages: Math.ceil(totalItems / limit), currentPage: parseInt(page)};
+    return {
+      items,
+      totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+      currentPage: parseInt(page),
+    };
   } catch (error) {
     console.error("Error in getItems:", error.message);
     throw error;
@@ -73,8 +86,8 @@ const deleteItem = async (itemId) => {
 };
 const rateItem = async (itemId, userId, rating) => {
   try {
-    console.log("Item ID:", itemId); 
-    console.log("User ID:", userId); 
+    console.log("Item ID:", itemId);
+    console.log("User ID:", userId);
     console.log("Rating:", rating);
 
     const item = await ItemModel.findById(itemId);
@@ -186,6 +199,7 @@ export default {
   searchItems,
   updateItem,
   getItemById,
+
   getItems,
   deleteItem,
   rateItem,
