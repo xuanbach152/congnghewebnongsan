@@ -43,10 +43,7 @@ const ItemCreationPage = () => {
               Quản lý cửa hàng
             </Link>
             <FaAngleRight className="nav-icon" />
-            <Link
-              to={routers.SHOP_REGISTRATION}
-              className="nav-item-creation"
-            >
+            <Link to={routers.SHOP_REGISTRATION} className="nav-item-creation">
               Thêm sản phẩm mới
             </Link>
           </div>
@@ -99,8 +96,8 @@ const ItemCreationPage = () => {
                   type="file"
                   id="avatar"
                   name="avatar"
-                  onChange={handleFileChange} 
-                  accept="image/*" 
+                  onChange={handleFileChange}
+                  accept="image/*"
                   required
                 />
               </div>

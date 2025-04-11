@@ -5,6 +5,8 @@ import routers from './utils/routers'
 import ShopManagementPage from 'pages/shopManagementPage/shopManagementPage'
 import ItemCreationPage from 'pages/itemCreationPage/itemCreationPage'
 import ShopRegistrationPage from 'pages/shopRegistrationPage/shopRegistrationPage'
+import ItemPage from 'pages/itemPage/itemPage'
+import ShopPage from 'pages/shopPage/shopPage'
 
 const renderRouter = () => {
   const allRouters = [
@@ -18,24 +20,32 @@ const renderRouter = () => {
     },
     {
       path: routers.SHOP_MANAGEMENT,
-      component: <ShopManagementPage />
+      component: <ShopManagementPage />,
     },
     {
       path: routers.SHOP_REGISTRATION,
-      component: <ShopRegistrationPage />
+      component: <ShopRegistrationPage />,
     },
     {
       path: routers.ITEM_CREATION,
-      component: <ItemCreationPage />
+      component: <ItemCreationPage />,
+    },
+    {
+      path: routers.ITEM,
+      component: <ItemPage />,
+    },
+    {
+      path: routers.SHOP,
+      component: <ShopPage />,
     },
   ]
 
   return (
-      <Routes>
-        {allRouters.map((route, index) => (
-          <Route key={index} path={route.path} element={route.component} />
-        ))}
-      </Routes>
+    <Routes>
+      {allRouters.map((route, index) => (
+        <Route key={index} path={route.path} element={route.component} />
+      ))}
+    </Routes>
   )
 }
 

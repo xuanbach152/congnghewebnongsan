@@ -1,5 +1,9 @@
 import { Schema, model } from "mongoose";
-import { DeliveryTypeEnum, PaymentMethodTypeEnum, PaymentStatusEnum } from "../utils/constant.js";
+import {
+  DeliveryTypeEnum,
+  PaymentMethodTypeEnum,
+  PaymentStatusEnum,
+} from "../utils/constant.js";
 
 const orderSchema = new Schema({
   userId: {
@@ -29,7 +33,7 @@ const orderSchema = new Schema({
     type: Number,
   },
   deliveryAddress: {
-    type: String, 
+    type: String,
     required: true,
   },
   totalDeliveryFee: {
@@ -42,7 +46,7 @@ const orderSchema = new Schema({
     default: 0,
   },
   deliveryType: {
-    type: String, 
+    type: String,
     enum: DeliveryTypeEnum,
     required: true,
     default: DeliveryTypeEnum[0],
@@ -54,7 +58,7 @@ const orderSchema = new Schema({
     default: PaymentMethodTypeEnum[0],
   },
   paymentStatus: {
-    type: String, 
+    type: String,
     enum: PaymentStatusEnum,
     required: true,
     default: PaymentStatusEnum[0],

@@ -23,7 +23,7 @@ const commentSchema = Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default model("Comment", commentSchema);

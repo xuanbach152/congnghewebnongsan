@@ -8,19 +8,18 @@ import {
   deleteShop,
   uploadImage,
   getRevenueByMonth,
-  getItemByShopId,
-  getShopByUserId
-  
+  getItemsByShopId,
+  getShopsByUserId,
 } from "../controllers/shop.controller.js";
 import { verifyToken } from "../services/auth.service.js";
-import {uploadImg} from "../utils/upload.middleware.js";
+import { uploadImg } from "../utils/upload.middleware.js";
 const router = express.Router();
 
-router.post("/", verifyToken,createShop);
+router.post("/", verifyToken, createShop);
 router.get("/", getShops);
 router.get("/search", searchShops);
-router.get("/user", verifyToken, getShopByUserId);
-router.get("/items/:id", getItemByShopId);
+router.get("/user", verifyToken, getShopsByUserId);
+router.get("/items/:id", getItemsByShopId);
 router.get("/revenue/:shopId", getRevenueByMonth);
 router.get("/:id", getShopById);
 router.post("/:id/upload-image", uploadImg.single("image"), uploadImage);

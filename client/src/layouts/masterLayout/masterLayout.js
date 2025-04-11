@@ -3,7 +3,7 @@ import Header from '../header/header'
 import Footer from '../footer/footer'
 import './masterLayout.scss'
 const MasterLayout = ({ children, ...props }) => {
-  return ( 
+  return (
     <div className="master-layout" {...props}>
       <Header />
       <div className="main-content">{children}</div>

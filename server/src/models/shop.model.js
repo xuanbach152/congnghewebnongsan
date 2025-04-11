@@ -22,7 +22,7 @@ const shopSchema = Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default model("Shop", shopSchema);

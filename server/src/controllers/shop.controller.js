@@ -2,11 +2,13 @@ import ShopService from "../services/shop.service.js";
 import httpStatus from "http-status";
 import Message from "../utils/message.js";
 import { PaginationEnum } from "../utils/constant.js";
+import ItemService from "../services/item.service.js";
 // Create a new Shop
 export const createShop = async (req, res) => {
   try {
     const { name, address } = req.body;
-    const userId = req.user.id; 
+    console.log(req.body);
+    const userId = req.user.id;
     const newShop = await ShopService.createShop({ name, address, userId });
     res.status(httpStatus.CREATED).send({
       code: httpStatus.CREATED,
@@ -45,7 +47,7 @@ export const searchShops = async (req, res) => {
 export const getShops = async (req, res) => {
   try {
     const { page } = req.query; //lấy page từ query params
-    const {sortField,sortType} = req.query;
+    const { sortField, sortType } = req.query;
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
     const Shops = await ShopService.getShops(page, limit, sortField, sortType);
     res.status(httpStatus.OK).send({
@@ -126,7 +128,7 @@ export const uploadImage = async (req, res) => {
 
     const updatedItem = await ItemService.saveImageToDatabase(
       req.params.id,
-      imgUrl
+      imgUrl,
     );
     console.log("Image URL saved to database:", updatedItem);
 
@@ -160,7 +162,7 @@ export const getRevenueByMonth = async (req, res) => {
     const revenueData = await ShopService.getRevenueByMonth(
       shopId,
       parseInt(month),
-      parseInt(year)
+      parseInt(year),
     );
 
     res.status(200).send({
@@ -177,40 +179,38 @@ export const getRevenueByMonth = async (req, res) => {
   }
 };
 
-export const getItemByShopId = async (req,res) => {
+export const getItemsByShopId = async (req, res) => {
   try {
     const shopid = req.params.id;
-
-    const items = await ShopService.getItemByShopId(shopid);
+    const items = await ShopService.getItemsByShopId(shopid);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: "Items retrieved successfully",
       data: items,
     });
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Error in getItemByShopId:", error.message);
     res.status(500).send({
       code: 500,
       message: error.message || "Failed to retrieve items",
     });
   }
-}
+};
 
-export const getShopByUserId = async(req,res) => {
-  try{const userId = req.user.id;
-    const shop = await ShopService.getShopByUserId(userId);
+export const getShopsByUserId = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const shop = await ShopService.getShopsByUserId(userId);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
-      message: "Shop retrieved successfully",
+      message: "Danh sách cửa hàng lấy thành công",
       data: shop,
     });
-  }
-  catch(error){
+  } catch (error) {
     console.error("Error in getShopByUserId:", error.message);
     res.status(500).send({
       code: 500,
       message: error.message || "Failed to retrieve shop",
     });
   }
-}
+};

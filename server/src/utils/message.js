@@ -80,7 +80,7 @@ export default {
   ShopCreatedFailed,
   ShopUpdated,
   ShopUpdatedFailed,
-  
+
   OK,
   FAILED,
 };

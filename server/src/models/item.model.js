@@ -9,36 +9,36 @@ const itemSchema = new Schema({
   name: {
     type: String,
     required: true,
-    default: "Tên sản phẩm mặc định", 
+    default: "Tên sản phẩm mặc định",
   },
   price: {
     type: Number,
     required: true,
-    default: 0, 
+    default: 0,
   },
   type: {
     type: String,
     enum: ItemTypeEnum,
     required: true,
-    default: ItemTypeEnum[0], 
+    default: ItemTypeEnum[0],
   },
   description: {
     type: String,
     required: true,
-    default: "Mô tả mặc định", 
+    default: "Mô tả mặc định",
   },
   imgUrl: {
     type: String,
-    default: "", 
+    default: "",
   },
   videoUrl: {
     type: String,
-    default: "", 
+    default: "",
   },
   rate: {
     type: Number,
     required: true,
-    default: 5.0, 
+    default: 5.0,
   },
   ratings: [
     {
@@ -50,19 +50,19 @@ const itemSchema = new Schema({
       rating: {
         type: Number,
         required: true,
-        default: 0.0, 
-      }
-    }
+        default: 0.0,
+      },
+    },
   ],
   quantity: {
     type: Number,
     required: true,
-    default: 1, 
+    default: 1,
   },
   address: {
     type: String,
     required: true,
-    default: "", 
+    default: "",
   },
 });
 

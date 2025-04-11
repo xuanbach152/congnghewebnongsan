@@ -1,6 +1,6 @@
-import './header.scss';
-import { memo, useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import './header.scss'
+import { memo, useEffect, useState } from 'react'
+import { jwtDecode } from 'jwt-decode'
 import {
   AiOutlineFacebook,
   AiOutlineUser,
@@ -11,252 +11,272 @@ import {
   AiOutlineInstagram,
   AiOutlineGoogle,
   AiOutlineBell,
-} from 'react-icons/ai';
-import { Link } from 'react-router-dom';
-import { formatter } from 'utils/formatter';
-import routers from 'utils/routers';
-import { default as axiosInstance } from 'utils/api';
+} from 'react-icons/ai'
+import { Link } from 'react-router-dom'
+import { formatter } from 'utils/formatter'
+import routers from 'utils/routers'
+import { default as axiosInstance } from 'utils/api'
 
 const MainHeader = () => {
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [cartItems, setCartItems] = useState([]);
-  const [cartTotal, setCartTotal] = useState(0);
-  const [cartLoading, setCartLoading] = useState(false);
-  const [cartErrors, setCartErrors] = useState({});
-  const [filterLocation, setFilterLocation] = useState('all');
-  const [filterCategory, setFilterCategory] = useState('all');
-  const [filterPrice, setFilterPrice] = useState('all');
-  const [filterPromotion, setFilterPromotion] = useState(false);
-  const [filterTrend, setFilterTrend] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [isLogin, setIsLogin] = useState(true)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const [cartItems, setCartItems] = useState([])
+  const [cartTotal, setCartTotal] = useState(0)
+  const [cartLoading, setCartLoading] = useState(false)
+  const [cartErrors, setCartErrors] = useState({})
+  const [filterLocation, setFilterLocation] = useState('all')
+  const [filterCategory, setFilterCategory] = useState('all')
+  const [filterPrice, setFilterPrice] = useState('all')
+  const [filterPromotion, setFilterPromotion] = useState(false)
+  const [filterTrend, setFilterTrend] = useState(false)
   const [filterSth, setFilterSth] = useState(false)
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(null)
 
-  const userId = user?.userId;
+  const userId = user?.userId
 
   const login = async (userName, password) => {
     try {
-      const response = await axiosInstance.post('/auth/login', { userName, password });
-      return response.data; 
+      const response = await axiosInstance.post('/auth/login', {
+        userName,
+        password,
+      })
+      return response.data
     } catch (error) {
-      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng nhập' };
+      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng nhập' }
     }
-  };
+  }
 
   const register = async (userName, password, phone) => {
     try {
-      const response = await axiosInstance.post('/auth/register', { userName, password, phone });
-      return response.data; 
+      const response = await axiosInstance.post('/auth/register', {
+        userName,
+        password,
+        phone,
+      })
+      return response.data
     } catch (error) {
-      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' };
+      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' }
     }
-  };
+  }
 
   const logout = async () => {
     try {
-      const response = await axiosInstance.post('/auth/logout');
-      localStorage.removeItem('accessToken');
-      setUser(null);
-      setIsLoggedIn(false);
-      setCartItems([]);
-      setCartTotal(0);
-      alert(response.data.message || 'Đăng xuất thành công!');
+      const response = await axiosInstance.post('/auth/logout')
+      localStorage.removeItem('accessToken')
+      setUser(null)
+      setIsLoggedIn(false)
+      setCartItems([])
+      setCartTotal(0)
+      alert(response.data.message || 'Đăng xuất thành công!')
     } catch (error) {
-      console.error('Logout error:', error);
-      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi đăng xuất!';
-      alert(errorMsg);
+      console.error('Logout error:', error)
+      const errorMsg =
+        error.response?.data?.message || 'Có lỗi xảy ra khi đăng xuất!'
+      alert(errorMsg)
     }
-  };
+  }
 
   const handleAuthSubmit = async (e) => {
-    e.preventDefault();
-    const userName = e.target.userName.value;
-    const password = e.target.password.value;
+    e.preventDefault()
+    const userName = e.target.userName.value
+    const password = e.target.password.value
     try {
       if (isLogin) {
         if (!userName || !password) {
-          alert('Vui lòng điền đầy đủ userName và password!');
-          return;
+          alert('Vui lòng điền đầy đủ userName và password!')
+          return
         }
-        const result = await login(userName, password);
-        localStorage.setItem('accessToken', result.accessToken);
-        setUser(result.user);
-        setIsLoggedIn(true);
-        setIsAuthModalOpen(false);
+        const result = await login(userName, password)
+        localStorage.setItem('accessToken', result.accessToken)
+        setUser(result.user)
+        setIsLoggedIn(true)
+        setIsAuthModalOpen(false)
       } else {
-        const confirmPassword = e.target.confirmPassword.value;
-        const phone = e.target.phone.value;
+        const confirmPassword = e.target.confirmPassword.value
+        const phone = e.target.phone.value
 
         if (!userName || !password || !confirmPassword || !phone) {
-          alert('Vui lòng điền đầy đủ các trường: userName, password, confirmPassword, phone!');
-          return;
+          alert(
+            'Vui lòng điền đầy đủ các trường: userName, password, confirmPassword, phone!'
+          )
+          return
         }
         if (password !== confirmPassword) {
-          alert('Mật khẩu không khớp!');
-          return;
+          alert('Mật khẩu không khớp!')
+          return
         }
-        const result = await register(userName, password, phone);
-        console.log('Register result:', result);
-        alert('Đăng ký thành công! Vui lòng đăng nhập.');
-        setIsLogin(true);
+        const result = await register(userName, password, phone)
+        console.log('Register result:', result)
+        alert('Đăng ký thành công! Vui lòng đăng nhập.')
+        setIsLogin(true)
       }
     } catch (error) {
-      console.error('Auth error details: ', error);
-      const errorMsg = error.message || 'Có lỗi xảy ra, vui lòng thử lại!';
-      alert(errorMsg);  
+      console.error('Auth error details: ', error)
+      const errorMsg = error.message || 'Có lỗi xảy ra, vui lòng thử lại!'
+      alert(errorMsg)
     }
-  };
+  }
 
   const handleAssistantClick = () => {
-    console.log('Gọi trợ lý ảo...');
-  };
+    console.log('Gọi trợ lý ảo...')
+  }
 
   const fetchCartData = async () => {
-    if (!userId) return;
-    setCartLoading(true);
+    if (!userId) return
+    setCartLoading(true)
     try {
-      const response = await axiosInstance.get(`/cart/${userId}`);
-      const result = await response.data;
+      const response = await axiosInstance.get(`/cart/${userId}`)
+      const result = await response.data
       if (result.code === 200) {
-        const items = result.data.items || [];
-        setCartItems(items);
-        calculateTotal(items);
+        const items = result.data.items || []
+        setCartItems(items)
+        calculateTotal(items)
       } else {
-        setCartErrors({fetch: result.message || 'Không thể tải giỏ hàng'});
+        setCartErrors({ fetch: result.message || 'Không thể tải giỏ hàng' })
       }
     } catch (error) {
-      console.error('Lỗi khi tải giỏ hàng:', error.response?.data || error.message);
-      setCartErrors({fetch: 'Lỗi kết nối server'});
+      console.error(
+        'Lỗi khi tải giỏ hàng:',
+        error.response?.data || error.message
+      )
+      setCartErrors({ fetch: 'Lỗi kết nối server' })
     } finally {
-      setCartLoading(false);
+      setCartLoading(false)
     }
-  }  
+  }
 
   const calculateTotal = (items) => {
-    const total = items.reduce((sum,item) => sum + item.price * item.quantity, 0);
-    setCartTotal(total);
-  };
+    const total = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    )
+    setCartTotal(total)
+  }
 
   const handleAddToCart = async (product) => {
     if (!userId) {
-      alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!');
-      setIsAuthModalOpen(true);
-      return;
+      alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!')
+      setIsAuthModalOpen(true)
+      return
     }
-    setCartLoading(true);
-    setCartErrors({});
+    setCartLoading(true)
+    setCartErrors({})
     try {
       // Kiểm tra giỏ hàng hiện tại
-      let cartResponse;
+      let cartResponse
       try {
-        cartResponse = await axiosInstance.get(`/cart/${userId}`);
+        cartResponse = await axiosInstance.get(`/cart/${userId}`)
       } catch (error) {
         // Nếu không tìm thấy giỏ hàng (404), tạo mới
         if (error.response?.status === 404) {
-          cartResponse = { data: { code: 404, data: null } };
+          cartResponse = { data: { code: 404, data: null } }
         } else {
-          throw error; // Ném lỗi nếu không phải 404
+          throw error // Ném lỗi nếu không phải 404
         }
       }
 
-      console.log('Cart response:', cartResponse.data); // Log để debug
+      console.log('Cart response:', cartResponse.data) // Log để debug
 
-      const cart = cartResponse.data;
-      const newItem = { productId: product.id, price: product.price, quantity: 1 };
+      const cart = cartResponse.data
+      const newItem = {
+        productId: product.id,
+        price: product.price,
+        quantity: 1,
+      }
 
       if (cart.code === 200 && cart.data) {
         // Cập nhật giỏ hàng nếu đã tồn tại
-        const updatedItems = cart.data.items || [];
+        const updatedItems = cart.data.items || []
         const existingItemIndex = updatedItems.findIndex(
           (item) => item.productId === product.id
-        );
+        )
         if (existingItemIndex !== -1) {
-          updatedItems[existingItemIndex].quantity += 1;
+          updatedItems[existingItemIndex].quantity += 1
         } else {
-          updatedItems.push(newItem);
+          updatedItems.push(newItem)
         }
 
         const response = await axiosInstance.put(`/cart/${userId}`, {
           items: updatedItems,
-        });
+        })
 
-        const result = response.data;
-        console.log('Update cart response:', result);
+        const result = response.data
+        console.log('Update cart response:', result)
         if (result.code === 200) {
-          setCartItems(updatedItems);
-          calculateTotal(updatedItems);
+          setCartItems(updatedItems)
+          calculateTotal(updatedItems)
         } else {
           setCartErrors({
             submit: result.message || 'Không thể cập nhật giỏ hàng',
-          });
+          })
         }
       } else {
         // Tạo giỏ hàng mới nếu chưa tồn tại
         const response = await axiosInstance.post(`/cart/${userId}`, {
           items: [newItem],
-        });
+        })
 
-        const result = response.data;
-        console.log('Create cart response:', result);
+        const result = response.data
+        console.log('Create cart response:', result)
         if (result.code === 200) {
-          setCartItems([newItem]);
-          calculateTotal([newItem]);
+          setCartItems([newItem])
+          calculateTotal([newItem])
         } else {
           setCartErrors({
             submit: result.message || 'Không thể tạo giỏ hàng mới',
-          });
+          })
         }
       }
     } catch (error) {
-      console.error('Add to cart error:', error.response?.data || error.message);
+      console.error('Add to cart error:', error.response?.data || error.message)
       setCartErrors({
         submit:
           error.response?.data?.message ||
           'Lỗi kết nối server khi thêm sản phẩm vào giỏ hàng',
-      });
+      })
     } finally {
-      setCartLoading(false);
+      setCartLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken')
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);
-        setUser(decodedToken);
-        setIsLoggedIn(true);
-        fetchCartData();
+        const decodedToken = jwtDecode(token)
+        setUser(decodedToken)
+        setIsLoggedIn(true)
+        fetchCartData()
       } catch (error) {
-        console.error('Lỗi khi giải mã token:', error.message);
-        logout();
+        console.error('Lỗi khi giải mã token:', error.message)
+        logout()
       }
     }
-  }, [userId]);
+  }, [userId])
 
   const toggleAuthModal = () => {
-    setIsAuthModalOpen(!isAuthModalOpen);
-  };
+    setIsAuthModalOpen(!isAuthModalOpen)
+  }
 
   const switchAuthMode = () => {
-    setIsLogin(!isLogin);
-  };
+    setIsLogin(!isLogin)
+  }
 
-  const handleLogout = async() => {
-    await logout();
-    setIsLoggedIn(false);
-    setIsDropdownOpen(false);
-    setIsProfileOpen(false);
-    setCartItems([]);
-    setCartTotal(0);
-  };
+  const handleLogout = async () => {
+    await logout()
+    setIsLoggedIn(false)
+    setIsDropdownOpen(false)
+    setIsProfileOpen(false)
+    setCartItems([])
+    setCartTotal(0)
+  }
 
   const testAddToCart = () => {
-    const product = { id: "67e2bdb31762e4f8f670d8bf", price: 100 };
-    handleAddToCart(product);
+    const product = { id: '67e2bdb31762e4f8f670d8bf', price: 100 }
+    handleAddToCart(product)
   }
 
   return (
@@ -284,7 +304,13 @@ const MainHeader = () => {
                     </Link>
                   </div>
                 </li>
-                <li onClick={() => (isLoggedIn ? setIsDropdownOpen(!isDropdownOpen) : toggleAuthModal())}>
+                <li
+                  onClick={() =>
+                    isLoggedIn
+                      ? setIsDropdownOpen(!isDropdownOpen)
+                      : toggleAuthModal()
+                  }
+                >
                   <AiOutlineUser />
                   <span>{isAuthModalOpen ? 'Đóng' : 'Tài khoản'}</span>
                   {isLoggedIn && <AiOutlineDown className="dropdown-arrow" />}
@@ -294,8 +320,14 @@ const MainHeader = () => {
                         <li onClick={() => setIsProfileOpen(!isProfileOpen)}>
                           <Link to={routers.PROFILE}>Thông tin cá nhân</Link>
                         </li>
-                        <li><Link to={routers.SHOP_MANAGEMENT}>Quản lý cửa hàng</Link></li>
-                        <li><Link to="#">Cài đặt</Link></li>
+                        <li>
+                          <Link to={routers.SHOP_MANAGEMENT}>
+                            Quản lý cửa hàng
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to="#">Cài đặt</Link>
+                        </li>
                         <li onClick={handleLogout}>Đăng xuất</li>
                       </ul>
                     </div>
@@ -322,10 +354,16 @@ const MainHeader = () => {
             <div className="header_search_container">
               <div className="header_search_form">
                 <form onSubmit={(e) => e.preventDefault()}>
-                  <input type="text" placeholder="Tìm kiếm sản phẩm hoặc cửa hàng..." />
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm sản phẩm hoặc cửa hàng..."
+                  />
                   <button type="submit">Tìm kiếm</button>
                 </form>
-                <div className="header_assistant_button" onClick={handleAssistantClick}>
+                <div
+                  className="header_assistant_button"
+                  onClick={handleAssistantClick}
+                >
                   <AiOutlineRocket />
                   <span>Trợ lý AI</span>
                 </div>
@@ -336,7 +374,11 @@ const MainHeader = () => {
           <div className="col-xl-3">
             <div className="header_cart">
               <div className="header_cart_price">
-                {cartLoading ? (<span>Đang tải...</span>) : (<span>{formatter(cartTotal)}</span>)}
+                {cartLoading ? (
+                  <span>Đang tải...</span>
+                ) : (
+                  <span>{formatter(cartTotal)}</span>
+                )}
               </div>
               <ul>
                 <li>
@@ -350,8 +392,12 @@ const MainHeader = () => {
               <button onClick={testAddToCart} style={{ marginTop: '10px' }}>
                 Test Add to Cart
               </button>
-              {cartErrors.fetch && <span className="error">{cartErrors.fetch}</span>}
-              {cartErrors.submit && <span className="error">{cartErrors.submit}</span>}
+              {cartErrors.fetch && (
+                <span className="error">{cartErrors.fetch}</span>
+              )}
+              {cartErrors.submit && (
+                <span className="error">{cartErrors.submit}</span>
+              )}
             </div>
           </div>
         </div>
@@ -445,12 +491,32 @@ const MainHeader = () => {
           <div className="auth_content">
             <h2>{isLogin ? 'Đăng nhập' : 'Đăng ký'}</h2>
             <form onSubmit={handleAuthSubmit} className="auth_form">
-              <input name="userName" type="text" placeholder="Email hoặc số điện thoại" required />
-              <input name="password" type="password" placeholder="Mật khẩu" required />
+              <input
+                name="userName"
+                type="text"
+                placeholder="Tên đăng nhập"
+                required
+              />
+              <input
+                name="password"
+                type="password"
+                placeholder="Mật khẩu"
+                required
+              />
               {!isLogin && (
                 <>
-                  <input name="confirmPassword" type="password" placeholder="Xác nhận mật khẩu" required/>
-                  <input name="phone" type="text" placeholder="Số điện thoại" required/>
+                  <input
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="Xác nhận mật khẩu"
+                    required
+                  />
+                  <input
+                    name="phone"
+                    type="text"
+                    placeholder="Số điện thoại"
+                    required
+                  />
                 </>
               )}
               {/* Nút Submit */}
@@ -480,14 +546,16 @@ const MainHeader = () => {
                   <AiOutlineFacebook /> Facebook
                 </button>
                 <button type="button" className="social_button instagram">
-                  <AiOutlineInstagram/> Instagram
+                  <AiOutlineInstagram /> Instagram
                 </button>
               </div>
             </form>
 
             {/* Chuyển chế độ */}
             <p onClick={switchAuthMode} className="switch_mode">
-              {isLogin ? 'Chưa có tài khoản ? Đăng ký ngay' : 'Đã có tài khoản ? Đăng nhập'}
+              {isLogin
+                ? 'Chưa có tài khoản ? Đăng ký ngay'
+                : 'Đã có tài khoản ? Đăng nhập'}
             </p>
 
             {/* Nút đóng */}
@@ -498,7 +566,7 @@ const MainHeader = () => {
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default memo(MainHeader);
+export default memo(MainHeader)

@@ -3,7 +3,7 @@ import './footer.scss'
 
 const Footer = () => {
   return (
-    <div className='footer'>
+    <div className="footer">
       <div className="container-fluid">
         <div className="row">
           <div className="col">

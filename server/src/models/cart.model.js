@@ -33,7 +33,7 @@ const cartSchema = Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default model("Cart", cartSchema);
