@@ -5,6 +5,9 @@ const routers = {
   SHOP_MANAGEMENT: '/shop-management',
   SHOP_REGISTRATION: '/shop-registration',
   ITEM_CREATION: '/shop-management/item-creation',
+  ITEM: '/shop-management/item',
+  SHOP: '/shop-management/:shopId',
+  getShopPath: (shopId) => `/shop-management/${shopId}`,
 }
 
 export default routers

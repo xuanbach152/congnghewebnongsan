@@ -43,12 +43,7 @@ const ShopRegistrationPage = () => {
               Quản lý cửa hàng
             </Link>
             <FaAngleRight className="nav-icon" />
-            <Link
-              to={routers.SHOP_REGISTRATION}
-              className="nav-shop-registration"
-            >
-              Đăng ký cửa hàng
-            </Link>
+            <Link className="nav-shop-registration">Đăng ký cửa hàng</Link>
           </div>
           <div className="shop-registration-form">
             <div className="title-text">Thông tin cửa hàng</div>
@@ -86,8 +81,8 @@ const ShopRegistrationPage = () => {
                   type="file"
                   id="avatar"
                   name="avatar"
-                  onChange={handleFileChange} 
-                  accept="image/*" 
+                  onChange={handleFileChange}
+                  accept="image/*"
                   required
                 />
               </div>

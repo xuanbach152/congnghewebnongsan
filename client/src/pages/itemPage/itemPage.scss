@@ -1,0 +1,143 @@
+@use 'sass:map';
+@import '../../style/pages/theme.scss';
+
+.item-management {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-bottom: 5px;
+
+  .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .nav-item-management {
+      color: #0153a5;
+      &:hover {
+        color: #0153a5;
+      }
+    }
+
+    .item-list {
+      position: relative;
+      flex: 1;
+      padding: 10px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .item-list-title {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 10px;
+
+        .title-text {
+          color: rgb(8, 15, 157);
+          font-size: 20px;
+          font-weight: bold;
+        }
+
+        .btn-create-item {
+          display: flex;
+          justify-content: center;
+          background-color: rgb(238, 28, 126);
+          border: none;
+          border-radius: 8px;
+          color: white;
+          font-size: 20px;
+          width: 35px;
+          height: 35px;
+          margin-left: auto;
+          cursor: pointer;
+          transition: background-color 0.2s ease-in-out;
+
+          &:hover {
+            background-color: rgb(170, 2, 80);
+          }
+        }
+
+        .btn-text {
+          font-size: 16px;
+          color: rgb(238, 28, 126);
+          font-weight: bold;
+        }
+      }
+
+      .item {
+        display: flex;
+        align-items: center;
+        background-color: #fff;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        margin-bottom: 16px;
+        border: 1px solid transparent;
+
+        &:hover {
+          background-color: rgb(198, 197, 197);
+        }
+
+        .item-image {
+          width: 130px;
+          height: 130px;
+          flex-shrink: 0;
+          overflow: hidden;
+          border-radius: 8px;
+          margin-right: 15px;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+          }
+        }
+
+        .item-info {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding-left: 16px;
+        
+          .item-name {
+            font-weight: 600;
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 8px;
+          }
+        
+          .item-price,
+          .item-type,
+          .item-rate,
+          .item-quantity {
+            color: #555;
+            font-size: 15px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+          }
+        }
+        
+      }
+
+      p {
+        position: absolute;
+        font-size: 18px;
+        top: 50%;
+        left: 50%;
+        font-weight: bold;
+        transform: translate(-50%, -50%);
+        color: rgb(225, 21, 21);
+      }
+    }
+  }
+}

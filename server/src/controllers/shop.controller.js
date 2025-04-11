@@ -1,6 +1,7 @@
 import ShopService from "../services/shop.service.js";
 import httpStatus from "http-status";
 import Message from "../utils/message.js";
+import { PaginationEnum } from "../utils/constant.js";
 
 // Create a new Shop
 export const createShop = async (req, res) => {

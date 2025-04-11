@@ -1,17 +1,25 @@
-import { memo, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 import './shopManagementPage.scss'
 import Pagination from 'layouts/pagination/pagination'
 import { Link } from 'react-router-dom'
 import routers from 'utils/routers'
+import axios from 'axios'
 
 const ShopManagementPage = () => {
-  const [shopList] = useState([
-    { id: 1, name: 'Cửa hàng A' },
-    { id: 2, name: 'Cửa hàng B' },
-    { id: 3, name: 'Cửa hàng C' },
-  ])
-  const [totalPages, setTotalPages] = useState(5)
-  const [currentPage, setCurrentPage] = useState(1)
+  const [shops, setShops] = useState([]);
+  const [totalPages, setTotalPages] = useState(5);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    axios.get(`http://localhost:3000/shop?page=${currentPage}`)
+      .then(response => {
+        const { shops, totalPages } = response.data.data;
+        setTotalPages(totalPages);
+        setShops(shops);
+      }).catch(error => {
+        console.error('Error fetching shop data:', error);
+      });
+  }, [currentPage]);
 
   return (
     <>
@@ -28,12 +36,20 @@ const ShopManagementPage = () => {
               <Link to={routers.SHOP_REGISTRATION} className="btn-create-shop">+</Link>
               <span className="btn-text">Đăng ký cửa hàng</span>
             </div>
-            {shopList.length > 0 ? (
+            {shops.length > 0 ? (
               <>
-                {shopList.map((shop) => (
-                  <div key={shop.id} className="shop-item">
-                    {shop.name}
+                {shops.map((shop) => (
+                  <Link key={shop._id} to={routers.getShopPath(shop._id)}>
+                  <div className="shop">
+                    <div className="shop-image">
+                      <img src={shop.imgUrl} alt={shop.name} />
+                    </div>
+                    <div className="shop-info">
+                      <div className="shop-name">{shop.name}</div>
+                      <div className="shop-address">{shop.address}</div>
+                    </div>
                   </div>
+                  </Link>
                 ))}
                 <Pagination
                   totalPages={totalPages}
