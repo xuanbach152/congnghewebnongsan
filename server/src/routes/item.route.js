@@ -32,8 +32,4 @@ router.post("/:id/upload-image", uploadImg.single("image"), uploadImage);
 
 router.post("/:id/upload-video", uploadVid.single("video"), uploadVideo);
 
-<<<<<<< HEAD
 export default router;
-=======
-export default router;
->>>>>>> origin/main

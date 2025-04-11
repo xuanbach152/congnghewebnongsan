@@ -45,14 +45,9 @@ export const searchShops = async (req, res) => {
 export const getShops = async (req, res) => {
   try {
     const { page } = req.query; //lấy page từ query params
-<<<<<<< HEAD
-    const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
-    const Shops = await ShopService.getShops(page, limit);
-=======
     const {sortField,sortType} = req.query;
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
     const Shops = await ShopService.getShops(page, limit, sortField, sortType);
->>>>>>> origin/main
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
