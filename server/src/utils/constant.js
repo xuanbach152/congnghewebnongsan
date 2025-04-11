@@ -27,8 +27,14 @@ export const PaymentMethodTypeEnum = {
 };
 
 export const PaymentStatusEnum = {
-  PAID: "PAID",
-  UNPAID: "UNPAID",
+  PENDING: "PENDING",
+  CANCELLED: "CANCELLED",
+  COMPLETED: "COMPLETED",
+};
+
+export const PaginationEnum = {
+  DEFAULT_LIMIT: 20, 
+  MAX_LIMIT: 200,   
 };
 
 export const PaginationEnum = {
