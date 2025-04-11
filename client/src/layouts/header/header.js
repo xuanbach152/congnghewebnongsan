@@ -99,6 +99,7 @@ const MainHeader = () => {
           return;
         }
         const result = await register(userName, password, phone);
+        console.log('Register result:', result);
         alert('Đăng ký thành công! Vui lòng đăng nhập.');
         setIsLogin(true);
       }
