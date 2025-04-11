@@ -59,6 +59,11 @@ const itemSchema = new Schema({
     required: true,
     default: 1, 
   },
+  address: {
+    type: String,
+    required: true,
+    default: "", 
+  },
 });
 
 export default model("Item", itemSchema);

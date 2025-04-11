@@ -1,15 +1,15 @@
 import express from "express";
 import { uploadImg, uploadVid } from "../utils/upload.middleware.js";
 import {
-    createItem,
-    getItems,
-    getItemById,
-    searchItems,
-    updateItem,
-    deleteItem,
-    rateItem,
-    uploadImage,
-    uploadVideo,
+  createItem,
+  getItems,
+  getItemById,
+  searchItems,
+  updateItem,
+  deleteItem,
+  rateItem,
+  uploadImage,
+  uploadVideo,
 } from "../controllers/item.controller.js";
 
 const router = express.Router();

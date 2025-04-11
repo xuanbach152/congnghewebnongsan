@@ -42,7 +42,7 @@ export const createItem = async (req, res) => {
 };
 // Search items by name, type, or description
 export const searchItems = async (req, res) => {
-  try{
+  try {
     const searchText = req.query.searchText;
     const item = await ItemService.searchItems(searchText);
     res.status(httpStatus.OK).send({
@@ -50,23 +50,22 @@ export const searchItems = async (req, res) => {
       message: Message.OK,
       data: item,
     });
-
-  }
-  catch (error) {
+  } catch (error) {
     console.log(error);
     res.status(httpStatus.BAD_REQUEST).send({
       code: httpStatus.BAD_REQUEST,
       message: Message.FAILED,
     });
   }
-}
+};
 // Get all items
 export const getItems = async (req, res) => {
   try {
-    const { page } = req.query;//lấy page từ query params
+    const { page } = req.query; //lấy page từ query params
+    const { sortField, sortType } = req.query;
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
 
-    const items = await ItemService.getItems(page, limit);
+    const items = await ItemService.getItems(page, limit, sortField, sortType);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
@@ -98,6 +97,7 @@ export const getItemById = async (req, res) => {
     });
   }
 };
+
 
 // Update an item by ID
 export const updateItem = async (req, res) => {
