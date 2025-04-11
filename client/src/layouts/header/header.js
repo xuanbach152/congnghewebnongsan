@@ -15,7 +15,7 @@ import {
 import { Link } from 'react-router-dom';
 import { formatter } from 'utils/formatter';
 import routers from 'utils/routers';
-import { login, register, default as axiosInstance } from 'utils/api';
+import { default as axiosInstance } from 'utils/api';
 
 const MainHeader = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -37,50 +37,75 @@ const MainHeader = () => {
 
   const userId = user?.userId;
 
-  const logout  = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    setUser(null);
-    setIsLoggedIn(false);
-    setCartItems([]);
-    setCartTotal(0);
-  }
+  const login = async (userName, password) => {
+    try {
+      const response = await axiosInstance.post('/auth/login', { userName, password });
+      return response.data; 
+    } catch (error) {
+      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng nhập' };
+    }
+  };
+
+  const register = async (userName, password, phone) => {
+    try {
+      const response = await axiosInstance.post('/auth/register', { userName, password, phone });
+      return response.data; 
+    } catch (error) {
+      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' };
+    }
+  };
+
+  const logout = async () => {
+    try {
+      const response = await axiosInstance.post('/auth/logout');
+      localStorage.removeItem('accessToken');
+      setUser(null);
+      setIsLoggedIn(false);
+      setCartItems([]);
+      setCartTotal(0);
+      alert(response.data.message || 'Đăng xuất thành công!');
+    } catch (error) {
+      console.error('Logout error:', error);
+      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi đăng xuất!';
+      alert(errorMsg);
+    }
+  };
 
   const handleAuthSubmit = async (e) => {
     e.preventDefault();
-    const email = e.target.email.value;
+    const userName = e.target.userName.value;
     const password = e.target.password.value;
     try {
       if (isLogin) {
-        const result = await login(email, password);
-        console.log('Login result:', result); // Log kết quả để debug
-        if (result.code === 200) {
-          localStorage.setItem('accessToken', result.data.accessToken);
-          localStorage.setItem('refreshToken', result.data.refreshToken);
-          setUser(result.user);
-          setIsLoggedIn(true);
-          setIsAuthModalOpen(false);
-        } else {
-          alert(result.message || 'Đăng nhập thất bại! Vui lòng thử lại!');
+        if (!userName || !password) {
+          alert('Vui lòng điền đầy đủ userName và password!');
+          return;
         }
+        const result = await login(userName, password);
+        localStorage.setItem('accessToken', result.accessToken);
+        setUser(result.user);
+        setIsLoggedIn(true);
+        setIsAuthModalOpen(false);
       } else {
         const confirmPassword = e.target.confirmPassword.value;
+        const phone = e.target.phone.value;
+
+        if (!userName || !password || !confirmPassword || !phone) {
+          alert('Vui lòng điền đầy đủ các trường: userName, password, confirmPassword, phone!');
+          return;
+        }
         if (password !== confirmPassword) {
           alert('Mật khẩu không khớp!');
           return;
         }
-        const result = await register({email, password});
-        console.log('Register result:', result); // Log kết quả để debug
-        if (result.code === 200) {
-          alert('Đăng ký thành công! Vui lòng đăng nhập.');
-          setIsLogin(true);
-        } else {
-          alert(result.message || 'Đăng ký thất bại! Vui lòng thử lại!');
-        }
+        const result = await register(userName, password, phone);
+        alert('Đăng ký thành công! Vui lòng đăng nhập.');
+        setIsLogin(true);
       }
     } catch (error) {
       console.error('Auth error details: ', error);
-      alert('Có lỗi xảy ra, vui lòng thử lại!');
+      const errorMsg = error.message || 'Có lỗi xảy ra, vui lòng thử lại!';
+      alert(errorMsg);  
     }
   };
 
@@ -219,8 +244,8 @@ const MainHeader = () => {
     setIsLogin(!isLogin);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async() => {
+    await logout();
     setIsLoggedIn(false);
     setIsDropdownOpen(false);
     setIsProfileOpen(false);
@@ -419,10 +444,14 @@ const MainHeader = () => {
           <div className="auth_content">
             <h2>{isLogin ? 'Đăng nhập' : 'Đăng ký'}</h2>
             <form onSubmit={handleAuthSubmit} className="auth_form">
-              <input name="email" type="text" placeholder="Email hoặc số điện thoại" required />
+              <input name="userName" type="text" placeholder="Email hoặc số điện thoại" required />
               <input name="password" type="password" placeholder="Mật khẩu" required />
-              {!isLogin && <input name="confirmPassword" type="password" placeholder="Xác nhận mật khẩu" required />}
-              
+              {!isLogin && (
+                <>
+                  <input name="confirmPassword" type="password" placeholder="Xác nhận mật khẩu" required/>
+                  <input name="phone" type="text" placeholder="Số điện thoại" required/>
+                </>
+              )}
               {/* Nút Submit */}
               <button type="submit" className="auth_submit_button">
                 {isLogin ? 'Đăng nhập' : 'Đăng ký'}
