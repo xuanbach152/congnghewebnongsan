@@ -25,11 +25,23 @@ export const addToCart = async (req, res) => {
   try {
     const { cartId, userId, itemId, quantity } = req.body;
 
-    if (!cartId || !userId || !itemId || !quantity) {
-      return res.status(400).send({
-        code: 400,
-        message: "Missing required fields: cartId, userId, itemId, quantity",
-      });
+// Get all Carts
+export const getCarts = async (req, res) => {
+    try {
+      const { page } = req.query;//lấy page từ query params
+      const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
+        const Carts = await CartService.getCarts(page, limit);
+        res.status(httpStatus.OK).send({
+            code: httpStatus.OK,
+            message: Message.OK,
+            data: Carts,
+          });
+    } catch (error) {
+        console.log(error);
+        res.status(httpStatus.BAD_REQUEST).send({
+          code: httpStatus.BAD_REQUEST,
+          message: Message.FAILED,
+        });
     }
 
     const cart = await CartService.addToCart(cartId, itemId, quantity);

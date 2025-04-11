@@ -36,3 +36,8 @@ export const PaginationEnum = {
   DEFAULT_LIMIT: 20, 
   MAX_LIMIT: 200,   
 };
+
+export const PaginationEnum = {
+  DEFAULT_LIMIT: 20, 
+  MAX_LIMIT: 200,   
+};

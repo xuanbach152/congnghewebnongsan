@@ -56,5 +56,4 @@ const uploadVid = multer({
   },
 });
 
-
 export { uploadImg, uploadVid };

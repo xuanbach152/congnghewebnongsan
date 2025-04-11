@@ -410,14 +410,14 @@
   top: 100%;
   right: 0;
   background: #fff;
-  border: none; // Xóa viền cũ
-  border-radius: 8px; // Bo góc mềm mại hơn
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); // Bóng đổ nhẹ và hiện đại
+  border: none; 
+  border-radius: 8px; 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
   z-index: 1000;
-  min-width: 220px; // Tăng chiều rộng một chút để đẹp hơn
+  min-width: 220px; 
   margin-top: 8px;
-  padding: 8px 0; // Thêm padding để không gian thoáng hơn
-  animation: slideDown 0.3s ease; // Thêm hiệu ứng trượt xuống
+  padding: 8px 0; 
+  animation: slideDown 0.3s ease;
 
   // Hiệu ứng trượt xuống khi mở dropdown
   @keyframes slideDown {
@@ -461,11 +461,12 @@
         width: 100%;
       }
 
-      // Style riêng cho mục "Đăng xuất" để nổi bật
+      // Style riêng cho mục "Đăng xuất" 
       &:last-child {
         border-top: 1px solid #e9ecef; // Thêm đường phân cách
         margin-top: 5px;
         padding-top: 12px;
+        font-size: 18px;
 
         &:hover {
           background: #dc3545; // Màu đỏ cho "Đăng xuất" khi hover
