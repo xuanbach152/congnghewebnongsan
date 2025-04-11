@@ -11,7 +11,7 @@ const createItem = async (itemData) => {
     if (!shop) {
       throw new Error("Shop not found");
     }
-    
+
     const newItem = await ItemModel.create(itemData);
     return newItem;
   } catch (error) {
@@ -53,8 +53,12 @@ const getItemById = async (itemId) => {
   }
 };
 
-
-const getItems = async (page, limit,sortField = "createdAt", sortType = "desc") => {
+const getItems = async (
+  page,
+  limit,
+  sortField = "createdAt",
+  sortType = "desc",
+) => {
   try {
     const skip = (page - 1) * limit; //tính toán số lượng item cần bỏ qua trong database
     const items = await ItemModel.find()
@@ -96,7 +100,7 @@ const rateItem = async (itemId, userId, rating) => {
     }
 
     const existingRating = item.ratings.find(
-      (r) => r.userId.toString() === userId
+      (r) => r.userId.toString() === userId,
     );
     if (existingRating) {
       existingRating.rating = rating;

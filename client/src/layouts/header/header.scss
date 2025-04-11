@@ -54,7 +54,7 @@
   justify-content: flex-end;
   align-items: center;
   position: relative;
-  
+
   .notice {
     display: flex;
     align-items: center;
@@ -94,7 +94,7 @@
     padding: 0;
 
     li {
-      position: relative; 
+      position: relative;
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -119,7 +119,7 @@
           margin-left: 5px;
         }
       }
-    }  
+    }
   }
 }
 
@@ -171,7 +171,6 @@
     }
 
     .active a {
-
       color: map.get($theme-colors, 'main');
       border-bottom: 2px solid map.get($theme-colors, 'main');
     }
@@ -241,7 +240,7 @@
   padding: 20px 0;
   justify-content: center;
   white-space: nowrap;
-  display : flex;
+  display: flex;
 
   .header_search_form {
     width: 100%;
@@ -286,7 +285,7 @@
       border: none;
       border-radius: 0 25px 25px 0;
       justify-content: center;
-      align-items: center;  
+      align-items: center;
       cursor: pointer;
       transition: all 0.3s;
 
@@ -410,13 +409,13 @@
   top: 100%;
   right: 0;
   background: #fff;
-  border: none; 
-  border-radius: 8px; 
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); 
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
-  min-width: 220px; 
+  min-width: 220px;
   margin-top: 8px;
-  padding: 8px 0; 
+  padding: 8px 0;
   animation: slideDown 0.3s ease;
 
   // Hiệu ứng trượt xuống khi mở dropdown
@@ -461,7 +460,7 @@
         width: 100%;
       }
 
-      // Style riêng cho mục "Đăng xuất" 
+      // Style riêng cho mục "Đăng xuất"
       &:last-child {
         border-top: 1px solid #e9ecef; // Thêm đường phân cách
         margin-top: 5px;
@@ -498,8 +497,8 @@
       cursor: pointer;
       color: map.get($theme-colors, 'normal-text');
 
-      input[type="radio"],
-      input[type="checkbox"] {
+      input[type='radio'],
+      input[type='checkbox'] {
         margin: 0;
         accent-color: map.get($theme-colors, 'main');
       }
@@ -542,7 +541,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6); // Tăng độ mờ của nền 
+  background: rgba(0, 0, 0, 0.6); // Tăng độ mờ của nền
   display: flex;
   align-items: center;
   justify-content: center;
@@ -550,8 +549,12 @@
   animation: fadeIn 0.3s ease; // Hiệu ứng mờ vào
 
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .auth_content {
@@ -607,7 +610,11 @@
       }
 
       .auth_submit_button {
-        background: linear-gradient(90deg, #28a745, #34c759); // Gradient cho nút
+        background: linear-gradient(
+          90deg,
+          #28a745,
+          #34c759
+        ); // Gradient cho nút
         color: #fff;
         border: none;
         padding: 12px;
@@ -667,7 +674,9 @@
           cursor: pointer;
           transition: all 0.3s ease;
 
-          svg, .google_icon, .instagram_icon {
+          svg,
+          .google_icon,
+          .instagram_icon {
             font-size: 20px;
           }
 
@@ -677,42 +686,42 @@
           }
 
           &.facebook {
-            background: #1877F2; // Màu chính thức của Facebook
+            background: #1877f2; // Màu chính thức của Facebook
             &:hover {
-              background: #165DDB; 
-              border-color: #165DDB; 
+              background: #165ddb;
+              border-color: #165ddb;
             }
           }
-      
+
           &.google {
             background: #eeeeee;
             border: 1px solid #ffffff;
             color: #ffffff;
             .google_icon {
-              font-weight: 700; 
+              font-weight: 700;
             }
             .google_text {
               display: flex;
               align-items: center;
               font-weight: 500;
-      
+
               .g1 {
-                color: #4285F4; // Xanh dương cho "G" đầu tiên
+                color: #4285f4; // Xanh dương cho "G" đầu tiên
               }
               .o1 {
-                color: #EA4335; // Đỏ cho "o" thứ nhất
+                color: #ea4335; // Đỏ cho "o" thứ nhất
               }
               .o2 {
-                color: #FBBC05; // Vàng cho "o" thứ hai
+                color: #fbbc05; // Vàng cho "o" thứ hai
               }
               .g2 {
-                color: #4285F4; // Xanh dương cho "g"
+                color: #4285f4; // Xanh dương cho "g"
               }
               .l {
-                color: #34A853; // Xanh lá cho "l"
+                color: #34a853; // Xanh lá cho "l"
               }
               .e {
-                color: #EA4335; // Đỏ cho "e"
+                color: #ea4335; // Đỏ cho "e"
               }
             }
             &:hover {
@@ -720,21 +729,21 @@
               border-color: #a7a6a6;
             }
           }
-      
+
           &.instagram {
             background: radial-gradient(
               circle at 30% 107%,
-              #FDF497 0%,
-              #FDF497 5%,
-              #FD5949 45%,
-              #D6249F 60%,
-              #285AEB 90%
+              #fdf497 0%,
+              #fdf497 5%,
+              #fd5949 45%,
+              #d6249f 60%,
+              #285aeb 90%
             ); // Gradient chính thức của Instagram
             .instagram_icon {
               color: #fff;
             }
             &:hover {
-              filter: brightness(1.15); 
+              filter: brightness(1.15);
             }
           }
         }
@@ -775,7 +784,7 @@
   }
 }
 
-/* Flexbox grid system for rows */  
+/* Flexbox grid system for rows */
 .row {
   display: flex;
   flex-wrap: wrap;
@@ -784,7 +793,7 @@
 }
 
 /* Flexbox grid system for columns */
-[class*="col-"] {
+[class*='col-'] {
   padding-left: 15px;
   padding-right: 15px;
 }

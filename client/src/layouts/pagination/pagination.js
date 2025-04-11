@@ -1,5 +1,5 @@
-import { memo, React} from 'react';
-import './pagination.scss';
+import { memo, React } from 'react'
+import './pagination.scss'
 
 const Pagination = ({ totalPages, currentPage, onPageChange }) => {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
@@ -32,4 +32,4 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
   )
 }
 
-export default memo(Pagination);
+export default memo(Pagination)

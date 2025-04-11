@@ -20,32 +20,32 @@ const renderRouter = () => {
     },
     {
       path: routers.SHOP_MANAGEMENT,
-      component: <ShopManagementPage />
+      component: <ShopManagementPage />,
     },
     {
       path: routers.SHOP_REGISTRATION,
-      component: <ShopRegistrationPage />
+      component: <ShopRegistrationPage />,
     },
     {
       path: routers.ITEM_CREATION,
-      component: <ItemCreationPage />
+      component: <ItemCreationPage />,
     },
     {
       path: routers.ITEM,
-      component: <ItemPage />
+      component: <ItemPage />,
     },
     {
       path: routers.SHOP,
-      component: <ShopPage />
+      component: <ShopPage />,
     },
   ]
 
   return (
-      <Routes>
-        {allRouters.map((route, index) => (
-          <Route key={index} path={route.path} element={route.component} />
-        ))}
-      </Routes>
+    <Routes>
+      {allRouters.map((route, index) => (
+        <Route key={index} path={route.path} element={route.component} />
+      ))}
+    </Routes>
   )
 }
 

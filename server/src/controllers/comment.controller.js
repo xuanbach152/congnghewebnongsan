@@ -63,7 +63,7 @@ export const updateComment = async (req, res) => {
   try {
     const updateComment = await CommentService.updateComment(
       req.params.id,
-      req.body
+      req.body,
     );
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,

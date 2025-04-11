@@ -5,8 +5,6 @@ import e from "express";
 
 dotenv.config();
 
-
-
 // Hàm hash mật khẩu khi đăng ký
 export const hashPassword = async (password) => {
   const salt = await bcrypt.genSalt(10);
@@ -23,7 +21,7 @@ export const generateAcessToken = (user) => {
   const accessToken = jwt.sign(
     { id: user.id, userName: user.userName, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "15m" }
+    { expiresIn: "1h" },
   );
   return accessToken;
 };
@@ -33,7 +31,7 @@ export const generateRefreshToken = (user) => {
   const refreshToken = jwt.sign(
     { id: user.id },
     process.env.JWT_REFRESH_SECRET,
-    { expiresIn: "30d" }
+    { expiresIn: "30d" },
   );
   return refreshToken;
 };

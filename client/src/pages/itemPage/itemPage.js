@@ -3,25 +3,34 @@ import './itemPage.scss'
 import Pagination from 'layouts/pagination/pagination'
 import { Link } from 'react-router-dom'
 import routers from 'utils/routers'
-import axios from 'axios'
+import { default as axiosInstance } from 'utils/api'
 import { FaAngleRight, FaStar } from 'react-icons/fa'
 
 const ItemPage = () => {
-  const [items, setItems] = useState([]);
-  const [totalPages, setTotalPages] = useState(5);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [items, setItems] = useState([])
+  const [totalPages, setTotalPages] = useState(5)
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/item?page=${currentPage}`)
-      .then(response => {
-        const { items, totalPages } = response.data.data;
-        setTotalPages(totalPages);
-        setItems(items);
-        console.log(items);
-      }).catch(error => {
-        console.error('Error fetching item data:', error);
-      });
-  }, [currentPage]);
+    const fetchItems = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `http://localhost:3000/item?page=${currentPage}`
+        )
+        const { items, totalPages } = response.data.data
+        setTotalPages(totalPages)
+        setItems(items)
+        console.log(items)
+      } catch (error) {
+        console.error(
+          'Error fetching item data:',
+          error.response?.data || error.message
+        )
+      }
+    }
+
+    fetchItems()
+  }, [currentPage])
 
   return (
     <>
@@ -32,17 +41,18 @@ const ItemPage = () => {
               Quản lý cửa hàng
             </Link>
             <FaAngleRight className="nav-icon" />
-            <Link
-              to={routers.ITEM}
-              className="nav-item-management"
-            >
+            <Link to={routers.ITEM} className="nav-item-management">
               Danh sách sản phẩm
             </Link>
           </div>
           <div className="item-list">
             <div className="item-list-title">
-              <div className="title-text">Danh sách sản phẩm của của hàng X</div>
-              <Link to={routers.ITEM_CREATION} className="btn-create-item">+</Link>
+              <div className="title-text">
+                Danh sách sản phẩm của của hàng X
+              </div>
+              <Link to={routers.ITEM_CREATION} className="btn-create-item">
+                +
+              </Link>
               <span className="btn-text">Thêm sản phẩm mới</span>
             </div>
             {items.length > 0 ? (
@@ -57,10 +67,17 @@ const ItemPage = () => {
                         <div className="item-name">{item.name}</div>
                         <div className="item-price">Đơn giá: {item.price}</div>
                         <div className="item-type">Loại hàng: {item.type}</div>
-                        <div className="item-rate">Đánh giá: {item.rate}
-                          <FaStar color="gold" size={14} style={{ marginTop: '2px' }} />
+                        <div className="item-rate">
+                          Đánh giá: {item.rate}
+                          <FaStar
+                            color="gold"
+                            size={14}
+                            style={{ marginTop: '2px' }}
+                          />
                         </div>
-                        <div className="item-quantity">Số lượng: {item.quantity} </div>
+                        <div className="item-quantity">
+                          Số lượng: {item.quantity}{' '}
+                        </div>
                       </div>
                     </div>
                   </Link>

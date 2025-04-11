@@ -70,10 +70,7 @@ const ShopPage = () => {
                 >
                   <FaEdit /> Chỉnh sửa
                 </Link>
-                <Link
-                  to={`/shop-management/${shop.id}/products`}
-                  className="btn btn-view"
-                >
+                <Link to={`/item`} className="btn btn-view">
                   <FaBox /> Xem sản phẩm
                 </Link>
               </div>

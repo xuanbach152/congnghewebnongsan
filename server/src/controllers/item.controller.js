@@ -98,7 +98,6 @@ export const getItemById = async (req, res) => {
   }
 };
 
-
 // Update an item by ID
 export const updateItem = async (req, res) => {
   try {
@@ -166,7 +165,7 @@ export const uploadImage = async (req, res) => {
 
     const updatedItem = await ItemService.saveImageToDatabase(
       req.params.id,
-      imgUrl
+      imgUrl,
     );
     console.log("Image URL saved to database:", updatedItem);
 
@@ -194,7 +193,7 @@ export const uploadVideo = async (req, res) => {
     const videoUrl = await ItemService.uploadVideoToCloudinary(req.file);
     const updatedItem = await ItemService.saveVideoToDatabase(
       req.params.id,
-      videoUrl
+      videoUrl,
     );
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,

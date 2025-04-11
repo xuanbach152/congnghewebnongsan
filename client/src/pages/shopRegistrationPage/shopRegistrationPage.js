@@ -3,13 +3,13 @@ import './shopRegistrationPage.scss'
 import { Link } from 'react-router-dom'
 import routers from 'utils/routers'
 import { FaAngleRight } from 'react-icons/fa'
+import axiosInstance from 'utils/api'
 
 const ShopRegistrationPage = () => {
   const [formData, setFormData] = useState({
     shopName: '',
-    email: '',
     address: '',
-    avatar: '',
+    image: '',
   })
 
   const handleInputChange = (e) => {
@@ -20,17 +20,34 @@ const ShopRegistrationPage = () => {
     })
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-  }
-
   const handleFileChange = (e) => {
     const file = e.target.files[0]
     if (file) {
       setFormData({
         ...formData,
-        avatar: file,
+        image: file,
       })
+    }
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    try {
+      const form = new FormData()
+      form.append('name', formData.shopName);
+      form.append('address', formData.address);
+      form.append('image', formData.image);
+      for (let [key, value] of form.entries()) {
+        console.log(`${key}:`, value);
+      }
+      
+      console.log(formData.shopName);
+      console.log(form);
+      const response = await axiosInstance.post('http://localhost:3000/shop', form);
+    } catch (error) {
+      console.error('Lỗi khi đăng ký cửa hàng:', error)
+      alert(error.response?.data?.message || 'Đăng ký thất bại')
     }
   }
 
@@ -76,11 +93,11 @@ const ShopRegistrationPage = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="avatar">Ảnh đại diện</label>
+                <label htmlFor="image">Ảnh đại diện</label>
                 <input
                   type="file"
-                  id="avatar"
-                  name="avatar"
+                  id="image"
+                  name="image"
                   onChange={handleFileChange}
                   accept="image/*"
                   required

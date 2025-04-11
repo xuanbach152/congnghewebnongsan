@@ -17,7 +17,12 @@ const app = express();
 
 // Middleware
 app.use(json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:4000',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}))
 app.use(cookieParser());
 
 app.listen(process.env.PORT, () => {
@@ -28,7 +33,7 @@ app.listen(process.env.PORT, () => {
 connect(process.env.MONGODB_URI)
   .then(() => console.log("Connected to MongoDB sucessfully !"))
   .catch((err) => {
-console.error("MongoDB connection error:", err.message);
+    console.error("MongoDB connection error:", err.message);
   });
 
 app.use("/user", userRoutes);

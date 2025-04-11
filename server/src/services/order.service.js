@@ -6,7 +6,7 @@ import distanceService from "../utils/distance.utils.js";
 const createOrder = async (userId, deliveryAddress, paymentMethod) => {
   try {
     const cart = await CartModel.findOne({ userId }).populate(
-      "cartItems.itemId"
+      "cartItems.itemId",
     );
     if (!cart || cart.cartItems.length === 0) {
       throw new Error("Cart is empty");
@@ -16,7 +16,7 @@ const createOrder = async (userId, deliveryAddress, paymentMethod) => {
 
     const distanceInKm = await distanceService.calculateDistance(
       shopAddress,
-      deliveryAddress
+      deliveryAddress,
     );
 
     const deliveryFee = distanceService.calculateDeliveryFee(distanceInKm);
@@ -72,7 +72,12 @@ const getOrderById = async (OrderId) => {
   return Order;
 };
 
-const getOrders = async (page, limit, sortField = "createdAt", sortType = "desc") => {
+const getOrders = async (
+  page,
+  limit,
+  sortField = "createdAt",
+  sortType = "desc",
+) => {
   try {
     const skip = (page - 1) * limit;
     const orders = await OrderModel.find()
