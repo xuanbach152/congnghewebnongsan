@@ -16,7 +16,6 @@ const uploadImg = multer({
   storage: imageStorage,
   limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    console.log("Image file received:", JSON.stringify(file, null, 2));
     if (!file) {
       console.error("No image file received");
       return cb(new Error("No image file received"), false);

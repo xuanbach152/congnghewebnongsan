@@ -1,6 +1,6 @@
 import { memo, useState } from 'react'
 import './shopRegistrationPage.scss'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import routers from 'utils/routers'
 import { FaAngleRight } from 'react-icons/fa'
 import axiosInstance from 'utils/api'
@@ -11,6 +11,8 @@ const ShopRegistrationPage = () => {
     address: '',
     image: '',
   })
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -32,19 +34,17 @@ const ShopRegistrationPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-
     try {
-      const form = new FormData()
-      form.append('name', formData.shopName);
-      form.append('address', formData.address);
-      form.append('image', formData.image);
-      for (let [key, value] of form.entries()) {
-        console.log(`${key}:`, value);
-      }
-      
-      console.log(formData.shopName);
-      console.log(form);
-      const response = await axiosInstance.post('http://localhost:3000/shop', form);
+      await axiosInstance.post(
+        'http://localhost:3000/shop',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      )
+      navigate(routers.SHOP_MANAGEMENT);
     } catch (error) {
       console.error('Lỗi khi đăng ký cửa hàng:', error)
       alert(error.response?.data?.message || 'Đăng ký thất bại')

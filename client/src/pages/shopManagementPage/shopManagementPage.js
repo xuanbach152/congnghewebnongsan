@@ -18,7 +18,7 @@ const ShopManagementPage = () => {
         const response = await axiosInstance.get(
           `http://localhost:3000/shop/user`
         )
-        const shops = response.data;
+        const shops = response.data.data;
         setTotalPages(totalPages)
         setShops(shops)
       } catch (error) {

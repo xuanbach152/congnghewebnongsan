@@ -15,7 +15,7 @@ import { verifyToken } from "../services/auth.service.js";
 import { uploadImg } from "../utils/upload.middleware.js";
 const router = express.Router();
 
-router.post("/", verifyToken, createShop);
+router.post("/", verifyToken, uploadImg.single("image"), createShop);
 router.get("/", getShops);
 router.get("/search", searchShops);
 router.get("/user", verifyToken, getShopsByUserId);

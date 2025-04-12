@@ -4,8 +4,11 @@ import ItemModel from "../models/item.model.js";
 import { throwBadRequest } from "../utils/error.util.js";
 import Message from "../utils/message.js";
 
-const createShop = async (ShopData) => {
-  const newShop = await ShopModel.create(ShopData);
+const createShop = async (shopData) => {
+  const newShop = await ShopModel.create({
+    ...shopData,
+    imgUrl: shopData.image.path || ""
+  });
   return newShop;
 };
 const searchShops = async (searchText) => {
@@ -31,7 +34,7 @@ const getShops = async (
   page,
   limit,
   sortField = "createdAt",
-  sortType = "desc",
+  sortType = "desc"
 ) => {
   try {
     const skip = (page - 1) * limit;
@@ -114,7 +117,7 @@ const getRevenueByMonth = async (shopId, month, year) => {
     // Tính tổng doanh thu
     const totalRevenue = orders.reduce(
       (sum, order) => sum + order.totalPrice,
-      0,
+      0
     );
 
     return {
