@@ -6,10 +6,10 @@ import ItemService from "../services/item.service.js";
 // Create a new Shop
 export const createShop = async (req, res) => {
   try {
-    const { name, address } = req.body;
-    console.log(req.body);
+    const { shopName: name, address } = req.body;
     const userId = req.user.id;
-    const newShop = await ShopService.createShop({ name, address, userId });
+    const image = req.file;
+    const newShop = await ShopService.createShop({ name, address, userId, image });
     res.status(httpStatus.CREATED).send({
       code: httpStatus.CREATED,
       message: Message.ShopCreated,
