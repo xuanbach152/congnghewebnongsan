@@ -1,4 +1,6 @@
 import ShopModel from "../models/shop.model.js";
+import OrderModel from "../models/order.model.js";
+import ItemModel from "../models/item.model.js";
 import { throwBadRequest } from "../utils/error.util.js";
 import Message from "../utils/message.js";
 
@@ -30,10 +32,11 @@ const getShopById = async (ShopId) => {
   return Shop;
 };
 
-const getShops = async (page, limit) => {
+const getShops = async (page, limit, sortField = "createdAt", sortType = "desc") => {
    try {
      const skip = (page - 1) * limit;
      const shops = await ShopModel.find()
+       .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
        .skip(skip)
        .limit(Math.min(limit, 100))
        .exec();
@@ -55,6 +58,85 @@ const deleteShop = async (ShopId) => {
   await ShopModel.findByIdAndDelete(ShopId);
 };
 
+const uploadImageToCloudinary = async (file) => {
+  try {
+    if (!file) {
+      throw new Error("No file uploaded");
+    }
+
+    console.log("Uploading file to Cloudinary:", JSON.stringify(file, null, 2));
+
+    if (!file.path) {
+      throw new Error("File path is missing");
+    }
+
+    console.log("File uploaded to Cloudinary:", file.path);
+
+    return file.path;
+  } catch (error) {
+    console.error("Error in uploadImageToCloudinary:", error.message);
+    throw error;
+  }
+};
+
+const saveImageToDatabase = async (shopId, imgUrl) => {
+  try {
+    const shop = await ShopModel.findById(shopId);
+    if (!shop) {
+      throw new Error("Shop not found");
+    }
+
+    console.log("Saving image URL to database:", imgUrl);
+
+    shop.imgUrl = imgUrl;
+    await shop.save();
+
+    return shop;
+  } catch (error) {
+    console.error("Error in saveImageToDatabase:", error.message);
+    throw error;
+  }
+};
+
+const getRevenueByMonth = async (shopId, month, year) => {
+  try {
+    // Tính ngày bắt đầu và ngày kết thúc của tháng
+    const startDate = new Date(year, month - 1, 1); 
+    const endDate = new Date(year, month, 0); 
+
+    // Lấy tất cả các đơn hàng của shop trong khoảng thời gian
+    const orders = await OrderModel.find({
+      "items.itemId": { $in: await getItemIdsByShop(shopId) }, 
+      createdAt: { $gte: startDate, $lte: endDate },
+      paymentStatus: "COMPLETED", 
+    });
+
+    // Tính tổng doanh thu
+    const totalRevenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+
+    return {
+      totalRevenue,
+      totalOrders: orders.length,
+      orders,
+    };
+  } catch (error) {
+    console.error("Error in getRevenueByMonth:", error.message);
+    throw error;
+  }
+};
+
+
+const getItemByShopId = async (shopId) => {
+  const items = await ItemModel.find({ shopId });
+  throwBadRequest(!items, Message.ItemNotFound);
+  return items;
+  
+};
+const getShopByUserId = async (userId) => {
+  const shop = await ShopModel.findOne({ userId });
+  throwBadRequest(!shop, Message.ShopNotFound);
+  return shop;
+}
 export default {
   createShop,
   searchShops,
@@ -62,4 +144,9 @@ export default {
   getShopById,
   getShops,
   deleteShop,
+  saveImageToDatabase,
+  uploadImageToCloudinary,
+  getRevenueByMonth,
+  getItemByShopId,
+  getShopByUserId
 };

@@ -1,6 +1,7 @@
 const routers = {
   HOME: '',
   PROFILE: 'profile',
+  CART: 'cart',
   PRODUCTS: 'products',
 }
 

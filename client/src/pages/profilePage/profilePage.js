@@ -1,6 +1,6 @@
 import './profilePage.scss';
 import { memo, useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from 'utils/api';
 import { AiOutlineCheck, AiOutlineExclamationCircle, AiOutlineUser, AiOutlineMail, AiOutlinePhone, AiOutlineHome } from 'react-icons/ai';
 
 const ProfilePage = ({ userId }) => {
@@ -13,15 +13,6 @@ const ProfilePage = ({ userId }) => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-
-
-  const axiosInstance = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
-    },
-  });
 
   // Validation rules
   const validateForm = () => {

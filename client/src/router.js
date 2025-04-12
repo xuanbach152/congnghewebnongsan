@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import HomePage from './pages/homePage/homePage'
 import ProfilePage from './pages/profilePage/profilePage'
+import CartPage from './pages/cartPage/cartPage'
 import routers from './utils/routers'
 import MasterLayout from './layouts/masterLayout/masterLayout'
 
@@ -14,6 +15,10 @@ const renderRouter = () => {
       path: routers.PROFILE,
       component: <ProfilePage />,
     },
+    {
+      path: routers.CART,
+      component: <CartPage />,
+    }
   ]
 
   return (
