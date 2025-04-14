@@ -88,6 +88,7 @@ const deleteItem = async (itemId) => {
     throw error;
   }
 };
+
 const rateItem = async (itemId, userId, rating) => {
   try {
     console.log("Item ID:", itemId);

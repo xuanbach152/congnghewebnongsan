@@ -64,6 +64,11 @@ const itemSchema = new Schema({
     required: true,
     default: "",
   },
+  // số lượt mua
+  purchaseCount: { 
+    type: Number,
+    default: 0,
+  }
 });
 
 export default model("Item", itemSchema);
