@@ -16,10 +16,15 @@ const CartPage = () => {
       const response = await axiosInstance.get('/cart/getcart');
       setCart(response.data.data);
       setError(null);
-      // Khởi tạo selectedItems với tất cả itemId nếu muốn chọn mặc định
       setSelectedItems(response.data.data.cartItems.map(item => item.itemId._id));
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to fetch cart');
+      if (err.response?.data?.message === 'Cart not found') {
+        setCart({ cartItems: [], _id: null }); // Giỏ hàng rỗng
+        setSelectedItems([]);
+        setError(null);
+      } else {
+        setError(err.response?.data?.message || 'Failed to fetch cart');
+      }
     } finally {
       setLoading(false);
     }
@@ -97,6 +102,11 @@ const CartPage = () => {
 
   // Tải giỏ hàng khi component được mount
   useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if(!token) {
+      setError('Vui lòng đăng nhập để xem giỏ hàng');
+      return;
+    }
     fetchCart();
   }, []);
 

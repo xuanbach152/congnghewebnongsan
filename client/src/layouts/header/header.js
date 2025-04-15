@@ -46,9 +46,10 @@ const MainHeader = () => {
   const register = async (userName, password, phone) => {
     try {
       const response = await axiosInstance.post('/auth/register', { userName, password, phone });
+      await axiosInstance.post('auth/login', {});
       return response.data; 
     } catch (error) {
-      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' };
+      throw error.response?.data || { message: 'Csó lỗi xảy ra khi đăng ký' };
     }
   };
 
@@ -58,7 +59,6 @@ const MainHeader = () => {
       localStorage.removeItem('accessToken');
       setUser(null);
       setIsLoggedIn(false);
-      setCartItemCount(0);
       alert(response.data.message || 'Đăng xuất thành công!');
     } catch (error) {
       console.error('Logout error:', error);
@@ -144,6 +144,25 @@ const MainHeader = () => {
       }
     }
   }, []);
+
+  const addToCart = async (productId, quantity = 1) => {
+    if (!user) {
+      alert('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!');
+      return;
+    }
+  
+    try {
+      const response = await axiosInstance.post('/cart/add', {
+        productId,
+        quantity,
+      });
+      alert('Sản phẩm đã được thêm vào giỏ hàng!');
+      fetchCartData(); // Cập nhật lại giỏ hàng sau khi thêm
+    } catch (error) {
+      console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error.response?.data || error.message);
+      alert('Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!');
+    }
+  };
 
   const toggleAuthModal = () => {
     setIsAuthModalOpen(!isAuthModalOpen);
@@ -236,6 +255,9 @@ const MainHeader = () => {
 
           <div className="col-xl-3">
             <div className="header_cart">
+              <div className="test_add_to_cart">
+                <button onClick={() => addToCart('67e2bdb31762e4f8f670d8c0', 2)}>Thêm sản phẩm test</button>
+              </div>
               <div className="header_cart_price">
                 {cartLoading ? (<span>Đang tải...</span>) : (<span>{formatter(cartTotal)}</span>)}
               </div>
