@@ -64,6 +64,19 @@ const itemSchema = new Schema({
     required: true,
     default: "",
   },
+  Comments: [
+    {
+      userId: {
+        type: Schema.ObjectId,
+        required: true,
+        ref: "User",
+      },
+      content: {
+        type: String,
+        required: true,
+      }
+    },
+  ],
 });
 
 export default model("Item", itemSchema);

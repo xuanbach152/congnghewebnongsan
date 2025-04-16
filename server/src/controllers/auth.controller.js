@@ -1,4 +1,5 @@
 import userService from "../services/user.service.js";
+import CartService from "../services/cart.service.js";
 import {
   hashPassword,
   generateAcessToken,
@@ -18,6 +19,9 @@ export const register = async (req, res) => {
       ...req.body,
       password: hashedPassword,
     });
+
+    const cart = await CartService.createCart({
+      userId: newUser._id, cartItems: [] });
     res.status(httpStatus.CREATED).json({ user: newUser });
   } catch (error) {
     res.status(httpStatus.BAD_REQUEST).json({ message: error.message });

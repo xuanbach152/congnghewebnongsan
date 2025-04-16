@@ -118,26 +118,6 @@ const rateItem = async (itemId, userId, rating) => {
     throw error;
   }
 };
-const uploadImageToCloudinary = async (file) => {
-  try {
-    if (!file) {
-      throw new Error("No file uploaded");
-    }
-
-    console.log("Uploading file to Cloudinary:", JSON.stringify(file, null, 2));
-
-    if (!file.path) {
-      throw new Error("File path is missing");
-    }
-
-    console.log("File uploaded to Cloudinary:", file.path);
-
-    return file.path;
-  } catch (error) {
-    console.error("Error in uploadImageToCloudinary:", error.message);
-    throw error;
-  }
-};
 
 const saveImageToDatabase = async (itemId, imgUrl) => {
   try {
@@ -154,27 +134,6 @@ const saveImageToDatabase = async (itemId, imgUrl) => {
     return item;
   } catch (error) {
     console.error("Error in saveImageToDatabase:", error.message);
-    throw error;
-  }
-};
-
-const uploadVideoToCloudinary = async (file) => {
-  try {
-    if (!file) {
-      throw new Error("No file uploaded");
-    }
-
-    console.log("Uploading file to Cloudinary:", JSON.stringify(file, null, 2));
-
-    if (!file.path) {
-      throw new Error("File path is missing");
-    }
-
-    console.log("File uploaded to Cloudinary:", file.path);
-
-    return file.path;
-  } catch (error) {
-    console.error("Error in uploadVideoToCloudinary:", error.message);
     throw error;
   }
 };
@@ -198,17 +157,26 @@ const saveVideoToDatabase = async (itemId, videoUrl) => {
   }
 };
 
+const getItemsByShopId = async (shopId, page, limit, sortField = "createdAt",
+  sortType = "desc") => {
+  const skip = (page - 1) * limit;
+  const items = await ItemModel.find({ shopId })
+    .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
+    .skip(skip)
+    .limit(limit)
+    .exec();
+  return items;
+};
+
 export default {
   createItem,
   searchItems,
   updateItem,
   getItemById,
-
+  getItemsByShopId,
   getItems,
   deleteItem,
   rateItem,
-  uploadImageToCloudinary,
   saveImageToDatabase,
-  uploadVideoToCloudinary,
   saveVideoToDatabase,
 };

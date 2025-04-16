@@ -2,6 +2,8 @@ import express, { json } from "express";
 import { connect } from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import { setupSocket } from "./configs/socket.config.js";
+import http from "http";
 
 import userRoutes from "./routes/user.route.js";
 import itemRoutes from "./routes/item.route.js";
@@ -10,24 +12,26 @@ import orderRoutes from "./routes/order.route.js";
 import shopRoutes from "./routes/shop.route.js";
 import commentRoutes from "./routes/comment.route.js";
 import authRoutes from "./routes/auth.route.js";
+import messageRoutes from "./routes/message.route.js";
 
 import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 
+const server = http.createServer(app);
+setupSocket(server);
+
 // Middleware
 app.use(json());
-app.use(cors({
-  origin: 'http://localhost:4000',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}))
+app.use(
+  cors({
+    origin: "http://localhost:4000",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(cookieParser());
-
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
-});
 
 // Kết nối MongoDB
 connect(process.env.MONGODB_URI)
@@ -43,5 +47,10 @@ app.use("/order", orderRoutes);
 app.use("/shop", shopRoutes);
 app.use("/comment", commentRoutes);
 app.use("/auth", authRoutes);
+
+// Lắng nghe server
+server.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
+});
 
 export default app;
