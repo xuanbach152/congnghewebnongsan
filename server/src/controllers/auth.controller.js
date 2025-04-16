@@ -7,6 +7,7 @@ import {
   comparePassword,
   verifyToken,
   verifyRole,
+  verifyRefreshToken
 } from "../services/auth.service.js";
 import httpStatus from "http-status";
 import Message from "../utils/message.js";
@@ -78,7 +79,7 @@ export const logout = (req, res) => {
 
 export const refreshToken = async (req, res) => {
   try {
-    const refreshToken = req.cookies.refreshToken; //lấy tuừ cookie
+    const refreshToken = req.cookies.refreshToken; //lấy từ cookie
     if (!refreshToken) {
       return res.status(403).json({ message: "Vui lòng đăng nhập" });
     }
@@ -86,7 +87,7 @@ export const refreshToken = async (req, res) => {
       return res.status(403).json({ message: "Token không hợp lệ" });
     }
     refreshTokens = refreshTokens.filter((token) => token !== refreshToken); //lọc ra token cũ
-    const user = await verifyToken(refreshToken);
+    const user =  verifyRefreshToken(refreshToken);
     const accessToken = generateAcessToken(user);
     const newrefreshToken = generateRefreshToken(user);
     refreshTokens.push(newrefreshToken);
