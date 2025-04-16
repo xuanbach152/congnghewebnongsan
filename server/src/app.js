@@ -47,7 +47,7 @@ app.use("/order", orderRoutes);
 app.use("/shop", shopRoutes);
 app.use("/comment", commentRoutes);
 app.use("/auth", authRoutes);
-
+app.use("/message", messageRoutes);
 // Lắng nghe server
 server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

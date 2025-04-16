@@ -39,18 +39,18 @@ export const addToCart = async (req, res) => {
 };
 
 // Get all Carts
-export const getCarts = async (req, res) => {
+export const getAllCarts = async (req, res) => {
   try {
     const { page } = req.query; //lấy page từ query params
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
-    const Carts = await CartService.getCarts(page, limit);
+    const carts = await CartService.getAllCarts(page, limit);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
-      data: Carts,
+      data: carts,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error in getAllCarts:", error.message);
     res.status(httpStatus.BAD_REQUEST).send({
       code: httpStatus.BAD_REQUEST,
       message: Message.FAILED,
@@ -76,7 +76,7 @@ export const getCartById = async (req, res) => {
   }
 };
 // Get all items in a user's cart
-export const getCart = async (req, res) => {
+export const getCartUser = async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -87,14 +87,14 @@ export const getCart = async (req, res) => {
       });
     }
 
-    const cart = await CartService.getCart(userId);
+    const cart = await CartService.getCartUser(userId);
     res.status(200).send({
       code: 200,
       message: "Cart retrieved successfully",
       data: cart,
     });
   } catch (error) {
-    console.error("Error in getCart:", error.message);
+    console.error("Error in getCartUser:", error.message);
     res.status(500).send({
       code: 500,
       message: error.message || "Failed to retrieve cart",
