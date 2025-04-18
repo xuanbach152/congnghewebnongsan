@@ -19,10 +19,22 @@ const shopSchema = Schema(
       type: String,
       default: "",
     },
+    description: {
+      type: String,    
+    },
+    rate: {
+      type: Number,
+      default: 5,
+    },
+    // số lượt mua
+    purchaseCount: { 
+      type: Number,
+      default: 0,
+    }
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export default model("Shop", shopSchema);

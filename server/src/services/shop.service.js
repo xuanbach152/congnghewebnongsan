@@ -4,20 +4,18 @@ import ItemModel from "../models/item.model.js";
 import { throwBadRequest } from "../utils/error.util.js";
 import Message from "../utils/message.js";
 
-const createShop = async (ShopData) => {
-  const newShop = await ShopModel.create(ShopData);
+const createShop = async (shopData) => {
+  const newShop = await ShopModel.create({
+    ...shopData,
+    imgUrl: shopData.image.path || ""
+  });
   return newShop;
 };
 const searchShops = async (searchText) => {
   const regex = new RegExp(searchText, "i");
   return await ShopModel.find({
-    $or: [
-      { name:{$regex: regex}  },
-      { address: {$regex: regex} }
-    ],
+    $or: [{ name: { $regex: regex } }, { address: { $regex: regex } }],
   });
-
-
 };
 
 const updateShop = async (ShopId, ShopData) => {
@@ -32,26 +30,31 @@ const getShopById = async (ShopId) => {
   return Shop;
 };
 
-const getShops = async (page, limit, sortField = "createdAt", sortType = "desc") => {
-   try {
-     const skip = (page - 1) * limit;
-     const shops = await ShopModel.find()
-       .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
-       .skip(skip)
-       .limit(Math.min(limit, 100))
-       .exec();
- 
-     const totalshops = await ShopModel.countDocuments();
-     return {
-       shops,
-       totalshops,
-       totalPages: Math.ceil(totalshops / limit),
-       currentPage: parseInt(page),
-     };
-   } catch (error) {
-     console.error("Error in getShops:", error.message);
-     throw error;
-   }
+const getShops = async (
+  page,
+  limit,
+  sortField = "createdAt",
+  sortType = "desc"
+) => {
+  try {
+    const skip = (page - 1) * limit;
+    const shops = await ShopModel.find()
+      .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
+      .skip(skip)
+      .limit(Math.min(limit, 100))
+      .exec();
+
+    const totalshops = await ShopModel.countDocuments();
+    return {
+      shops,
+      totalshops,
+      totalPages: Math.ceil(totalshops / limit),
+      currentPage: parseInt(page),
+    };
+  } catch (error) {
+    console.error("Error in getShops:", error.message);
+    throw error;
+  }
 };
 
 const deleteShop = async (ShopId) => {
@@ -101,18 +104,21 @@ const saveImageToDatabase = async (shopId, imgUrl) => {
 const getRevenueByMonth = async (shopId, month, year) => {
   try {
     // Tính ngày bắt đầu và ngày kết thúc của tháng
-    const startDate = new Date(year, month - 1, 1); 
-    const endDate = new Date(year, month, 0); 
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0);
 
     // Lấy tất cả các đơn hàng của shop trong khoảng thời gian
     const orders = await OrderModel.find({
-      "items.itemId": { $in: await getItemIdsByShop(shopId) }, 
+      "items.itemId": { $in: await getItemIdsByShop(shopId) },
       createdAt: { $gte: startDate, $lte: endDate },
-      paymentStatus: "COMPLETED", 
+      paymentStatus: "COMPLETED",
     });
 
     // Tính tổng doanh thu
-    const totalRevenue = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+    const totalRevenue = orders.reduce(
+      (sum, order) => sum + order.totalPrice,
+      0
+    );
 
     return {
       totalRevenue,
@@ -125,18 +131,14 @@ const getRevenueByMonth = async (shopId, month, year) => {
   }
 };
 
-
-const getItemByShopId = async (shopId) => {
+const getItemsByShopId = async (shopId) => {
   const items = await ItemModel.find({ shopId });
-  throwBadRequest(!items, Message.ItemNotFound);
   return items;
-  
 };
-const getShopByUserId = async (userId) => {
-  const shop = await ShopModel.findOne({ userId });
-  throwBadRequest(!shop, Message.ShopNotFound);
-  return shop;
-}
+const getShopsByUserId = async (userId) => {
+  const shops = await ShopModel.find({ userId });
+  return shops;
+};
 export default {
   createShop,
   searchShops,
@@ -147,6 +149,6 @@ export default {
   saveImageToDatabase,
   uploadImageToCloudinary,
   getRevenueByMonth,
-  getItemByShopId,
-  getShopByUserId
+  getItemsByShopId,
+  getShopsByUserId,
 };

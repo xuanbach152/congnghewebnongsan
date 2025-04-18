@@ -6,17 +6,16 @@ import cloudinary from "../configs/cloudinary.config.js";
 const imageStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "images", 
-    allowed_formats: ["jpg", "png", "jpeg"], 
-    transformation: [{ width: 500, height: 500, crop: "limit" }], 
+    folder: "images",
+    allowed_formats: ["jpg", "png", "jpeg"],
+    transformation: [{ width: 500, height: 500, crop: "limit" }],
   },
 });
 
 const uploadImg = multer({
   storage: imageStorage,
-  limits: { fileSize: 10 * 1024 * 1024 }, 
+  limits: { fileSize: 10 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
-    console.log("Image file received:", JSON.stringify(file, null, 2));
     if (!file) {
       console.error("No image file received");
       return cb(new Error("No image file received"), false);
@@ -33,15 +32,15 @@ const uploadImg = multer({
 const videoStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: "videos", 
-resource_type: "video", 
-    allowed_formats: ["mp4", "mpeg"], 
+    folder: "videos",
+    resource_type: "video",
+    allowed_formats: ["mp4", "mpeg"],
   },
 });
 
 const uploadVid = multer({
   storage: videoStorage,
-  limits: { fileSize: 1000 * 1024* 1024 },
+  limits: { fileSize: 1000 * 1024 * 1024 },
   fileFilter: (req, file, cb) => {
     console.log("Video file received:", JSON.stringify(file, null, 2));
     if (!file) {
@@ -55,6 +54,5 @@ const uploadVid = multer({
     cb(null, true);
   },
 });
-
 
 export { uploadImg, uploadVid };

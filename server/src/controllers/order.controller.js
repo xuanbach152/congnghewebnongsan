@@ -6,7 +6,7 @@ import { PaginationEnum } from "../utils/constant.js";
 export const createOrder = async (req, res) => {
   try {
     const { deliveryAddress, paymentMethod } = req.body;
-    const userId = req.user.id; 
+    const userId = req.user.id;
     if (!userId || !deliveryAddress || !paymentMethod) {
       return res.status(400).send({
         code: 400,
@@ -17,7 +17,7 @@ export const createOrder = async (req, res) => {
     const order = await OrderService.createOrder(
       userId,
       deliveryAddress,
-      paymentMethod
+      paymentMethod,
     );
     res.status(201).send({
       code: 201,
@@ -58,7 +58,12 @@ export const getOrders = async (req, res) => {
     const { page } = req.query; //lấy page từ query params
     const { sortField, sortType } = req.query;
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
-    const Orders = await OrderService.getOrders(page, limit, sortField, sortType);
+    const Orders = await OrderService.getOrders(
+      page,
+      limit,
+      sortField,
+      sortType,
+    );
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
@@ -93,7 +98,7 @@ export const getOrderById = async (req, res) => {
 
 export const getOrdersByUser = async (req, res) => {
   try {
-    const userId = req.user.id; 
+    const userId = req.user.id;
     const orders = await OrderService.getOrdersByUser(userId);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,

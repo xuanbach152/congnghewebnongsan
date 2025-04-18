@@ -20,24 +20,24 @@ const getCommentById = async (CommentId) => {
 };
 
 const getComments = async (page, limit) => {
-   try {
-     const skip = (page - 1) * limit;
-     const comments = await CommentModel.find()
-       .skip(skip)
-       .limit(Math.min(limit, 100))
-       .exec();
- 
-     const totalcomments = await CommentModel.countDocuments();
-     return {
-       comments,
-       totalcomments,
-       totalPages: Math.ceil(totalcomments / limit),
-       currentPage: parseInt(page),
-     };
-   } catch (error) {
-     console.error("Error in getComments:", error.message);
-     throw error;
-   }
+  try {
+    const skip = (page - 1) * limit;
+    const comments = await CommentModel.find()
+      .skip(skip)
+      .limit(Math.min(limit, 100))
+      .exec();
+
+    const totalcomments = await CommentModel.countDocuments();
+    return {
+      comments,
+      totalcomments,
+      totalPages: Math.ceil(totalcomments / limit),
+      currentPage: parseInt(page),
+    };
+  } catch (error) {
+    console.error("Error in getComments:", error.message);
+    throw error;
+  }
 };
 
 const deleteComment = async (CommentId) => {

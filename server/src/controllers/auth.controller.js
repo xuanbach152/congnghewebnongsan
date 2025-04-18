@@ -44,7 +44,7 @@ export const login = async (req, res) => {
     const accessToken = generateAcessToken(user);
     const refreshToken = generateRefreshToken(user);
     refreshTokens.push(refreshToken);
-    res.cookie("refreshtoken", refreshToken, {
+    res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       path: "/",
       sameSite: "strict",
@@ -57,12 +57,13 @@ export const login = async (req, res) => {
     res.status(httpStatus.BAD_REQUEST).json({ message: error.message });
   }
 };
+
 export const logout = (req, res) => {
   try {
     // Xóa cookie chứa token
-    res.clearCookie("refreshtoken");
+    res.clearCookie("refreshToken");
     refreshTokens = refreshTokens.filter(
-      (token) => token !== req.cookies.refreshtoken
+      (token) => token !== req.cookies.refreshToken,
     );
     // Trả về phản hồi thành công
     res.status(200).json({ message: "Đăng xuất thành công" });
@@ -71,9 +72,9 @@ export const logout = (req, res) => {
   }
 };
 
-export const requestrefresh_token = async (req, res) => {
+export const refreshToken = async (req, res) => {
   try {
-    const refreshToken = req.cookies.refreshtoken; //lấy tuừ cookie
+    const refreshToken = req.cookies.refreshToken; //lấy tuừ cookie
     if (!refreshToken) {
       return res.status(403).json({ message: "Vui lòng đăng nhập" });
     }
@@ -85,7 +86,7 @@ export const requestrefresh_token = async (req, res) => {
     const accessToken = generateAcessToken(user);
     const newrefreshToken = generateRefreshToken(user);
     refreshTokens.push(newrefreshToken);
-    res.cookie("refreshtoken", newrefreshToken, {
+    res.cookie("refreshToken", newrefreshToken, {
       httpOnly: true,
       path: "/",
       sameSite: "strict",

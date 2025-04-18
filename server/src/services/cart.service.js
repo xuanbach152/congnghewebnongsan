@@ -20,7 +20,7 @@ const addToCart = async (cartId, itemId, quantity) => {
     }
 
     const existingItem = cart.cartItems.find(
-      (cartItem) => cartItem.itemId.toString() === itemId
+      (cartItem) => cartItem.itemId.toString() === itemId,
     );
 
     if (existingItem) {
@@ -35,7 +35,7 @@ const addToCart = async (cartId, itemId, quantity) => {
 
     cart.totalPrice = cart.cartItems.reduce(
       (total, cartItem) => total + cartItem.price * cartItem.quantity,
-      0
+      0,
     );
 
     await cart.save();
@@ -53,7 +53,7 @@ const updateCartItem = async (cartId, itemId, quantity) => {
     }
 
     const cartItem = cart.cartItems.find(
-      (item) => item.itemId.toString() === itemId
+      (item) => item.itemId.toString() === itemId,
     );
 
     if (!cartItem) {
@@ -64,7 +64,7 @@ const updateCartItem = async (cartId, itemId, quantity) => {
 
     cart.totalPrice = cart.cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
-      0
+      0,
     );
 
     await cart.save();
@@ -123,12 +123,12 @@ const removeCartItem = async (cartId, itemId) => {
     }
 
     cart.cartItems = cart.cartItems.filter(
-      (item) => item.itemId.toString() !== itemId
+      (item) => item.itemId.toString() !== itemId,
     );
 
     cart.totalPrice = cart.cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
-      0
+      0,
     );
 
     await cart.save();
