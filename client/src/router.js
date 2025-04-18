@@ -4,6 +4,8 @@ import ProfilePage from './pages/profilePage/profilePage'
 import CartPage from './pages/cartPage/cartPage'
 import routers from './utils/routers'
 import MasterLayout from './layouts/masterLayout/masterLayout'
+import CheckoutPage from 'pages/checkoutPage/checkoutPage'
+import OrderHistoryPage from 'pages/orderHistoryPage/orderHistoryPage'
 
 const renderRouter = () => {
   const allRouters = [
@@ -18,7 +20,15 @@ const renderRouter = () => {
     {
       path: routers.CART,
       component: <CartPage />,
-    }
+    },
+    {
+      path: routers.CHECKOUT,
+      component: <CheckoutPage />,
+    },
+    {
+      path: routers.ORDER_HISTORY,
+      component: <OrderHistoryPage />,
+    },
   ]
 
   return (

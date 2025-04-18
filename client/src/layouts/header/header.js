@@ -31,8 +31,9 @@ const MainHeader = () => {
   const [filterPrice, setFilterPrice] = useState('all');
   const [filterPromotion, setFilterPromotion] = useState(false);
   const [filterTrend, setFilterTrend] = useState(false);
-  const [filterSth, setFilterSth] = useState(false)
+  const [filterSth, setFilterSth] = useState(false);
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   const login = async (userName, password) => {
     try {
@@ -46,10 +47,10 @@ const MainHeader = () => {
   const register = async (userName, password, phone) => {
     try {
       const response = await axiosInstance.post('/auth/register', { userName, password, phone });
-      await axiosInstance.post('auth/login', {});
-      return response.data; 
+      const { user , cart } = response.data;
+      return { user , cart }; 
     } catch (error) {
-      throw error.response?.data || { message: 'Csó lỗi xảy ra khi đăng ký' };
+      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' };
     }
   };
 
@@ -150,10 +151,11 @@ const MainHeader = () => {
       alert('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!');
       return;
     }
-  
+
     try {
       const response = await axiosInstance.post('/cart/add', {
-        productId,
+        userId: user._id,
+        itemId: productId,
         quantity,
       });
       alert('Sản phẩm đã được thêm vào giỏ hàng!');
@@ -215,7 +217,7 @@ const MainHeader = () => {
                           <Link to={routers.PROFILE}>Thông tin cá nhân</Link>
                         </li>
                         <li><Link to={routers.SHOP_MANAGEMENT}>Quản lý cửa hàng</Link></li>
-                        <li><Link to="#">Cài đặt</Link></li>
+                        <li><Link to={routers.ORDER_HISTORY}>Lịch sử mua hàng</Link></li>
                         <li onClick={handleLogout}>Đăng xuất</li>
                       </ul>
                     </div>

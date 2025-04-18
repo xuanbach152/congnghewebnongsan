@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../utils/api';
 import './cartPage.scss';
 import { memo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const CartPage = () => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]); // Lưu danh sách itemId được chọn
+  const navigate = useNavigate();
 
   // Lấy giỏ hàng của người dùng
   const fetchCart = async () => {
@@ -100,6 +102,11 @@ const CartPage = () => {
       .reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
+  const handleCheckout = () => {
+    const itemsToCheckout = cart.cartItems.filter(item => selectedItems.includes(item.itemId._id));
+    navigate('/checkout', { state: { selectedItems: itemsToCheckout, cartId: cart._id } });
+  };
+
   // Tải giỏ hàng khi component được mount
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -188,7 +195,7 @@ const CartPage = () => {
             Tổng thanh toán ({selectedItems.length} sản phẩm):{' '}
             <strong>{calculateSelectedTotal().toLocaleString()} VNĐ</strong>
           </span>
-          <button className="checkout-button" disabled={selectedItems.length === 0}>
+          <button className="checkout-button" onClick={handleCheckout} disabled={selectedItems.length === 0}>
             Thanh toán
           </button>
         </div>
