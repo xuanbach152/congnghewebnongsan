@@ -10,6 +10,7 @@ import {
   rateItem,
   uploadImage,
   uploadVideo,
+  getItemsByShopId,
 } from "../controllers/item.controller.js";
 
 const router = express.Router();
@@ -21,6 +22,8 @@ router.get("/", getItems);
 router.get("/search", searchItems);
 
 router.get("/:id", getItemById);
+
+router.get("/shop/:id", getItemsByShopId);
 
 router.put("/:id", updateItem);
 

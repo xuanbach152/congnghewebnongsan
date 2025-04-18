@@ -33,6 +33,6 @@ export const PaymentStatusEnum = {
 };
 
 export const PaginationEnum = {
-  DEFAULT_LIMIT: 12,
+  DEFAULT_LIMIT: 20,
   MAX_LIMIT: 200,
 };

@@ -64,11 +64,19 @@ const itemSchema = new Schema({
     required: true,
     default: "",
   },
-  // số lượt mua
-  purchaseCount: { 
-    type: Number,
-    default: 0,
-  }
+  Comments: [
+    {
+      userId: {
+        type: Schema.ObjectId,
+        required: true,
+        ref: "User",
+      },
+      content: {
+        type: String,
+        required: true,
+      }
+    },
+  ],
 });
 
 export default model("Item", itemSchema);

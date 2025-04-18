@@ -7,6 +7,13 @@ const createCart = async (CartData) => {
   const newCart = await CartModel.create(CartData);
   return newCart;
 };
+
+const getAllCarts = async (page, limit) => {
+  const skip = (page - 1) * limit;
+  const carts = await CartModel.find().skip(skip).limit(limit).exec();
+  return carts;
+};
+
 const addToCart = async (cartId, itemId, quantity) => {
   try {
     const item = await ItemModel.findById(itemId);
@@ -81,7 +88,7 @@ const getCartById = async (CartId) => {
   return Cart;
 };
 
-const getCart = async (userId) => {
+const getCartUser = async (userId) => {
   try {
     const cart = await CartModel.findOne({ userId }).populate({
       path: "cartItems.itemId",
@@ -94,7 +101,7 @@ const getCart = async (userId) => {
 
     return cart;
   } catch (error) {
-    console.error("Error in getCart:", error.message);
+    console.error("Error in getCartUser:", error.message);
     throw error;
   }
 };
@@ -145,8 +152,9 @@ const deleteCart = async (CartId) => {
 export default {
   createCart,
   updateCartItem,
+  getAllCarts,
   getCartById,
-  getCart,
+  getCartUser,
   addToCart,
   deleteCart,
   removeCartItem,

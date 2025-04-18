@@ -2,6 +2,7 @@ import ItemService from "../services/item.service.js";
 import httpStatus from "http-status";
 import Message from "../utils/message.js";
 import { PaginationEnum } from "../utils/constant.js";
+import { uploadToCloudinary } from "../utils/file.util.js";
 import e from "express";
 
 // Create a new item
@@ -10,6 +11,8 @@ export const createItem = async (req, res) => {
     console.log("Request body:", req.body);
 
     const { shopId, name, price, type, description, rate, quantity } = req.body;
+    const image = req.file;
+    const imgUrl = await uploadToCloudinary(image);
     if (
       !shopId ||
       !name ||
@@ -25,7 +28,16 @@ export const createItem = async (req, res) => {
       });
     }
 
-    const newItem = await ItemService.createItem(req.body);
+    const newItem = await ItemService.createItem({
+      shopId,
+      name,
+      price,
+      type,
+      description,
+      rate,
+      quantity,
+      imgUrl,
+    });
     res.status(httpStatus.CREATED).send({
       code: httpStatus.CREATED,
       message: Message.ItemCreated,
@@ -160,12 +172,12 @@ export const uploadImage = async (req, res) => {
     console.log("Request body:", req.body);
     console.log("File received:", JSON.stringify(req.file, null, 2));
 
-    const imgUrl = await ItemService.uploadImageToCloudinary(req.file);
+const imgUrl = await uploadToCloudinary(req.file);
     console.log("Image uploaded to Cloudinary:", imgUrl);
 
     const updatedItem = await ItemService.saveImageToDatabase(
       req.params.id,
-      imgUrl,
+      imgUrl
     );
     console.log("Image URL saved to database:", updatedItem);
 
@@ -190,10 +202,10 @@ export const uploadVideo = async (req, res) => {
     console.log("Request body:", req.body);
     console.log("File received:", req.file);
 
-    const videoUrl = await ItemService.uploadVideoToCloudinary(req.file);
+    const videoUrl = await uploadToCloudinary(req.file);
     const updatedItem = await ItemService.saveVideoToDatabase(
       req.params.id,
-      videoUrl,
+      videoUrl
     );
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
@@ -202,6 +214,26 @@ export const uploadVideo = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    res.status(httpStatus.BAD_REQUEST).send({
+      code: httpStatus.BAD_REQUEST,
+      message: Message.FAILED,
+      error: error.message,
+    });
+  }
+};
+
+export const getItemsByShopId = async (req, res) => {
+  try {
+    const shopId = req.params.shopId;
+    const{page,limit,sortField,sortType} = req.query
+    const items = await ItemService.getItemsByShopId(shopId,page,limit,sortField,sortType);
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: Message.OK,
+      data: items,
+    });
+  } catch (error) {
+    console.error("Error in getItemsByShopId:", error.message);
     res.status(httpStatus.BAD_REQUEST).send({
       code: httpStatus.BAD_REQUEST,
       message: Message.FAILED,

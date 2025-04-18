@@ -8,7 +8,6 @@ import {
   deleteShop,
   uploadImage,
   getRevenueByMonth,
-  getItemsByShopId,
   getShopsByUserId,
 } from "../controllers/shop.controller.js";
 import { verifyToken } from "../services/auth.service.js";
@@ -19,7 +18,6 @@ router.post("/", verifyToken, uploadImg.single("image"), createShop);
 router.get("/", getShops);
 router.get("/search", searchShops);
 router.get("/user", verifyToken, getShopsByUserId);
-router.get("/items/:id", getItemsByShopId);
 router.get("/revenue/:shopId", getRevenueByMonth);
 router.get("/:id", getShopById);
 router.post("/:id/upload-image", uploadImg.single("image"), uploadImage);
