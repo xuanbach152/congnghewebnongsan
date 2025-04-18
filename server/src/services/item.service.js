@@ -33,9 +33,18 @@ const searchItems = async (searchText) => {
 
 const updateItem = async (itemId, itemData) => {
   try {
+   
     const item = await ItemModel.findById(itemId);
     throwBadRequest(!item, Message.ItemNotFound);
-    return ItemModel.findByIdAndUpdate(itemId, itemData, { new: true });
+
+    
+    const updatedItem = await ItemModel.findByIdAndUpdate(
+      itemId,
+      { $set: itemData }, 
+      { new: true, runValidators: true } 
+    );
+
+    return updatedItem;
   } catch (error) {
     console.error("Error in updateItem:", error.message);
     throw error;
@@ -157,15 +166,21 @@ const saveVideoToDatabase = async (itemId, videoUrl) => {
   }
 };
 
-const getItemsByShopId = async (shopId, page, limit, sortField = "createdAt",
+const getItemsByShopId = async (shopId, page = 1, limit = 10, sortField = "createdAt",
   sortType = "desc") => {
   const skip = (page - 1) * limit;
   const items = await ItemModel.find({ shopId })
-    .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
+    .sort({ [sortField]: sortType })
     .skip(skip)
     .limit(limit)
     .exec();
-  return items;
+  const totalItems = await ItemModel.countDocuments({ shopId });
+  return {
+    items,
+    totalItems,
+    totalPages: Math.ceil(totalItems / limit),
+    currentPage: page,
+  };
 };
 
 export default {

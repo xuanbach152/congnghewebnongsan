@@ -9,7 +9,7 @@ import e from "express";
 export const createItem = async (req, res) => {
   try {
     console.log("Request body:", req.body);
-
+    console.log("Uploaded File:", req.file);
     const { shopId, name, price, type, description, rate, quantity } = req.body;
     const image = req.file;
     const imgUrl = await uploadToCloudinary(image);
@@ -19,7 +19,6 @@ export const createItem = async (req, res) => {
       !price ||
       !type ||
       !description ||
-      !rate ||
       !quantity
     ) {
       return res.status(httpStatus.BAD_REQUEST).send({
@@ -113,7 +112,15 @@ export const getItemById = async (req, res) => {
 // Update an item by ID
 export const updateItem = async (req, res) => {
   try {
-    const updateitem = await ItemService.updateItem(req.params.id, req.body);
+    const itemId = req.params.id; 
+    const itemData = req.body; 
+    const image = req.file;
+    const imgUrl = await uploadToCloudinary(image);
+    itemData.imgUrl = imgUrl;
+    console.log("Item ID:", itemId);
+    console.log("Item Data:", itemData);
+
+    const updateitem = await ItemService.updateItem(itemId, itemData);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.ItemUpdated,
@@ -131,7 +138,7 @@ export const updateItem = async (req, res) => {
 // Delete an item by ID
 export const deleteItem = async (req, res) => {
   try {
-    const Itemdelete = await ItemService.deleteItem(req.body);
+    const Itemdelete = await ItemService.deleteItem(req.params.id);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
@@ -149,7 +156,8 @@ export const deleteItem = async (req, res) => {
 export const rateItem = async (req, res) => {
   try {
     const itemId = req.params.id;
-    const { userId, rating } = req.body;
+    const userId = req.user.id;
+    const { rating } = req.body;
 
     const ratedItem = await ItemService.rateItem(itemId, userId, rating);
     res.status(httpStatus.OK).send({
@@ -172,7 +180,7 @@ export const uploadImage = async (req, res) => {
     console.log("Request body:", req.body);
     console.log("File received:", JSON.stringify(req.file, null, 2));
 
-const imgUrl = await uploadToCloudinary(req.file);
+    const imgUrl = await uploadToCloudinary(req.file);
     console.log("Image uploaded to Cloudinary:", imgUrl);
 
     const updatedItem = await ItemService.saveImageToDatabase(
@@ -225,8 +233,21 @@ export const uploadVideo = async (req, res) => {
 export const getItemsByShopId = async (req, res) => {
   try {
     const shopId = req.params.shopId;
-    const{page,limit,sortField,sortType} = req.query
-    const items = await ItemService.getItemsByShopId(shopId,page,limit,sortField,sortType);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const sortField = req.query.sortField || "createdAt";
+    const sortType = req.query.sortType === "asc" ? 1 : -1;
+
+    console.log("Shop ID:", shopId);
+    console.log("Page:", page, "Limit:", limit);
+    console.log("Sort Field:", sortField, "Sort Type:", sortType);
+    const items = await ItemService.getItemsByShopId(
+      shopId,
+      page,
+      limit,
+      sortField,
+      sortType
+    );
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,

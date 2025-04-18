@@ -14,8 +14,9 @@ const imageStorage = new CloudinaryStorage({
 
 const uploadImg = multer({
   storage: imageStorage,
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: { fileSize: 1000 * 1024 * 1024 }, 
   fileFilter: (req, file, cb) => {
+    console.log("File received in multer:", file);
     if (!file) {
       console.error("No image file received");
       return cb(new Error("No image file received"), false);

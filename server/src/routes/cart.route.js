@@ -3,7 +3,7 @@ import {
   createCart,
   getAllCarts,
   getCartUser,
-  getCartById,
+
   addToCart,
   removeCartItem,
   updateCartItem,
@@ -20,6 +20,5 @@ router.delete("/remove", verifyToken, removeCartItem);
 router.delete("/clear", verifyToken, clearCart);
 router.get("/", verifyToken, getAllCarts);
 router.get("/getcart", verifyToken, getCartUser);
-router.get("/:id", verifyToken, getCartById);
-router.delete("/:id", verifyToken, deleteCart);
+router.delete("/delete", verifyToken, deleteCart);
 export default router;
