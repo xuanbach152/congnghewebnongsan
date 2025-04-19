@@ -11,7 +11,7 @@ const createItem = async (itemData) => {
     if (!shop) {
       throw new Error("Shop not found");
     }
-
+    itemData.address = shop.address;
     const newItem = await ItemModel.create(itemData);
     return newItem;
   } catch (error) {

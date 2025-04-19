@@ -18,6 +18,9 @@ const orderSchema = new Schema({
         required: true,
         ref: "Item",
       },
+      // name: { type: String, required: true }, 
+      // price: { type: Number, required: true }, 
+      // type: { type: String, required: true }, 
       quantity: {
         type: Number,
         required: true,
@@ -25,6 +28,11 @@ const orderSchema = new Schema({
       },
     },
   ],
+  orderDate: {
+    type: Date,
+    default: Date.now,
+  },
+  
   totalPrice: {
     type: Number,
     required: true,
