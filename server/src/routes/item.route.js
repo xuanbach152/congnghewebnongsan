@@ -12,27 +12,27 @@ import {
   uploadVideo,
   getItemsByShopId,
 } from "../controllers/item.controller.js";
-
+import { verifyToken } from "../services/auth.service.js";
 const router = express.Router();
 
-router.post("/", createItem);
+router.post("/", verifyToken, uploadImg.single("image"), createItem);
 
-router.get("/", getItems);
+router.get("/", verifyToken, getItems);
 
-router.get("/search", searchItems);
+router.get("/search", verifyToken, searchItems);
 
-router.get("/:id", getItemById);
+router.get("/:id", verifyToken, getItemById);
 
-router.get("/shop/:id", getItemsByShopId);
+router.get("/shop/:shopId", verifyToken, getItemsByShopId);
 
-router.put("/:id", updateItem);
+router.put("/:id", verifyToken, uploadImg.single("image"), updateItem);
 
-router.delete("/:id", deleteItem);
+router.delete("/:id", verifyToken, deleteItem);
 
-router.post("/:id/rate", rateItem);
+router.post("/:id/rate", verifyToken, rateItem);
 
-router.post("/:id/upload-image", uploadImg.single("image"), uploadImage);
+router.post("/:id/upload-image", verifyToken, uploadImg.single("image"), uploadImage);
 
-router.post("/:id/upload-video", uploadVid.single("video"), uploadVideo);
+router.post("/:id/upload-video", verifyToken, uploadVid.single("video"), uploadVideo);
 
 export default router;

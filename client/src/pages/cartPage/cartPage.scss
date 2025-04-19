@@ -1,3 +1,6 @@
+@use 'sass:map';
+@import '../../style/pages/theme.scss';
+
 .cart-page {
     max-width: 1200px;
     margin: 0 auto;
@@ -124,7 +127,7 @@
       .item-total {
         text-align: center;
         font-size: 14px;
-        color: #ee4d2d;
+        color: #0dac02;
         font-weight: bold;
       }
   
@@ -191,12 +194,12 @@
   
           strong {
             font-size: 16px;
-            color: #ee4d2d;
+            color: #0dac02;
           }
         }
   
         .checkout-button {
-          background-color: #ee4d2d;
+          background-color: #0dac02;
           color: white;
           border: none;
           padding: 10px 20px;
@@ -206,7 +209,7 @@
           cursor: pointer;
   
           &:hover {
-            background-color: #d43c1f;
+            background-color: map.get($theme-colors, 'main');;
           }
   
           &:disabled {

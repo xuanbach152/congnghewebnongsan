@@ -12,7 +12,7 @@ import {
   AiOutlineGoogle,
   AiOutlineBell,
 } from 'react-icons/ai';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { formatter } from 'utils/formatter';
 import routers from 'utils/routers';
 import axiosInstance from 'utils/api';
@@ -23,9 +23,10 @@ const MainHeader = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [cartItemCount, setCartItemCount] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [cart, setCart] = useState(null);
   const [cartLoading, setCartLoading] = useState(false);
+  const [cartErrors, setError] = useState({});
   const [filterLocation, setFilterLocation] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterPrice, setFilterPrice] = useState('all');
@@ -33,7 +34,6 @@ const MainHeader = () => {
   const [filterTrend, setFilterTrend] = useState(false);
   const [filterSth, setFilterSth] = useState(false);
   const [user, setUser] = useState(null);
-  const navigate = useNavigate();
 
   const login = async (userName, password) => {
     try {
@@ -113,23 +113,40 @@ const MainHeader = () => {
   };
 
   const fetchCartData = async () => {
-    if (!user) return;
-    setCartLoading(true);
     try {
-      const response = await axiosInstance.get(`/cart/getcart`);
-      const cart = response.data.data;
-      const itemCount = cart?.cartItems?.length || 0;
-      const total = cart?.cartItems?.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0;
-      setCartItemCount(itemCount);
-      setCartTotal(total);
-    } catch (error) {
-      console.error('Lỗi khi tải giỏ hàng:', error.response?.data || error.message);
-      setCartItemCount(0);
-      setCartTotal(0);
+      setCartLoading(true);
+      const response = await axiosInstance.get('/cart/getcart');
+      setCart(response.data.data);
+      setError(null);
+      setSelectedItems(response.data.data.cartItems.map(item => item.itemId._id));
+    } catch (err) {
+      if (err.response?.data?.message === 'Cart not found') {
+        setCart({ cartItems: [], _id: null });
+        setSelectedItems([]);
+        setError(null);
+      } else {
+        setError(err.response?.data?.message || 'Không thể tải giỏ hàng');
+      }
     } finally {
       setCartLoading(false);
     }
-  }  
+  }; 
+
+  const cartItemCount = () => {
+    return cart?.cartItems?.length || 0;
+  };
+
+  const cartTotal = () => {
+    if (!cart?.cartItems) return 0;
+    return cart.cartItems
+      .filter(item => selectedItems.includes(item.itemId._id))
+      .reduce((total, item) => {
+        const price = Number(item.price) || 0;
+        const quantity = Number(item.quantity) || 0;
+        return total + price * quantity;
+      }, 0);
+  };
+  
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -146,25 +163,25 @@ const MainHeader = () => {
     }
   }, []);
 
-  const addToCart = async (productId, quantity = 1) => {
-    if (!user) {
-      alert('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!');
-      return;
-    }
+  // const addToCart = async (productId, quantity = 1) => {
+  //   if (!user) {
+  //     alert('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!');
+  //     return;
+  //   }
 
-    try {
-      const response = await axiosInstance.post('/cart/add', {
-        userId: user._id,
-        itemId: productId,
-        quantity,
-      });
-      alert('Sản phẩm đã được thêm vào giỏ hàng!');
-      fetchCartData(); // Cập nhật lại giỏ hàng sau khi thêm
-    } catch (error) {
-      console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error.response?.data || error.message);
-      alert('Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!');
-    }
-  };
+  //   try {
+  //     const response = await axiosInstance.post('/cart/add', {
+  //       userId: user._id,
+  //       itemId: productId,
+  //       quantity,
+  //     });
+  //     alert('Sản phẩm đã được thêm vào giỏ hàng!');
+  //     fetchCartData(); // Cập nhật lại giỏ hàng sau khi thêm
+  //   } catch (error) {
+  //     console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error.response?.data || error.message);
+  //     alert('Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!');
+  //   }
+  // };
 
   const toggleAuthModal = () => {
     setIsAuthModalOpen(!isAuthModalOpen);
@@ -257,21 +274,21 @@ const MainHeader = () => {
 
           <div className="col-xl-3">
             <div className="header_cart">
-              <div className="test_add_to_cart">
+              {/* <div className="test_add_to_cart">
                 <button onClick={() => addToCart('67e2bdb31762e4f8f670d8c0', 2)}>Thêm sản phẩm test</button>
-              </div>
+              </div> */}
               <div className="header_cart_price">
-                {cartLoading ? (<span>Đang tải...</span>) : (<span>{formatter(cartTotal)}</span>)}
+                {cartLoading ? (<span>Đang tải...</span>) : (<span>{formatter(cartTotal())}</span>)}
               </div>
               <ul>
                 <li>
                   <Link to={routers.CART}>
                     <AiOutlineShoppingCart />
-                    <span>{cartItemCount}</span>
+                    <span>{cartItemCount()}</span>
                   </Link>
                 </li>
               </ul>
-            </div>
+             </div>
           </div>
         </div>
         {/* ?...? */}

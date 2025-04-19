@@ -19,12 +19,10 @@ const itemSchema = new Schema({
   type: {
     type: String,
     enum: ItemTypeEnum,
-    required: true,
     default: ItemTypeEnum[0],
   },
   description: {
     type: String,
-    required: true,
     default: "Mô tả mặc định",
   },
   imgUrl: {
@@ -37,7 +35,6 @@ const itemSchema = new Schema({
   },
   rate: {
     type: Number,
-    required: true,
     default: 5.0,
   },
   ratings: [
@@ -61,7 +58,6 @@ const itemSchema = new Schema({
   },
   address: {
     type: String,
-    required: true,
     default: "",
   },
   Comments: [
