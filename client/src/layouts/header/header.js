@@ -1,6 +1,6 @@
-import './header.scss';
-import { memo, useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import './header.scss'
+import { memo, useEffect, useState } from 'react'
+import { jwtDecode } from 'jwt-decode'
 import {
   AiOutlineFacebook,
   AiOutlineUser,
@@ -37,12 +37,15 @@ const MainHeader = () => {
 
   const login = async (userName, password) => {
     try {
-      const response = await axiosInstance.post('/auth/login', { userName, password });
-      return response.data; 
+      const response = await axiosInstance.post('/auth/login', {
+        userName,
+        password,
+      })
+      return response.data
     } catch (error) {
-      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng nhập' };
+      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng nhập' }
     }
-  };
+  }
 
   const register = async (userName, password, phone) => {
     try {
@@ -50,9 +53,9 @@ const MainHeader = () => {
       const { user , cart } = response.data;
       return { user , cart }; 
     } catch (error) {
-      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' };
+      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' }
     }
-  };
+  }
 
   const logout = async () => {
     try {
@@ -62,21 +65,22 @@ const MainHeader = () => {
       setIsLoggedIn(false);
       alert(response.data.message || 'Đăng xuất thành công!');
     } catch (error) {
-      console.error('Logout error:', error);
-      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi đăng xuất!';
-      alert(errorMsg);
+      console.error('Logout error:', error)
+      const errorMsg =
+        error.response?.data?.message || 'Có lỗi xảy ra khi đăng xuất!'
+      alert(errorMsg)
     }
-  };
+  }
 
   const handleAuthSubmit = async (e) => {
-    e.preventDefault();
-    const userName = e.target.userName.value;
-    const password = e.target.password.value;
+    e.preventDefault()
+    const userName = e.target.userName.value
+    const password = e.target.password.value
     try {
       if (isLogin) {
         if (!userName || !password) {
-          alert('Vui lòng điền đầy đủ userName và password!');
-          return;
+          alert('Vui lòng điền đầy đủ userName và password!')
+          return
         }
         const result = await login(userName, password);
         localStorage.setItem('accessToken', result.accessToken);
@@ -85,32 +89,34 @@ const MainHeader = () => {
         setIsAuthModalOpen(false);
         fetchCartData();
       } else {
-        const confirmPassword = e.target.confirmPassword.value;
-        const phone = e.target.phone.value;
+        const confirmPassword = e.target.confirmPassword.value
+        const phone = e.target.phone.value
 
         if (!userName || !password || !confirmPassword || !phone) {
-          alert('Vui lòng điền đầy đủ các trường: userName, password, confirmPassword, phone!');
-          return;
+          alert(
+            'Vui lòng điền đầy đủ các trường: userName, password, confirmPassword, phone!'
+          )
+          return
         }
         if (password !== confirmPassword) {
-          alert('Mật khẩu không khớp!');
-          return;
+          alert('Mật khẩu không khớp!')
+          return
         }
-        const result = await register(userName, password, phone);
-        console.log('Register result:', result);
-        alert('Đăng ký thành công! Vui lòng đăng nhập.');
-        setIsLogin(true);
+        const result = await register(userName, password, phone)
+        console.log('Register result:', result)
+        alert('Đăng ký thành công! Vui lòng đăng nhập.')
+        setIsLogin(true)
       }
     } catch (error) {
-      console.error('Auth error details: ', error);
-      const errorMsg = error.message || 'Có lỗi xảy ra, vui lòng thử lại!';
-      alert(errorMsg);  
+      console.error('Auth error details: ', error)
+      const errorMsg = error.message || 'Có lỗi xảy ra, vui lòng thử lại!'
+      alert(errorMsg)
     }
-  };
+  }
 
   const handleAssistantClick = () => {
-    console.log('Gọi trợ lý ảo...');
-  };
+    console.log('Gọi trợ lý ảo...')
+  }
 
   const fetchCartData = async () => {
     try {
@@ -128,7 +134,7 @@ const MainHeader = () => {
         setError(err.response?.data?.message || 'Không thể tải giỏ hàng');
       }
     } finally {
-      setCartLoading(false);
+      setCartLoading(false)
     }
   }; 
 
@@ -149,16 +155,16 @@ const MainHeader = () => {
   
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken')
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);
-        setUser(decodedToken);
-        setIsLoggedIn(true);
-        fetchCartData();
+        const decodedToken = jwtDecode(token)
+        setUser(decodedToken)
+        setIsLoggedIn(true)
+        fetchCartData()
       } catch (error) {
-        console.error('Lỗi khi giải mã token:', error.message);
-        logout();
+        console.error('Lỗi khi giải mã token:', error.message)
+        logout()
       }
     }
   }, []);
@@ -184,12 +190,12 @@ const MainHeader = () => {
   // };
 
   const toggleAuthModal = () => {
-    setIsAuthModalOpen(!isAuthModalOpen);
-  };
+    setIsAuthModalOpen(!isAuthModalOpen)
+  }
 
   const switchAuthMode = () => {
-    setIsLogin(!isLogin);
-  };
+    setIsLogin(!isLogin)
+  }
 
   const handleLogout = async() => {
     await logout();
@@ -223,7 +229,13 @@ const MainHeader = () => {
                     </Link>
                   </div>
                 </li>
-                <li onClick={() => (isLoggedIn ? setIsDropdownOpen(!isDropdownOpen) : toggleAuthModal())}>
+                <li
+                  onClick={() =>
+                    isLoggedIn
+                      ? setIsDropdownOpen(!isDropdownOpen)
+                      : toggleAuthModal()
+                  }
+                >
                   <AiOutlineUser />
                   <span>{isAuthModalOpen ? 'Đóng' : 'Tài khoản'}</span>
                   {isLoggedIn && <AiOutlineDown className="dropdown-arrow" />}
@@ -261,10 +273,16 @@ const MainHeader = () => {
             <div className="header_search_container">
               <div className="header_search_form">
                 <form onSubmit={(e) => e.preventDefault()}>
-                  <input type="text" placeholder="Tìm kiếm sản phẩm hoặc cửa hàng..." />
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm sản phẩm hoặc cửa hàng..."
+                  />
                   <button type="submit">Tìm kiếm</button>
                 </form>
-                <div className="header_assistant_button" onClick={handleAssistantClick}>
+                <div
+                  className="header_assistant_button"
+                  onClick={handleAssistantClick}
+                >
                   <AiOutlineRocket />
                   <span>Trợ lý AI</span>
                 </div>
@@ -381,12 +399,32 @@ const MainHeader = () => {
           <div className="auth_content">
             <h2>{isLogin ? 'Đăng nhập' : 'Đăng ký'}</h2>
             <form onSubmit={handleAuthSubmit} className="auth_form">
-              <input name="userName" type="text" placeholder="Email hoặc số điện thoại" required />
-              <input name="password" type="password" placeholder="Mật khẩu" required />
+              <input
+                name="userName"
+                type="text"
+                placeholder="Tên đăng nhập"
+                required
+              />
+              <input
+                name="password"
+                type="password"
+                placeholder="Mật khẩu"
+                required
+              />
               {!isLogin && (
                 <>
-                  <input name="confirmPassword" type="password" placeholder="Xác nhận mật khẩu" required/>
-                  <input name="phone" type="text" placeholder="Số điện thoại" required/>
+                  <input
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="Xác nhận mật khẩu"
+                    required
+                  />
+                  <input
+                    name="phone"
+                    type="text"
+                    placeholder="Số điện thoại"
+                    required
+                  />
                 </>
               )}
               {/* Nút Submit */}
@@ -416,14 +454,16 @@ const MainHeader = () => {
                   <AiOutlineFacebook /> Facebook
                 </button>
                 <button type="button" className="social_button instagram">
-                  <AiOutlineInstagram/> Instagram
+                  <AiOutlineInstagram /> Instagram
                 </button>
               </div>
             </form>
 
             {/* Chuyển chế độ */}
             <p onClick={switchAuthMode} className="switch_mode">
-              {isLogin ? 'Chưa có tài khoản ? Đăng ký ngay' : 'Đã có tài khoản ? Đăng nhập'}
+              {isLogin
+                ? 'Chưa có tài khoản ? Đăng ký ngay'
+                : 'Đã có tài khoản ? Đăng nhập'}
             </p>
 
             {/* Nút đóng */}
@@ -434,7 +474,7 @@ const MainHeader = () => {
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default memo(MainHeader);
+export default memo(MainHeader)

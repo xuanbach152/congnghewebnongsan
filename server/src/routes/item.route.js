@@ -23,7 +23,7 @@ router.get("/search", verifyToken, searchItems);
 
 router.get("/:id", verifyToken, getItemById);
 
-router.get("/shop/:shopId", verifyToken, getItemsByShopId);
+router.get("/shop/:shopId", getItemsByShopId);
 
 router.put("/:id", verifyToken, uploadImg.single("image"), updateItem);
 

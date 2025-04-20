@@ -16,83 +16,87 @@ const ProfilePage = ({ userId }) => {
 
   // Validation rules
   const validateForm = () => {
-    const newErrors = {};
-    if (!userData.userName.trim()) newErrors.userName = 'Tên người dùng không được để trống';
-    if (!userData.email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) newErrors.email = 'Email không hợp lệ';
-    if (!userData.phone.match(/^\d{10}$/)) newErrors.phone = 'Số điện thoại phải là 10 chữ số';
-    if (!userData.address.trim()) newErrors.address = 'Địa chỉ không được để trống';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    const newErrors = {}
+    if (!userData.userName.trim())
+      newErrors.userName = 'Tên người dùng không được để trống'
+    if (!userData.email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/))
+      newErrors.email = 'Email không hợp lệ'
+    if (!userData.phone.match(/^\d{10}$/))
+      newErrors.phone = 'Số điện thoại phải là 10 chữ số'
+    if (!userData.address.trim())
+      newErrors.address = 'Địa chỉ không được để trống'
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   // Fetch user data
   const fetchUserData = async () => {
     if (!userId) {
-      setErrors({ fetch: 'Không có ID người dùng' });
-      return;
+      setErrors({ fetch: 'Không có ID người dùng' })
+      return
     }
-    setLoading(true);
+    setLoading(true)
     try {
       const response = await fetch(`/api/users/${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-      });
-      const result = await response.json();
+      })
+      const result = await response.json()
       if (result.code === 200) {
         setUserData({
           userName: result.data.userName || '',
           email: result.data.email || '',
           phone: result.data.phone || '',
           address: result.data.address || '',
-        });
+        })
       } else {
-        setErrors({ fetch: result.message || 'Không thể tải thông tin' });
+        setErrors({ fetch: result.message || 'Không thể tải thông tin' })
       }
     } catch (err) {
-      setErrors({ fetch: 'Lỗi kết nối server' });
+      setErrors({ fetch: 'Lỗi kết nối server' })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+    e.preventDefault()
+    if (!validateForm()) return
 
-    setLoading(true);
+    setLoading(true)
     try {
       const response = await fetch(`/api/users/${userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
-      });
-      const result = await response.json();
+      })
+      const result = await response.json()
       if (result.code === 200) {
-        setSuccess(true);
+        setSuccess(true)
         setTimeout(() => {
-          setSuccess(false);
-        }, 2000);
+          setSuccess(false)
+        }, 2000)
       } else {
-        setErrors({ submit: result.message || 'Cập nhật thất bại' });
+        setErrors({ submit: result.message || 'Cập nhật thất bại' })
       }
     } catch (err) {
-      setErrors({ submit: 'Có lỗi xảy ra khi cập nhật' });
+      setErrors({ submit: 'Có lỗi xảy ra khi cập nhật' })
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   // Handle input changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData({ ...userData, [name]: value });
-    setErrors({ ...errors, [name]: '' });
-  };
+    const { name, value } = e.target
+    setUserData({ ...userData, [name]: value })
+    setErrors({ ...errors, [name]: '' })
+  }
 
   useEffect(() => {
-    if (userId) fetchUserData();
-  }, [userId]);
+    if (userId) fetchUserData()
+  }, [userId])
 
   return (
     <div className="container profile_page_container">
@@ -116,7 +120,9 @@ const ProfilePage = ({ userId }) => {
         <form onSubmit={handleSubmit} className="profile_form">
           {/* UserName */}
           <div className="form_group">
-            <label>Tên người dùng <span className="required">*</span></label>
+            <label>
+              Tên người dùng <span className="required">*</span>
+            </label>
             <div className="input_wrapper">
               <AiOutlineUser className="input_icon" />
               <input
@@ -137,7 +143,9 @@ const ProfilePage = ({ userId }) => {
 
           {/* Email */}
           <div className="form_group">
-            <label>Email <span className="required">*</span></label>
+            <label>
+              Email <span className="required">*</span>
+            </label>
             <div className="input_wrapper">
               <AiOutlineMail className="input_icon" />
               <input
@@ -158,7 +166,9 @@ const ProfilePage = ({ userId }) => {
 
           {/* Phone */}
           <div className="form_group">
-            <label>Số điện thoại <span className="required">*</span></label>
+            <label>
+              Số điện thoại <span className="required">*</span>
+            </label>
             <div className="input_wrapper">
               <AiOutlinePhone className="input_icon" />
               <input
@@ -179,7 +189,9 @@ const ProfilePage = ({ userId }) => {
 
           {/* Address */}
           <div className="form_group">
-            <label>Địa chỉ <span className="required">*</span></label>
+            <label>
+              Địa chỉ <span className="required">*</span>
+            </label>
             <div className="input_wrapper">
               <AiOutlineHome className="input_icon" />
               <textarea
@@ -199,7 +211,9 @@ const ProfilePage = ({ userId }) => {
 
           {/* sth */}
           <div className="form_group">
-            <label>Sth <span className="required"></span></label>
+            <label>
+              Sth <span className="required"></span>
+            </label>
             <div className="input_wrapper">
               <textarea
                 name="sth"
@@ -235,7 +249,7 @@ const ProfilePage = ({ userId }) => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default memo(ProfilePage);
+export default memo(ProfilePage)

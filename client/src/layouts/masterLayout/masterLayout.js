@@ -1,11 +1,12 @@
 import { memo } from 'react'
 import Header from '../header/header'
 import Footer from '../footer/footer'
+import './masterLayout.scss'
 const MasterLayout = ({ children, ...props }) => {
   return (
-    <div {...props}>
+    <div className="master-layout" {...props}>
       <Header />
-      {children}
+      <div className="main-content">{children}</div>
       <Footer />
     </div>
   )

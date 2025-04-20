@@ -7,11 +7,12 @@ import cloudinary from "../configs/cloudinary.config.js";
 
 const createItem = async (itemData) => {
   try {
+    console.log(itemData);
     const shop = await ShopModel.findById(itemData.shopId);
     if (!shop) {
       throw new Error("Shop not found");
     }
-
+    itemData.address = shop.address;
     const newItem = await ItemModel.create(itemData);
     return newItem;
   } catch (error) {
@@ -97,6 +98,7 @@ const deleteItem = async (itemId) => {
     throw error;
   }
 };
+
 const rateItem = async (itemId, userId, rating) => {
   try {
     console.log("Item ID:", itemId);
