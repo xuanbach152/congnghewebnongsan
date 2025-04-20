@@ -2,8 +2,12 @@ import OrderModel from "../models/order.model.js";
 import { throwBadRequest } from "../utils/error.util.js";
 import Message from "../utils/message.js";
 import distanceService from "../utils/distance.utils.js";
+import CartModel from "../models/cart.model.js";
+import CartService from "./cart.service.js";
+import { PaginationEnum } from "../utils/constant.js";
 
-const createOrder = async (userId, deliveryAddress, paymentMethod) => {
+
+const createOrder = async (userId, deliveryAddress, paymentMethod, deliveryType) => {
   try {
     const cart = await CartModel.findOne({ userId }).populate(
       "cartItems.itemId",
@@ -29,6 +33,9 @@ const createOrder = async (userId, deliveryAddress, paymentMethod) => {
       userId,
       items: cart.cartItems.map((cartItem) => ({
         itemId: cartItem.itemId._id,
+        name: cartItem.itemId.name, 
+        price: cartItem.itemId.price, 
+        type: cartItem.itemId.type, 
         quantity: cartItem.quantity,
       })),
       totalPrice,
@@ -36,10 +43,11 @@ const createOrder = async (userId, deliveryAddress, paymentMethod) => {
       totalPaymentAmount,
       deliveryAddress,
       paymentMethod,
+      deliveryType,
       paymentStatus: "PENDING",
     });
 
-    await CartModel.findOneAndDelete({ userId });
+    await CartService.clearCart(userId);
 
     return newOrder;
   } catch (error) {
@@ -59,6 +67,7 @@ const cancelOrder = async (orderId) => {
     }
     order.paymentStatus = "CANCELLED";
     await order.save();
+    await CartService.clearCart(order.userId);
     return order;
   } catch (error) {
     console.error("Error in cancelOrder:", error.message);
@@ -66,9 +75,9 @@ const cancelOrder = async (orderId) => {
   }
 };
 
-const getOrderById = async (OrderId) => {
-  const Order = await OrderModel.findById(OrderId);
-  throwBadRequest(!Order, Message.OrderNotFound);
+const getOrderById = async (orderId) => {
+  const order = await OrderModel.findById(orderId);
+  throwBadRequest(!order, Message.OrderNotFound);
   return Order;
 };
 

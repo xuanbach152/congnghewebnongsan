@@ -5,9 +5,13 @@ import { PaginationEnum } from "../utils/constant.js";
 // Create a new Order
 export const createOrder = async (req, res) => {
   try {
-    const { deliveryAddress, paymentMethod } = req.body;
+    const { deliveryAddress, paymentMethod,deliveryType } = req.body;
     const userId = req.user.id;
-    if (!userId || !deliveryAddress || !paymentMethod) {
+    console.log("User ID:", userId); 
+    console.log("Delivery Address:", deliveryAddress); 
+    console.log("Payment Method:", paymentMethod); 
+    console.log("Delivery Type:", deliveryType);
+    if (!userId || !deliveryAddress || !paymentMethod || !deliveryType) {
       return res.status(400).send({
         code: 400,
         message: "Missing required fields",
@@ -18,6 +22,7 @@ export const createOrder = async (req, res) => {
       userId,
       deliveryAddress,
       paymentMethod,
+      deliveryType,
     );
     res.status(201).send({
       code: 201,

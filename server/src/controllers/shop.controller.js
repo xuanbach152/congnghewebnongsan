@@ -3,13 +3,15 @@ import httpStatus from "http-status";
 import Message from "../utils/message.js";
 import { PaginationEnum } from "../utils/constant.js";
 import ItemService from "../services/item.service.js";
+import { uploadToCloudinary } from "../utils/file.util.js";
 // Create a new Shop
 export const createShop = async (req, res) => {
   try {
     const { shopName: name, address } = req.body;
     const userId = req.user.id;
     const image = req.file;
-    const newShop = await ShopService.createShop({ name, address, userId, image });
+    const imgUrl = await uploadToCloudinary(image);
+    const newShop = await ShopService.createShop({ name, address, userId, image: { path: imgUrl } });
     res.status(httpStatus.CREATED).send({
       code: httpStatus.CREATED,
       message: Message.ShopCreated,
@@ -46,7 +48,7 @@ export const searchShops = async (req, res) => {
 // Get all Shops
 export const getShops = async (req, res) => {
   try {
-    const { page } = req.query; //lấy page từ query params
+    const { page } = req.query; 
     const { sortField, sortType } = req.query;
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
     const Shops = await ShopService.getShops(page, limit, sortField, sortType);
@@ -85,11 +87,11 @@ export const getShopById = async (req, res) => {
 // Update an Shop by ID
 export const updateShop = async (req, res) => {
   try {
-    const updateShop = await ShopService.updateShop(req.params.id, req.body);
+    const updatedShop = await ShopService.updateShop(req.params.id, req.body);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.ShopUpdated,
-      data: updateShop,
+      data: updatedShop,
     });
   } catch (error) {
     console.log(error);
@@ -123,7 +125,7 @@ export const uploadImage = async (req, res) => {
     console.log("Request body:", req.body);
     console.log("File received:", JSON.stringify(req.file, null, 2));
 
-    const imgUrl = await ItemService.uploadImageToCloudinary(req.file);
+    const imgUrl = await uploadToCloudinary(req.file);
     console.log("Image uploaded to Cloudinary:", imgUrl);
 
     const updatedItem = await ItemService.saveImageToDatabase(
@@ -179,28 +181,12 @@ export const getRevenueByMonth = async (req, res) => {
   }
 };
 
-export const getItemsByShopId = async (req, res) => {
-  try {
-    const shopid = req.params.id;
-    const items = await ShopService.getItemsByShopId(shopid);
-    res.status(httpStatus.OK).send({
-      code: httpStatus.OK,
-      message: "Items retrieved successfully",
-      data: items,
-    });
-  } catch (error) {
-    console.error("Error in getItemByShopId:", error.message);
-    res.status(500).send({
-      code: 500,
-      message: error.message || "Failed to retrieve items",
-    });
-  }
-};
-
 export const getShopsByUserId = async (req, res) => {
   try {
     const userId = req.user.id;
-    const shop = await ShopService.getShopsByUserId(userId);
+
+    const { page = 1, limit = 10, sortField = "createdAt", sortType = "desc" } = req.query;
+    const shop = await ShopService.getShopsByUserId(userId, page, limit, sortField, sortType);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: "Danh sách cửa hàng lấy thành công",

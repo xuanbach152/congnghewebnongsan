@@ -90,3 +90,11 @@ export const verifyToken = (req, res, next) => {
     return res.status(403).json({ message: "Token không hợp lệ" });
   }
 };
+
+export const verifyRefreshToken = (token) => {
+  try {
+    return jwt.verify(token, process.env.JWT_REFRESH_SECRET); // Sử dụng JWT_REFRESH_SECRET
+  } catch (error) {
+    throw new Error("Refresh Token không hợp lệ hoặc đã hết hạn");
+  }
+};
