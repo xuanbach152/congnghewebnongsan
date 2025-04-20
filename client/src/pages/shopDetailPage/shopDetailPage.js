@@ -1,11 +1,11 @@
 import { memo, useEffect, useState } from 'react'
-import './shopPage.scss'
+import './shopDetailPage.scss'
 import { Link, useParams } from 'react-router-dom'
 import routers from 'utils/routers'
 import axios from 'axios'
 import { FaAngleRight, FaBox, FaEdit } from 'react-icons/fa'
 
-const ShopPage = () => {
+const ShopDetailPage = () => {
   const { shopId } = useParams()
   const [shop, setShop] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -82,4 +82,4 @@ const ShopPage = () => {
   )
 }
 
-export default memo(ShopPage)
+export default memo(ShopDetailPage)

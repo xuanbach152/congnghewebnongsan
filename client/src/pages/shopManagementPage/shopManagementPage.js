@@ -56,7 +56,7 @@ const ShopManagementPage = () => {
             ) : shops.length > 0 ? (
               <>
                 {shops.map((shop) => (
-                  <Link key={shop._id} to={routers.getShopPath(shop._id)}>
+                  <Link key={shop._id} to={routers.getShopDetailPath(shop._id)}>
                     <div className="shop">
                       <div className="shop-image">
                         <img src={shop.imgUrl} alt={shop.name} />

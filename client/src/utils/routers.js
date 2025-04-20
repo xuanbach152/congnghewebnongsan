@@ -7,8 +7,10 @@ const routers = {
   ITEM_CREATION: '/shop-management/item-creation',
   ITEM: '/shop-management/:shopId/item',
   getItemShopPath: (shopId) => `/shop-management/${shopId}/item`,
-  SHOP: '/shop-management/:shopId',
-  getShopPath: (shopId) => `/shop-management/${shopId}`,
+  SHOP_DETAIL: '/shop/:shopId',
+  getShopDetailPath: (shopId) => `/shop/${shopId}`,
+  ITEM_DETAIL: '/item/:itemId',
+  getItemDetailPath: (itemId) => `/item/${itemId}`,
 }
 
 export default routers
