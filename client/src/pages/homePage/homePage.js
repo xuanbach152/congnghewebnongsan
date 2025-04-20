@@ -5,6 +5,7 @@ import routers from 'utils/routers'
 import { default as axiosInstance } from 'utils/api'
 import ArrowPagination from 'layouts/arrowPagination/arrowPagination'
 import { FaStar } from 'react-icons/fa'
+import { formatter } from 'utils/formatter'
 
 const HomePage = () => {
   const [shops, setShops] = useState([])
@@ -90,7 +91,7 @@ const HomePage = () => {
                           </div>
                           <div className="item-info">
                             <div className="item-name">{item.name}</div>
-                            <div className="item-price">Đơn giá: {item.price}</div>
+                            <div className="item-price">Đơn giá: {formatter(item.price)}</div>
                             <div className="item-type">Loại hàng: {item.type}</div>
                             <div className="item-rate">
                               Đánh giá: {item.rate}

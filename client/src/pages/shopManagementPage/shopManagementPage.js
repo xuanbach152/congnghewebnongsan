@@ -16,10 +16,9 @@ const ShopManagementPage = () => {
       setLoading(true)
       try {
         const response = await axiosInstance.get(
-          `http://localhost:3000/shop/user`
+          `http://localhost:3000/shop/user?page=${currentPage}`
         )
-        const shops = response.data.data;
-        setTotalPages(totalPages)
+        const { data: shops, totalPages } = response.data;
         setShops(shops)
       } catch (error) {
         console.error(
@@ -56,7 +55,7 @@ const ShopManagementPage = () => {
             ) : shops.length > 0 ? (
               <>
                 {shops.map((shop) => (
-                  <Link key={shop._id} to={routers.getShopDetailPath(shop._id)}>
+                  <Link key={shop._id} to={routers.getMyShopPath(shop._id)}>
                     <div className="shop">
                       <div className="shop-image">
                         <img src={shop.imgUrl} alt={shop.name} />

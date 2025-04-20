@@ -3,11 +3,17 @@ import './itemDetailPage.scss'
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { FaCartPlus, FaStar } from 'react-icons/fa'
+import { formatter } from 'utils/formatter'
 
 const ItemDetailPage = () => {
     const { itemId } = useParams()
     const [item, setItem] = useState(null)
-    const [loading, setLoading] = useState(true)
+    const [quantity, setQuantity] = useState(1);
+
+    const handleQuantityChange = (e) => {
+        const value = Math.max(1, parseInt(e.target.value) || 1);
+        setQuantity(value);
+    };
 
     useEffect(() => {
         axios
@@ -17,9 +23,6 @@ const ItemDetailPage = () => {
             })
             .catch((error) => {
                 console.error('Error fetching item data:', error)
-            })
-            .finally(() => {
-                setLoading(false)
             })
     }, [itemId])
 
@@ -45,19 +48,31 @@ const ItemDetailPage = () => {
                                     <div>
                                         <strong>Tên sản phẩm: </strong> {item.name}
                                     </div>
-                                    <div className="item-price"><strong>Đơn giá: </strong> {item.price}</div>
+                                    <div className="item-price"><strong>Đơn giá: </strong> {formatter(item.price)}</div>
                                     <div className="item-type"><strong>Loại hàng: </strong> {item.type}</div>
                                     <div className="item-rate">
                                         <strong>Đánh giá:</strong> {item.rate}
                                         <FaStar
                                             color="gold"
                                             size={14}
-                                            style={{ marginBottom: '4px' }}
+                                            style={{ marginTop: '2px' }}
                                         />
                                     </div>
                                     <div>
                                         <strong>Mô tả: </strong>
                                         {item.description || 'Không có mô tả'}
+                                    </div>
+                                    <div className="item-quantity">
+                                        <strong>Số lượng mua: </strong>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            value={quantity}
+                                            onChange={handleQuantityChange}
+                                        />
+                                    </div>
+                                    <div className="item-total-price">
+                                        <strong>Tổng tiền: </strong> {formatter(quantity * item.price)}
                                     </div>
                                     <div className="item-actions">
                                         <Link

@@ -1,14 +1,20 @@
 import { memo, useEffect, useState } from 'react'
 import './shopDetailPage.scss'
 import { Link, useParams } from 'react-router-dom'
-import routers from 'utils/routers'
 import axios from 'axios'
-import { FaAngleRight, FaBox, FaEdit } from 'react-icons/fa'
+import { FaBox, FaEdit, FaStar } from 'react-icons/fa'
+import axiosInstance from 'utils/api'
+import Pagination from 'layouts/pagination/pagination'
+import routers from 'utils/routers'
+import { formatter } from 'utils/formatter'
 
 const ShopDetailPage = () => {
   const { shopId } = useParams()
   const [shop, setShop] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [items, setItems] = useState([])
+  const [itemTotalPages, setItemTotalPages] = useState(5)
+  const [itemCurrentPage, setItemCurrentPage] = useState(1)
+  const [itemLoading, setItemLoading] = useState(false)
 
   useEffect(() => {
     axios
@@ -19,27 +25,38 @@ const ShopDetailPage = () => {
       .catch((error) => {
         console.error('Error fetching shop data:', error)
       })
-      .finally(() => {
-        setLoading(false)
-      })
   }, [shopId])
+
+  useEffect(() => {
+    const fetchItems = async () => {
+      setItemLoading(true)
+      try {
+        const response = await axiosInstance.get(
+          `http://localhost:3000/item/shop/${shopId}/?page=${itemCurrentPage}`
+        )
+        const { items, totalPages } = response.data.data
+        setItemTotalPages(totalPages)
+        setItems(items)
+      } catch (error) {
+        console.error(
+          'Error fetching item data:',
+          error.response?.data || error.message
+        )
+      } finally {
+        setItemLoading(false)
+      }
+    }
+
+    fetchItems()
+  }, [itemCurrentPage, shopId])
 
   return (
     <div className="shop-information-management">
       <div className="container">
-        <div className="navigation">
-          <Link to={routers.SHOP_MANAGEMENT} className="nav-shop-management">
-            Quản lý cửa hàng
-          </Link>
-          <FaAngleRight className="nav-icon" />
-          <Link className="nav-shop-information">Thông tin cửa hàng</Link>
-        </div>
-
         <div className="shop-information">
           <div className="shop-information-title">
             <div className="title-text">Thông tin cửa hàng</div>
           </div>
-
           {shop && (
             <>
               <div className="shop-detail">
@@ -51,31 +68,86 @@ const ShopDetailPage = () => {
 
                 <div className="shop-content">
                   <div>
-                    <strong>Tên cửa hàng:</strong> {shop.name}
+                    <strong>Tên cửa hàng: </strong> {shop.name}
+                  </div>
+                  <div className="shop-address">
+                    <strong>Địa chỉ: </strong>
+                    {shop.address}
+                  </div>
+                  <div className="shop-phone">
+                    <strong>Số điện thoại: </strong>
+                    {shop.phone || '0987654321'}
+                  </div>
+                  <div className="shop-rate">
+                    <strong>Đánh giá:</strong> {shop.rate}
+                    <FaStar
+                      color="gold"
+                      size={14}
+                      style={{ marginTop: '2px' }}
+                    />
                   </div>
                   <div>
-                    <strong>Địa chỉ:</strong> {shop.address}
-                  </div>
-                  <div>
-                    <strong>Mô tả:</strong>{' '}
+                    <strong>Mô tả: </strong>
                     {shop.description || 'Không có mô tả'}
                   </div>
                 </div>
               </div>
-
-              <div className="shop-actions">
-                <Link
-                  to={`/shop-management/${shop.id}/edit`}
-                  className="btn btn-edit"
-                >
-                  <FaEdit /> Chỉnh sửa
-                </Link>
-                <Link to={`/item`} className="btn btn-view">
-                  <FaBox /> Xem sản phẩm
-                </Link>
-              </div>
             </>
           )}
+
+          <div class="divider"></div>
+
+          <div className="item-list">
+            <div className="item-list-title">
+              <div className="title-text">Sản phẩm trong cửa hàng</div>
+            </div>
+            {itemLoading ? (
+              <p>Đang tải dữ liệu...</p>
+            ) : items.length > 0 ? (
+              <>
+                <div className="item-grid-wrapper">
+                  <div className="item-grid">
+                    {items.map((item) => (
+                      <Link
+                        key={item._id}
+                        to={routers.getItemDetailPath(item._id)}
+                      >
+                        <div className="item">
+                          <div className="item-image">
+                            <img src={item.imgUrl} alt={item.name} />
+                          </div>
+                          <div className="item-info">
+                            <div className="item-name">{item.name}</div>
+                            <div className="item-price">
+                              Đơn giá: {formatter(item.price)}
+                            </div>
+                            <div className="item-type">
+                              Loại hàng: {item.type}
+                            </div>
+                            <div className="item-rate">
+                              Đánh giá: {item.rate}
+                              <FaStar
+                                color="gold"
+                                size={14}
+                                style={{ marginTop: '1px' }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  <Pagination
+                    totalPages={itemTotalPages}
+                    currentPage={itemCurrentPage}
+                    onPageChange={setItemCurrentPage}
+                  />
+                </div>
+              </>
+            ) : (
+              <p>Hiện chưa có sản phẩm nào</p>
+            )}
+          </div>
         </div>
       </div>
     </div>

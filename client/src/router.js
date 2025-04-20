@@ -8,6 +8,7 @@ import ShopRegistrationPage from 'pages/shopRegistrationPage/shopRegistrationPag
 import ItemPage from 'pages/itemPage/itemPage'
 import ItemDetailPage from 'pages/itemDetailPage/itemDetailPage'
 import ShopDetailPage from 'pages/shopDetailPage/shopDetailPage'
+import MyShopPage from 'pages/myShopPage/myShopPage'
 
 const renderRouter = () => {
   const allRouters = [
@@ -42,7 +43,11 @@ const renderRouter = () => {
     {
       path: routers.ITEM_DETAIL,
       component: <ItemDetailPage />,
-    }
+    },
+    {
+      path: routers.MY_SHOP,
+      component: <MyShopPage />,
+    },
   ]
 
   return (
