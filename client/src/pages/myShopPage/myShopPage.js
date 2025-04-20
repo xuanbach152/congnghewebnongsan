@@ -126,13 +126,12 @@ const MyShopPage = () => {
                       <th>Giá</th>
                       <th>Loại</th>
                       <th>Số lượng</th>
-                      <th>Địa chỉ</th>
                       <th>Lựa chọn</th>
                     </tr>
                   </thead>
                   <tbody>
                     {items.map((item) => (
-                      <tr key={item._id} className="item-row">
+                      <tr key={item._id} className="item-row" onClick={() => navigate(routers.getItemDetailPath(item._id))}>
                         <td>
                           <img src={item.imgUrl} alt={item.name} className="item-img" />
                         </td>
@@ -140,7 +139,6 @@ const MyShopPage = () => {
                         <td>{item.price}</td>
                         <td>{item.type}</td>
                         <td>{item.quantity}</td>
-                        <td>{item.address}</td>
                         <td>
                           <div className="action-icons">
                             <FaEdit
@@ -160,9 +158,6 @@ const MyShopPage = () => {
                   </tbody>
                 </table>
               </div>
-
-
-
             </>
           )}
         </div>
