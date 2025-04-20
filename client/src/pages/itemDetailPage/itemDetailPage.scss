@@ -1,0 +1,114 @@
+@use 'sass:map';
+@import '../../style/pages/theme.scss';
+
+.item-information-management {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-bottom: 5px;
+
+  .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .item-information {
+      position: relative;
+      flex: 1;
+      padding: 10px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .item-information-title {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 5px;
+
+        .title-text {
+          color: rgb(8, 15, 157);
+          font-size: 25px;
+          font-weight: bold;
+        }
+      }
+
+      .item-detail {
+        display: flex;
+        gap: 24px;
+      }
+
+      .item-image img {
+        width: 310px;
+        height: 310px;
+        object-fit: cover;
+        border-radius: 8px;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        border: 2px solid #4f05be;
+      }
+
+      .item-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        font-size: 15px;
+
+        strong {
+          color: #333;
+        }
+
+        .item-price,
+        .item-type,
+        .item-rate,
+        .item-quantity,
+        .item-total-price {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
+
+        .item-quantity input {
+          width: 60px;
+          padding: 5px;
+          margin-left: 10px;
+          border-radius: 6px;
+          border: 1px solid #ccc;
+          text-align: center;
+        }
+
+        .item-total-price {
+          color: #ff2200;
+        }
+
+        .item-actions {
+          margin-top: 15px;
+
+          .btn.add-to-cart {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #4818d9;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: 0.2s ease;
+
+            &:hover {
+              background: #2f08a4;
+              transform: translateY(-2px);
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
+          }
+        }
+      }
+    }
+  }
+}

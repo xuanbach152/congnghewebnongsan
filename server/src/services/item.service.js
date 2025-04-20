@@ -7,6 +7,7 @@ import cloudinary from "../configs/cloudinary.config.js";
 
 const createItem = async (itemData) => {
   try {
+    console.log(itemData);
     const shop = await ShopModel.findById(itemData.shopId);
     if (!shop) {
       throw new Error("Shop not found");

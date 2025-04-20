@@ -6,7 +6,9 @@ import ShopManagementPage from 'pages/shopManagementPage/shopManagementPage'
 import ItemCreationPage from 'pages/itemCreationPage/itemCreationPage'
 import ShopRegistrationPage from 'pages/shopRegistrationPage/shopRegistrationPage'
 import ItemPage from 'pages/itemPage/itemPage'
-import ShopPage from 'pages/shopPage/shopPage'
+import ItemDetailPage from 'pages/itemDetailPage/itemDetailPage'
+import ShopDetailPage from 'pages/shopDetailPage/shopDetailPage'
+import MyShopPage from 'pages/myShopPage/myShopPage'
 
 const renderRouter = () => {
   const allRouters = [
@@ -35,8 +37,16 @@ const renderRouter = () => {
       component: <ItemPage />,
     },
     {
-      path: routers.SHOP,
-      component: <ShopPage />,
+      path: routers.SHOP_DETAIL,
+      component: <ShopDetailPage />,
+    },
+    {
+      path: routers.ITEM_DETAIL,
+      component: <ItemDetailPage />,
+    },
+    {
+      path: routers.MY_SHOP,
+      component: <MyShopPage />,
     },
   ]
 

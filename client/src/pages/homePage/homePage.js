@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import routers from 'utils/routers'
 import { default as axiosInstance } from 'utils/api'
 import ArrowPagination from 'layouts/arrowPagination/arrowPagination'
+import { FaStar } from 'react-icons/fa'
+import { formatter } from 'utils/formatter'
 
 const HomePage = () => {
   const [shops, setShops] = useState([])
@@ -82,14 +84,23 @@ const HomePage = () => {
                   />
                   <div className="item-grid">
                     {items.map((item) => (
-                      <Link key={item._id} to={routers.ITEM}>
+                      <Link key={item._id} to={routers.getItemDetailPath(item._id)}>
                         <div className="item">
                           <div className="item-image">
                             <img src={item.imgUrl} alt={item.name} />
                           </div>
                           <div className="item-info">
                             <div className="item-name">{item.name}</div>
-                            <div className="item-description">{item.description}</div>
+                            <div className="item-price">Đơn giá: {formatter(item.price)}</div>
+                            <div className="item-type">Loại hàng: {item.type}</div>
+                            <div className="item-rate">
+                              Đánh giá: {item.rate}
+                              <FaStar
+                                color="gold"
+                                size={14}
+                                style={{ marginTop: '1px' }}
+                              />
+                            </div>
                           </div>
                         </div>
                       </Link>
@@ -118,14 +129,14 @@ const HomePage = () => {
                   />
                   <div className="shop-grid">
                     {shops.map((shop) => (
-                      <Link key={shop._id} to={routers.getShopPath(shop._id)}>
+                      <Link key={shop._id} to={routers.getShopDetailPath(shop._id)}>
                         <div className="shop">
                           <div className="shop-image">
                             <img src={shop.imgUrl} alt={shop.name} />
                           </div>
                           <div className="shop-info">
                             <div className="shop-name">{shop.name}</div>
-                            <div className="shop-address">{shop.address}</div>
+                            <div className="shop-address">Địa chỉ: {shop.address}</div>
                           </div>
                         </div>
                       </Link>
