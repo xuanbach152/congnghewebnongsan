@@ -17,11 +17,11 @@ const router = express.Router();
 
 router.post("/", verifyToken, uploadImg.single("image"), createItem);
 
-router.get("/", getItems);
+router.get("/", verifyToken, getItems);
 
 router.get("/search", verifyToken, searchItems);
 
-router.get("/:id", getItemById);
+router.get("/:id", verifyToken, getItemById);
 
 router.get("/shop/:shopId", getItemsByShopId);
 

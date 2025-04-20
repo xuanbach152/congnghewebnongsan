@@ -1,7 +1,10 @@
 const routers = {
   HOME: '',
-  PROFILE: '/profile',
-  PRODUCTS: '/products',
+  PROFILE: 'profile',
+  CART: 'cart',
+  PRODUCTS: 'products',
+  CHECKOUT: 'checkout',
+  ORDER_HISTORY: 'order/history',
   SHOP_MANAGEMENT: '/shop-management',
   SHOP_REGISTRATION: '/shop-registration',
   ITEM_CREATION: '/shop-management/:shopId/item-creation',

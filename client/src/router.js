@@ -1,7 +1,10 @@
 import { Routes, Route } from 'react-router-dom'
 import HomePage from './pages/homePage/homePage'
 import ProfilePage from './pages/profilePage/profilePage'
+import CartPage from './pages/cartPage/cartPage'
 import routers from './utils/routers'
+import CheckoutPage from 'pages/checkoutPage/checkoutPage'
+import OrderHistoryPage from 'pages/orderHistoryPage/orderHistoryPage'
 import ShopManagementPage from 'pages/shopManagementPage/shopManagementPage'
 import ItemCreationPage from 'pages/itemCreationPage/itemCreationPage'
 import ShopRegistrationPage from 'pages/shopRegistrationPage/shopRegistrationPage'
@@ -19,6 +22,18 @@ const renderRouter = () => {
     {
       path: routers.PROFILE,
       component: <ProfilePage />,
+    },
+    {
+      path: routers.CART,
+      component: <CartPage />,
+    },
+    {
+      path: routers.CHECKOUT,
+      component: <CheckoutPage />,
+    },
+    {
+      path: routers.ORDER_HISTORY,
+      component: <OrderHistoryPage />,
     },
     {
       path: routers.SHOP_MANAGEMENT,
