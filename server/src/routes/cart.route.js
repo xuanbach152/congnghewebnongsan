@@ -1,8 +1,9 @@
 import express from "express";
 import {
   createCart,
-  getCart,
-  getCartById,
+  getAllCarts,
+  getCartUser,
+
   addToCart,
   removeCartItem,
   updateCartItem,
@@ -17,7 +18,7 @@ router.post("/add", verifyToken, addToCart);
 router.put("/update", verifyToken, updateCartItem);
 router.delete("/remove", verifyToken, removeCartItem);
 router.delete("/clear", verifyToken, clearCart);
-router.get("/getcart", verifyToken, getCart);
-router.get("/:id", verifyToken, getCartById);
-router.delete("/:id", verifyToken, deleteCart);
+router.get("/", verifyToken, getAllCarts);
+router.get("/getcart", verifyToken, getCartUser);
+router.delete("/delete", verifyToken, deleteCart);
 export default router;

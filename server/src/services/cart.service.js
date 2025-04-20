@@ -7,14 +7,28 @@ const createCart = async (CartData) => {
   const newCart = await CartModel.create(CartData);
   return newCart;
 };
-const addToCart = async (cartId, itemId, quantity) => {
+
+const getAllCarts = async (page , limit ) => {
+  const skip = (page - 1) * limit;
+  const carts = await CartModel.find().skip(skip).limit(limit).exec();
+  const totalCarts = await CartModel.countDocuments();
+  const totalPages = Math.ceil(totalCarts / limit);
+  return {
+    carts,
+    totalCarts,
+    totalPages,
+    currentPage: parseInt(page),
+  };
+};
+
+const addToCart = async (userId, itemId, quantity) => {
   try {
     const item = await ItemModel.findById(itemId);
     if (!item) {
       throw new Error("Item not found");
     }
 
-    let cart = await CartModel.findOne({ _id: cartId });
+    let cart = await CartModel.findOne({ userId: userId });
     if (!cart) {
       throw new Error("Cart not found");
     }
@@ -45,9 +59,9 @@ const addToCart = async (cartId, itemId, quantity) => {
     throw error;
   }
 };
-const updateCartItem = async (cartId, itemId, quantity) => {
+const updateCartItem = async (userId, itemId, quantity) => {
   try {
-    const cart = await CartModel.findOne({ _id: cartId });
+    const cart = await CartModel.findOne({ userId: userId });
     if (!cart) {
       throw new Error("Cart not found");
     }
@@ -75,13 +89,8 @@ const updateCartItem = async (cartId, itemId, quantity) => {
   }
 };
 
-const getCartById = async (CartId) => {
-  const Cart = await CartModel.findById(CartId);
-  throwBadRequest(!Cart, Message.CartNotFound);
-  return Cart;
-};
 
-const getCart = async (userId) => {
+const getCartUser = async (userId) => {
   try {
     const cart = await CartModel.findOne({ userId }).populate({
       path: "cartItems.itemId",
@@ -94,13 +103,13 @@ const getCart = async (userId) => {
 
     return cart;
   } catch (error) {
-    console.error("Error in getCart:", error.message);
+    console.error("Error in getCartUser:", error.message);
     throw error;
   }
 };
-const clearCart = async (cartId) => {
+const clearCart = async (userId) => {
   try {
-    const cart = await CartModel.findOne({ _id: cartId });
+    const cart = await CartModel.findOne({ userId: userId });
     if (!cart) {
       throw new Error("Cart not found");
     }
@@ -115,9 +124,9 @@ const clearCart = async (cartId) => {
     throw error;
   }
 };
-const removeCartItem = async (cartId, itemId) => {
+const removeCartItem = async (userId, itemId) => {
   try {
-    const cart = await CartModel.findOne({ _id: cartId });
+    const cart = await CartModel.findOne({ userId: userId });
     if (!cart) {
       throw new Error("Cart not found");
     }
@@ -138,15 +147,20 @@ const removeCartItem = async (cartId, itemId) => {
     throw error;
   }
 };
-const deleteCart = async (CartId) => {
-  await CartModel.findByIdAndDelete(CartId);
+const deleteCart = async (userId) => {
+  const cart = await CartModel.findOne({ userId: userId });
+  if (!cart) {
+    throw new Error("Cart not found");
+  }
+  return CartModel.findByIdAndDelete(cart._id);
 };
 
 export default {
   createCart,
   updateCartItem,
-  getCartById,
-  getCart,
+  getAllCarts,
+ 
+  getCartUser,
   addToCart,
   deleteCart,
   removeCartItem,

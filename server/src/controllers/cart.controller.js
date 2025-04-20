@@ -1,7 +1,7 @@
 import CartService from "../services/cart.service.js";
 import httpStatus from "http-status";
 import Message from "../utils/message.js";
-
+import { PaginationEnum } from "../utils/constant.js";
 // Create a new cart
 export const createCart = async (req, res) => {
   try {
@@ -22,8 +22,9 @@ export const createCart = async (req, res) => {
 // add item to cart
 export const addToCart = async (req, res) => {
   try {
-    const { cartId, userId, itemId, quantity } = req.body;
-    const cart = await CartService.addToCart(cartId, itemId, quantity);
+    const userId = req.user.id; 
+    const { itemId, quantity } = req.body;
+    const cart = await CartService.addToCart(userId, itemId, quantity);
     res.status(200).send({
       code: 200,
       message: "Item added to cart successfully",
@@ -39,18 +40,18 @@ export const addToCart = async (req, res) => {
 };
 
 // Get all Carts
-export const getCarts = async (req, res) => {
+export const getAllCarts = async (req, res) => {
   try {
     const { page } = req.query; //lấy page từ query params
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
-    const Carts = await CartService.getCarts(page, limit);
+    const carts = await CartService.getAllCarts(page, limit);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
-      data: Carts,
+      data: carts,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Error in getAllCarts:", error.message);
     res.status(httpStatus.BAD_REQUEST).send({
       code: httpStatus.BAD_REQUEST,
       message: Message.FAILED,
@@ -58,25 +59,9 @@ export const getCarts = async (req, res) => {
   }
 };
 
-// Get a single Cart by ID
-export const getCartById = async (req, res) => {
-  try {
-    const Cart = await CartService.getCartById(req.params.id);
-    res.status(httpStatus.OK).send({
-      code: httpStatus.OK,
-      message: Message.OK,
-      data: Cart,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(httpStatus.BAD_REQUEST).send({
-      code: httpStatus.BAD_REQUEST,
-      message: Message.FAILED,
-    });
-  }
-};
+
 // Get all items in a user's cart
-export const getCart = async (req, res) => {
+export const getCartUser = async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -87,33 +72,35 @@ export const getCart = async (req, res) => {
       });
     }
 
-    const cart = await CartService.getCart(userId);
+    const cart = await CartService.getCartUser(userId);
     res.status(200).send({
       code: 200,
       message: "Cart retrieved successfully",
       data: cart,
     });
   } catch (error) {
-    console.error("Error in getCart:", error.message);
+    console.error("Error in getCartUser:", error.message);
     res.status(500).send({
       code: 500,
       message: error.message || "Failed to retrieve cart",
     });
   }
 };
-// Update an Cart by ID
+
+// Update an item in the cart
 export const updateCartItem = async (req, res) => {
   try {
-    const { cartId, itemId, quantity } = req.body;
+    const userId = req.user.id; 
+    const {  itemId, quantity } = req.body;
 
-    if (!cartId || !itemId || !quantity) {
+    if (!userId || !itemId || !quantity) {
       return res.status(400).send({
         code: 400,
-        message: "Missing required fields: cartId, itemId, quantity",
+        message: "Missing required fields: userId, itemId, quantity",
       });
     }
 
-    const cart = await CartService.updateCartItem(cartId, itemId, quantity);
+    const cart = await CartService.updateCartItem(userId, itemId, quantity);
     res.status(200).send({
       code: 200,
       message: "Cart item updated successfully",
@@ -130,7 +117,8 @@ export const updateCartItem = async (req, res) => {
 // Delete an Cart by ID
 export const deleteCart = async (req, res) => {
   try {
-    const Cartdelete = await CartService.deleteCart(req.body);
+    const userId = req.user.id;
+    const Cartdelete = await CartService.deleteCart(userId);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
@@ -147,16 +135,17 @@ export const deleteCart = async (req, res) => {
 // Remove an item from the cart
 export const removeCartItem = async (req, res) => {
   try {
-    const { cartId, itemId } = req.body;
+    const userId = req.user.id;
+    const {  itemId } = req.body;
 
-    if (!cartId || !itemId) {
+    if (!userId || !itemId) {
       return res.status(400).send({
         code: 400,
-        message: "Missing required fields: cartId, itemId",
+        message: "Missing required fields: userId, itemId",
       });
     }
 
-    const cart = await CartService.removeCartItem(cartId, itemId);
+    const cart = await CartService.removeCartItem(userId, itemId);
     res.status(200).send({
       code: 200,
       message: "Cart item removed successfully",
@@ -173,14 +162,14 @@ export const removeCartItem = async (req, res) => {
 
 export const clearCart = async (req, res) => {
   try {
-    const { cartId } = req.body;
-    if (!cartId) {
+    const userId = req.user.id;
+    if (!userId) {
       return res.status(400).send({
         code: 400,
-        message: "Missing required field: cartId",
+        message: "Missing required field: userId",
       });
     }
-    const cart = await CartService.clearCart(cartId);
+    const cart = await CartService.clearCart(userId);
     res.status(200).send({
       code: 200,
       message: "Cart cleared successfully",

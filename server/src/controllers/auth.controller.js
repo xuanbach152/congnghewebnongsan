@@ -1,4 +1,5 @@
 import userService from "../services/user.service.js";
+import CartService from "../services/cart.service.js";
 import {
   hashPassword,
   generateAcessToken,
@@ -6,6 +7,7 @@ import {
   comparePassword,
   verifyToken,
   verifyRole,
+  verifyRefreshToken
 } from "../services/auth.service.js";
 import httpStatus from "http-status";
 import Message from "../utils/message.js";
@@ -18,6 +20,9 @@ export const register = async (req, res) => {
       ...req.body,
       password: hashedPassword,
     });
+
+    const cart = await CartService.createCart({
+      userId: newUser._id, cartItems: [] });
     res.status(httpStatus.CREATED).json({ user: newUser });
   } catch (error) {
     res.status(httpStatus.BAD_REQUEST).json({ message: error.message });
@@ -74,7 +79,7 @@ export const logout = (req, res) => {
 
 export const refreshToken = async (req, res) => {
   try {
-    const refreshToken = req.cookies.refreshToken; //lấy tuừ cookie
+    const refreshToken = req.cookies.refreshToken; //lấy từ cookie
     if (!refreshToken) {
       return res.status(403).json({ message: "Vui lòng đăng nhập" });
     }
@@ -82,7 +87,7 @@ export const refreshToken = async (req, res) => {
       return res.status(403).json({ message: "Token không hợp lệ" });
     }
     refreshTokens = refreshTokens.filter((token) => token !== refreshToken); //lọc ra token cũ
-    const user = await verifyToken(refreshToken);
+    const user =  verifyRefreshToken(refreshToken);
     const accessToken = generateAcessToken(user);
     const newrefreshToken = generateRefreshToken(user);
     refreshTokens.push(newrefreshToken);

@@ -17,3 +17,25 @@ export const validateFile = (file, allowedTypes, maxSize) => {
     );
   }
 };
+
+export const uploadToCloudinary = async (file) => {
+  try {
+    if (!file) {
+      throw new Error("No file uploaded");
+    }
+
+    console.log("Uploading file to Cloudinary:", JSON.stringify(file, null, 2));
+
+    if (!file.path) {
+      throw new Error("File path is missing");
+    }
+
+    console.log("File uploaded to Cloudinary:", file.path);
+
+    return file.path;
+  } catch (error) {
+    console.error("Error in uploadImageToCloudinary:", error.message);
+    throw error;
+  }
+};
+

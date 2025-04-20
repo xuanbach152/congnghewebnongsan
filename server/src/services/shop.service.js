@@ -61,27 +61,6 @@ const deleteShop = async (ShopId) => {
   await ShopModel.findByIdAndDelete(ShopId);
 };
 
-const uploadImageToCloudinary = async (file) => {
-  try {
-    if (!file) {
-      throw new Error("No file uploaded");
-    }
-
-    console.log("Uploading file to Cloudinary:", JSON.stringify(file, null, 2));
-
-    if (!file.path) {
-      throw new Error("File path is missing");
-    }
-
-    console.log("File uploaded to Cloudinary:", file.path);
-
-    return file.path;
-  } catch (error) {
-    console.error("Error in uploadImageToCloudinary:", error.message);
-    throw error;
-  }
-};
-
 const saveImageToDatabase = async (shopId, imgUrl) => {
   try {
     const shop = await ShopModel.findById(shopId);
@@ -131,12 +110,17 @@ const getRevenueByMonth = async (shopId, month, year) => {
   }
 };
 
-const getItemsByShopId = async (shopId) => {
-  const items = await ItemModel.find({ shopId });
-  return items;
-};
-const getShopsByUserId = async (userId) => {
-  const shops = await ShopModel.find({ userId });
+
+const getShopsByUserId = async (userId, page,
+  limit,
+  sortField = "createdAt",
+  sortType = "desc") => {
+  const skip = (page - 1) * limit;
+  const shops = await ShopModel.find({ userId })
+    .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
+    .skip(skip)
+    .limit(limit)
+    .exec();
   return shops;
 };
 export default {
@@ -147,8 +131,7 @@ export default {
   getShops,
   deleteShop,
   saveImageToDatabase,
-  uploadImageToCloudinary,
+ 
   getRevenueByMonth,
-  getItemsByShopId,
   getShopsByUserId,
 };
