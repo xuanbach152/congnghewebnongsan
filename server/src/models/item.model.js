@@ -60,6 +60,11 @@ const itemSchema = new Schema({
     type: String,
     default: "",
   },
+  // số lượt mua
+  purchaseCount: { 
+    type: Number,
+    default: 0,
+  },
   Comments: [
     {
       userId: {

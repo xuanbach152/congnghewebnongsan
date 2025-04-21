@@ -17,6 +17,7 @@ const OrderHistoryPage = () => {
       setTotalPages(response.data.data.totalPages);
       setError(null);
     } catch (err) {
+      console.error('Lỗi khi lấy lịch sử đơn hàng:', err.response?.data || err.message);
       setError(err.response?.data?.message || 'Không thể tải lịch sử mua hàng');
     } finally {
       setLoading(false);
@@ -44,38 +45,44 @@ const OrderHistoryPage = () => {
           <div key={order._id} className="order">
             <div className="order-header">
               <span>Mã đơn hàng: {order._id}</span>
-              <span>Ngày đặt: {new Date(order.createdAt).toLocaleDateString()}</span>
-              <span>Trạng thái: {order.status}</span>
+              <span>Ngày đặt: {new Date(order.orderDate).toLocaleDateString()}</span>
+              <span>Trạng thái: {order.paymentStatus}</span>
             </div>
             <div className="order-items">
               {order.items.map((item) => (
-                <div key={item.itemId._id} className="order-item">
-                  <img src={item.itemId.imgUrl} alt={item.itemId.name} className="item-image" />
-                  <span className="item-name">{item.itemId.name}</span>
-                  <span className="item-price">{item.price.toLocaleString()} VNĐ</span>
+                <div key={item._id} className="order-item">
+                  <img
+                    src={item.itemId?.imgUrl || 'https://via.placeholder.com/60'}
+                    alt={item.itemId?.name || 'Sản phẩm'}
+                    className="item-image"
+                  />
+                  <span className="item-name">{item.itemId?.name || 'Sản phẩm không xác định'}</span>
+                  <span className="item-price">{(item.price || 0).toLocaleString()} VNĐ</span>
                   <span className="item-quantity">Số lượng: {item.quantity}</span>
                   <span className="item-total">
-                    {(item.price * item.quantity).toLocaleString()} VNĐ
+                    {(item.price * item.quantity || 0).toLocaleString()} VNĐ
                   </span>
                 </div>
               ))}
             </div>
             <div className="order-footer">
-              <span>Tổng tiền: <strong>{order.totalPrice.toLocaleString()} VNĐ</strong></span>
+              <span>
+                Tổng tiền: <strong>{order.totalPrice.toLocaleString()} VNĐ</strong>
+              </span>
             </div>
           </div>
         ))}
       </div>
       <div className="pagination">
         <button
-          onClick={() => setPage(prev => Math.max(prev - 1, 1))}
+          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
         >
           Trang trước
         </button>
         <span>Trang {page} / {totalPages}</span>
         <button
-          onClick={() => setPage(prev => Math.min(prev + 1, totalPages))}
+          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={page === totalPages}
         >
           Trang sau
