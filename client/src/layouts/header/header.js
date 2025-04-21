@@ -11,31 +11,29 @@ import {
   AiOutlineInstagram,
   AiOutlineGoogle,
   AiOutlineBell,
-} from 'react-icons/ai'
-import { Link } from 'react-router-dom'
-import { formatter } from 'utils/formatter'
-import routers from 'utils/routers'
-import { default as axiosInstance } from 'utils/api'
+} from 'react-icons/ai';
+import { Link } from 'react-router-dom';
+import { formatter } from 'utils/formatter';
+import routers from 'utils/routers';
+import axiosInstance from 'utils/api';
 
 const MainHeader = () => {
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
-  const [isLogin, setIsLogin] = useState(true)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isProfileOpen, setIsProfileOpen] = useState(false)
-  const [cartItems, setCartItems] = useState([])
-  const [cartTotal, setCartTotal] = useState(0)
-  const [cartLoading, setCartLoading] = useState(false)
-  const [cartErrors, setCartErrors] = useState({})
-  const [filterLocation, setFilterLocation] = useState('all')
-  const [filterCategory, setFilterCategory] = useState('all')
-  const [filterPrice, setFilterPrice] = useState('all')
-  const [filterPromotion, setFilterPromotion] = useState(false)
-  const [filterTrend, setFilterTrend] = useState(false)
-  const [filterSth, setFilterSth] = useState(false)
-  const [user, setUser] = useState(null)
-
-  const userId = user?.userId
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [cart, setCart] = useState(null);
+  const [cartLoading, setCartLoading] = useState(false);
+  const [cartErrors, setError] = useState({});
+  const [filterLocation, setFilterLocation] = useState('all');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [filterPrice, setFilterPrice] = useState('all');
+  const [filterPromotion, setFilterPromotion] = useState(false);
+  const [filterTrend, setFilterTrend] = useState(false);
+  const [filterSth, setFilterSth] = useState(false);
+  const [user, setUser] = useState(null);
 
   const login = async (userName, password) => {
     try {
@@ -51,12 +49,9 @@ const MainHeader = () => {
 
   const register = async (userName, password, phone) => {
     try {
-      const response = await axiosInstance.post('/auth/register', {
-        userName,
-        password,
-        phone,
-      })
-      return response.data
+      const response = await axiosInstance.post('/auth/register', { userName, password, phone });
+      const { user , cart } = response.data;
+      return { user , cart }; 
     } catch (error) {
       throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' }
     }
@@ -64,13 +59,11 @@ const MainHeader = () => {
 
   const logout = async () => {
     try {
-      const response = await axiosInstance.post('/auth/logout')
-      localStorage.removeItem('accessToken')
-      setUser(null)
-      setIsLoggedIn(false)
-      setCartItems([])
-      setCartTotal(0)
-      alert(response.data.message || 'Đăng xuất thành công!')
+      const response = await axiosInstance.post('/auth/logout');
+      localStorage.removeItem('accessToken');
+      setUser(null);
+      setIsLoggedIn(false);
+      alert(response.data.message || 'Đăng xuất thành công!');
     } catch (error) {
       console.error('Logout error:', error)
       const errorMsg =
@@ -89,11 +82,12 @@ const MainHeader = () => {
           alert('Vui lòng điền đầy đủ userName và password!')
           return
         }
-        const result = await login(userName, password)
-        localStorage.setItem('accessToken', result.accessToken)
-        setUser(result.user)
-        setIsLoggedIn(true)
-        setIsAuthModalOpen(false)
+        const result = await login(userName, password);
+        localStorage.setItem('accessToken', result.accessToken);
+        setUser(result.user);
+        setIsLoggedIn(true);
+        setIsAuthModalOpen(false);
+        fetchCartData();
       } else {
         const confirmPassword = e.target.confirmPassword.value
         const phone = e.target.phone.value
@@ -125,122 +119,40 @@ const MainHeader = () => {
   }
 
   const fetchCartData = async () => {
-    if (!userId) return
-    setCartLoading(true)
     try {
-      const response = await axiosInstance.get(`/cart/${userId}`)
-      const result = await response.data
-      if (result.code === 200) {
-        const items = result.data.items || []
-        setCartItems(items)
-        calculateTotal(items)
+      setCartLoading(true);
+      const response = await axiosInstance.get('/cart/getcart');
+      setCart(response.data.data);
+      setError(null);
+      setSelectedItems(response.data.data.cartItems.map(item => item.itemId._id));
+    } catch (err) {
+      if (err.response?.data?.message === 'Cart not found') {
+        setCart({ cartItems: [], _id: null });
+        setSelectedItems([]);
+        setError(null);
       } else {
-        setCartErrors({ fetch: result.message || 'Không thể tải giỏ hàng' })
+        setError(err.response?.data?.message || 'Không thể tải giỏ hàng');
       }
-    } catch (error) {
-      console.error(
-        'Lỗi khi tải giỏ hàng:',
-        error.response?.data || error.message
-      )
-      setCartErrors({ fetch: 'Lỗi kết nối server' })
     } finally {
       setCartLoading(false)
     }
-  }
+  }; 
 
-  const calculateTotal = (items) => {
-    const total = items.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    )
-    setCartTotal(total)
-  }
+  const cartItemCount = () => {
+    return cart?.cartItems?.length || 0;
+  };
 
-  const handleAddToCart = async (product) => {
-    if (!userId) {
-      alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!')
-      setIsAuthModalOpen(true)
-      return
-    }
-    setCartLoading(true)
-    setCartErrors({})
-    try {
-      // Kiểm tra giỏ hàng hiện tại
-      let cartResponse
-      try {
-        cartResponse = await axiosInstance.get(`/cart/${userId}`)
-      } catch (error) {
-        // Nếu không tìm thấy giỏ hàng (404), tạo mới
-        if (error.response?.status === 404) {
-          cartResponse = { data: { code: 404, data: null } }
-        } else {
-          throw error // Ném lỗi nếu không phải 404
-        }
-      }
-
-      console.log('Cart response:', cartResponse.data) // Log để debug
-
-      const cart = cartResponse.data
-      const newItem = {
-        productId: product.id,
-        price: product.price,
-        quantity: 1,
-      }
-
-      if (cart.code === 200 && cart.data) {
-        // Cập nhật giỏ hàng nếu đã tồn tại
-        const updatedItems = cart.data.items || []
-        const existingItemIndex = updatedItems.findIndex(
-          (item) => item.productId === product.id
-        )
-        if (existingItemIndex !== -1) {
-          updatedItems[existingItemIndex].quantity += 1
-        } else {
-          updatedItems.push(newItem)
-        }
-
-        const response = await axiosInstance.put(`/cart/${userId}`, {
-          items: updatedItems,
-        })
-
-        const result = response.data
-        console.log('Update cart response:', result)
-        if (result.code === 200) {
-          setCartItems(updatedItems)
-          calculateTotal(updatedItems)
-        } else {
-          setCartErrors({
-            submit: result.message || 'Không thể cập nhật giỏ hàng',
-          })
-        }
-      } else {
-        // Tạo giỏ hàng mới nếu chưa tồn tại
-        const response = await axiosInstance.post(`/cart/${userId}`, {
-          items: [newItem],
-        })
-
-        const result = response.data
-        console.log('Create cart response:', result)
-        if (result.code === 200) {
-          setCartItems([newItem])
-          calculateTotal([newItem])
-        } else {
-          setCartErrors({
-            submit: result.message || 'Không thể tạo giỏ hàng mới',
-          })
-        }
-      }
-    } catch (error) {
-      console.error('Add to cart error:', error.response?.data || error.message)
-      setCartErrors({
-        submit:
-          error.response?.data?.message ||
-          'Lỗi kết nối server khi thêm sản phẩm vào giỏ hàng',
-      })
-    } finally {
-      setCartLoading(false)
-    }
-  }
+  const cartTotal = () => {
+    if (!cart?.cartItems) return 0;
+    return cart.cartItems
+      .filter(item => selectedItems.includes(item.itemId._id))
+      .reduce((total, item) => {
+        const price = Number(item.price) || 0;
+        const quantity = Number(item.quantity) || 0;
+        return total + price * quantity;
+      }, 0);
+  };
+  
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken')
@@ -255,7 +167,27 @@ const MainHeader = () => {
         logout()
       }
     }
-  }, [userId])
+  }, []);
+
+  // const addToCart = async (productId, quantity = 1) => {
+  //   if (!user) {
+  //     alert('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!');
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await axiosInstance.post('/cart/add', {
+  //       userId: user._id,
+  //       itemId: productId,
+  //       quantity,
+  //     });
+  //     alert('Sản phẩm đã được thêm vào giỏ hàng!');
+  //     fetchCartData(); // Cập nhật lại giỏ hàng sau khi thêm
+  //   } catch (error) {
+  //     console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error.response?.data || error.message);
+  //     alert('Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!');
+  //   }
+  // };
 
   const toggleAuthModal = () => {
     setIsAuthModalOpen(!isAuthModalOpen)
@@ -265,19 +197,12 @@ const MainHeader = () => {
     setIsLogin(!isLogin)
   }
 
-  const handleLogout = async () => {
-    await logout()
-    setIsLoggedIn(false)
-    setIsDropdownOpen(false)
-    setIsProfileOpen(false)
-    setCartItems([])
-    setCartTotal(0)
-  }
-
-  const testAddToCart = () => {
-    const product = { id: '67e2bdb31762e4f8f670d8bf', price: 100 }
-    handleAddToCart(product)
-  }
+  const handleLogout = async() => {
+    await logout();
+    setIsLoggedIn(false);
+    setIsDropdownOpen(false);
+    setIsProfileOpen(false);
+  };
 
   return (
     <>
@@ -320,14 +245,8 @@ const MainHeader = () => {
                         <li onClick={() => setIsProfileOpen(!isProfileOpen)}>
                           <Link to={routers.PROFILE}>Thông tin cá nhân</Link>
                         </li>
-                        <li>
-                          <Link to={routers.SHOP_MANAGEMENT}>
-                            Quản lý cửa hàng
-                          </Link>
-                        </li>
-                        <li>
-                          <Link to="#">Cài đặt</Link>
-                        </li>
+                        <li><Link to={routers.SHOP_MANAGEMENT}>Quản lý cửa hàng</Link></li>
+                        <li><Link to={routers.ORDER_HISTORY}>Lịch sử mua hàng</Link></li>
                         <li onClick={handleLogout}>Đăng xuất</li>
                       </ul>
                     </div>
@@ -373,32 +292,21 @@ const MainHeader = () => {
 
           <div className="col-xl-3">
             <div className="header_cart">
+              {/* <div className="test_add_to_cart">
+                <button onClick={() => addToCart('67e2bdb31762e4f8f670d8c0', 2)}>Thêm sản phẩm test</button>
+              </div> */}
               <div className="header_cart_price">
-                {cartLoading ? (
-                  <span>Đang tải...</span>
-                ) : (
-                  <span>{formatter(cartTotal)}</span>
-                )}
+                {cartLoading ? (<span>Đang tải...</span>) : (<span>{formatter(cartTotal())}</span>)}
               </div>
               <ul>
                 <li>
-                  <Link to={'#'}>
+                  <Link to={routers.CART}>
                     <AiOutlineShoppingCart />
-                    <span>{cartItems.length}</span>
+                    <span>{cartItemCount()}</span>
                   </Link>
                 </li>
               </ul>
-              {/* Thêm nút test */}
-              <button onClick={testAddToCart} style={{ marginTop: '10px' }}>
-                Test Add to Cart
-              </button>
-              {cartErrors.fetch && (
-                <span className="error">{cartErrors.fetch}</span>
-              )}
-              {cartErrors.submit && (
-                <span className="error">{cartErrors.submit}</span>
-              )}
-            </div>
+             </div>
           </div>
         </div>
         {/* ?...? */}
