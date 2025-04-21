@@ -78,7 +78,7 @@ const cancelOrder = async (orderId) => {
 const getOrderById = async (orderId) => {
   const order = await OrderModel.findById(orderId);
   throwBadRequest(!order, Message.OrderNotFound);
-  return Order;
+  return order;
 };
 
 const getOrders = async (

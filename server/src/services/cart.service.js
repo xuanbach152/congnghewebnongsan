@@ -27,7 +27,9 @@ const addToCart = async (userId, itemId, quantity) => {
     if (!item) {
       throw new Error("Item not found");
     }
-
+    if (!item.quantity || item.quantity < quantity) {
+      throw new Error(`Not enough items in stock. Only ${item.quantity || 0} items available.`);
+    }
     let cart = await CartModel.findOne({ userId: userId });
     if (!cart) {
       throw new Error("Cart not found");
