@@ -1,12 +1,12 @@
 import { memo, useEffect, useState } from 'react'
-import './itemCreationPage.scss'
+import './itemUpsertPage.scss'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import routers from 'utils/routers'
 import { FaAngleRight } from 'react-icons/fa'
 import axios from 'axios'
 import axiosInstance from 'utils/api'
 
-const ItemCreationPage = () => {
+const ItemUpsertPage = () => {
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -15,9 +15,12 @@ const ItemCreationPage = () => {
     description: '',
     image: '',
   })
-  const { shopId } = useParams()
+  const { shopId, mode, itemId } = useParams()
   const [shop, setShop] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [item, setItem] = useState(null)
+  const [loadingShop, setLoadingShop] = useState(true)
+  const [loadingItem, setLoadingItem] = useState(true)
+  const [preview, setPreview] = useState(null);
 
   const navigate = useNavigate();
 
@@ -31,11 +34,39 @@ const ItemCreationPage = () => {
         console.error('Error fetching shop data:', error)
       })
       .finally(() => {
-        setLoading(false)
+        setLoadingShop(false)
       })
   }, [shopId])
 
-  if (loading) {
+  useEffect(() => {
+    if (!itemId) return;
+    const fetchItem = async () => {
+      try {
+        const { data } = await axios.get(`http://localhost:3000/item/${itemId}`);
+        const itemData = data.data;
+        setItem(itemData);
+        setFormData({
+          name: itemData.name,
+          price: itemData.price,
+          description: itemData.description,
+          type: itemData.type,
+          quantity: itemData.quantity,
+        });
+        setPreview(itemData.imgUrl);
+      } catch (error) {
+        console.error('Error fetching shop data:', error);
+      } finally {
+        setLoadingItem(false);
+      }
+    };
+    fetchItem();
+  }, [itemId]);
+
+  if (loadingShop  && mode === 'create') {
+    return <div className="loading">Đang tải dữ liệu...</div>
+  }
+
+  if ((loadingShop || loadingItem) && mode === 'update') {
     return <div className="loading">Đang tải dữ liệu...</div>
   }
 
@@ -54,15 +85,22 @@ const ItemCreationPage = () => {
         ...formData,
         image: file,
       })
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     console.log(formData);
+    const url = mode === 'create' ? 'http://localhost:3000/item' : `http://localhost:3000/item/${itemId}`;
+    const method = mode === 'create' ? 'post' : 'patch';
     try {
-      await axiosInstance.post(
-        'http://localhost:3000/item',
+      await axiosInstance[method](
+        url,
         { ...formData, shopId },
         {
           headers: {
@@ -70,10 +108,9 @@ const ItemCreationPage = () => {
           },
         }
       )
-      navigate(routers.getMyShopPath(shopId));
+      navigate(routers.getMyShopPath(shopId, 'itemList'));
     } catch (error) {
-      console.error('Lỗi khi đăng ký cửa hàng:', error)
-      alert(error.response?.data?.message || 'Đăng ký thất bại')
+      alert(error.response?.data?.message || 'Lỗi gọi api item')
     }
   }
 
@@ -91,7 +128,7 @@ const ItemCreationPage = () => {
             </Link>
             <FaAngleRight className="nav-icon" />
             <Link to={routers.SHOP_REGISTRATION} className="nav-item-creation">
-              Thêm sản phẩm mới
+              { mode === 'create' ? 'Thêm sản phẩm mới' : 'Cập nhập thông tin sản phẩm' }
             </Link>
           </div>
           <div className="item-creation-form">
@@ -106,7 +143,7 @@ const ItemCreationPage = () => {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  placeholder="Nhập tên sản phẩm"
+                  placeholder={item?.name || "Nhập tên sản phẩm"}
                   required
                 />
               </div>
@@ -119,7 +156,7 @@ const ItemCreationPage = () => {
                   name="price"
                   value={formData.price}
                   onChange={handleInputChange}
-                  placeholder="Nhập giá"
+                  placeholder={item?.price || "Nhập giá"}
                   required
                 />
               </div>
@@ -132,52 +169,59 @@ const ItemCreationPage = () => {
                   name="type"
                   value={formData.type}
                   onChange={handleInputChange}
-                  placeholder="Nhập loại sản phẩm"
+                  placeholder={item?.type || "Nhập loại sản phẩm"}
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="type">Số lượng bán</label>
+                <label htmlFor="quantity">Số lượng bán</label>
                 <input
                   type="number"
                   id="quantity"
                   name="quantity"
                   value={formData.quantity}
                   onChange={handleInputChange}
-                  placeholder="Nhập số lượng bán"
+                  placeholder={item?.quantity || "Nhập số lượng bán"}
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="type">Mô tả sản phẩm</label>
+                <label htmlFor="description">Mô tả sản phẩm</label>
                 <input
                   type="text"
                   id="description"
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  placeholder="Nhập mô tả"
+                  placeholder={item?.description || "Nhập mô tả"}
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="image">Ảnh sản phẩm</label>
+                <label htmlFor="image">Ảnh đại diện</label>
+                <label htmlFor="image" className="upload-box">
+                  {preview ? (
+                    <img src={preview} alt="Preview" className="upload-preview" />
+                  ) : (
+                    "+"
+                  )}
+                </label>
                 <input
                   type="file"
                   id="image"
                   name="image"
-                  onChange={handleFileChange}
                   accept="image/*"
-                  required
+                  onChange={handleFileChange}
+                  className="upload-input"
                 />
               </div>
 
               <div className="form-group">
                 <button type="submit" className="btn-submit">
-                  Thêm mới
+                  { mode === 'create' ? 'Thêm mới' : 'Cập nhật' }
                 </button>
               </div>
             </form>
@@ -188,4 +232,4 @@ const ItemCreationPage = () => {
   )
 }
 
-export default memo(ItemCreationPage)
+export default memo(ItemUpsertPage)

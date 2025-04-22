@@ -45,7 +45,7 @@ const ShopManagementPage = () => {
           <div className="shop-list">
             <div className="shop-list-title">
               <div className="title-text">Danh sách cửa hàng của bạn</div>
-              <Link to={routers.SHOP_REGISTRATION} className="btn-create-shop">
+              <Link to={routers.getShopUpsertPath('create')} className="btn-create-shop">
                 +
               </Link>
               <span className="btn-text">Đăng ký cửa hàng</span>
@@ -55,7 +55,7 @@ const ShopManagementPage = () => {
             ) : shops.length > 0 ? (
               <>
                 {shops.map((shop) => (
-                  <Link key={shop._id} to={routers.getMyShopPath(shop._id)}>
+                  <Link key={shop._id} to={routers.getMyShopPath(shop._id, 'shopInfo')}>
                     <div className="shop">
                       <div className="shop-image">
                         <img src={shop.imgUrl} alt={shop.name} />

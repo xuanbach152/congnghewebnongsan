@@ -15,7 +15,7 @@ import {
 import { verifyToken } from "../services/auth.service.js";
 const router = express.Router();
 
-router.post("/", uploadImg.single("image"), createItem);
+router.post("/", verifyToken, uploadImg.single("image"), createItem);
 
 router.get("/", getItems);
 
@@ -25,7 +25,7 @@ router.get("/:id", getItemById);
 
 router.get("/shop/:shopId", getItemsByShopId);
 
-router.put("/:id", verifyToken, uploadImg.single("image"), updateItem);
+router.patch("/:id", verifyToken, uploadImg.single("image"), updateItem);
 
 router.delete("/:id", verifyToken, deleteItem);
 

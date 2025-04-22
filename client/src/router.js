@@ -6,8 +6,8 @@ import routers from './utils/routers'
 import CheckoutPage from 'pages/checkoutPage/checkoutPage'
 import OrderHistoryPage from 'pages/orderHistoryPage/orderHistoryPage'
 import ShopManagementPage from 'pages/shopManagementPage/shopManagementPage'
-import ItemCreationPage from 'pages/itemCreationPage/itemCreationPage'
-import ShopRegistrationPage from 'pages/shopRegistrationPage/shopRegistrationPage'
+import ItemUpsertPage from 'pages/itemUpsertPage/itemUpsertPage'
+import ShopUpsertPage from 'pages/shopUpsertPage/shopUpsertPage'
 import ItemPage from 'pages/itemPage/itemPage'
 import ItemDetailPage from 'pages/itemDetailPage/itemDetailPage'
 import ShopDetailPage from 'pages/shopDetailPage/shopDetailPage'
@@ -40,12 +40,12 @@ const renderRouter = () => {
       component: <ShopManagementPage />,
     },
     {
-      path: routers.SHOP_REGISTRATION,
-      component: <ShopRegistrationPage />,
+      path: routers.SHOP_UPSERT,
+      component: <ShopUpsertPage />,
     },
     {
-      path: routers.ITEM_CREATION,
-      component: <ItemCreationPage />,
+      path: routers.ITEM_UPSERT,
+      component: <ItemUpsertPage />,
     },
     {
       path: routers.ITEM,
