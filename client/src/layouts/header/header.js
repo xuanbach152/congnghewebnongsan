@@ -82,8 +82,8 @@ const MainHeader = () => {
         localStorage.setItem('accessToken', result.accessToken);
         setUser(result.user);
         setIsLoggedIn(true);
+        await fetchCartData();
         setIsAuthModalOpen(false);
-        fetchCartData();
       } else {
         const confirmPassword = e.target.confirmPassword.value;
         const phone = e.target.phone.value;
@@ -225,7 +225,7 @@ const MainHeader = () => {
                 </li>
                 <li onClick={() => (isLoggedIn ? setIsDropdownOpen(!isDropdownOpen) : toggleAuthModal())}>
                   <AiOutlineUser />
-                  <span>{isAuthModalOpen ? 'Đóng' : 'Tài khoản'}</span>
+                  <span>{isLoggedIn && user ? user.userName : 'Tài khoản'}</span>
                   {isLoggedIn && <AiOutlineDown className="dropdown-arrow" />}
                   {isLoggedIn && isDropdownOpen && (
                     <div className="user_dropdown">

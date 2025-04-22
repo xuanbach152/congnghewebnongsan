@@ -15,15 +15,15 @@ import {
 import { verifyToken } from "../services/auth.service.js";
 const router = express.Router();
 
-router.post("/", verifyToken, uploadImg.single("image"), createItem);
+router.post("/", uploadImg.single("image"), createItem);
 
-router.get("/", verifyToken, getItems);
+router.get("/", getItems);
 
-router.get("/search", verifyToken, searchItems);
+router.get("/search", searchItems);
 
-router.get("/:id", verifyToken, getItemById);
+router.get("/:id", getItemById);
 
-router.get("/shop/:shopId", verifyToken, getItemsByShopId);
+router.get("/shop/:shopId", getItemsByShopId);
 
 router.put("/:id", verifyToken, uploadImg.single("image"), updateItem);
 
