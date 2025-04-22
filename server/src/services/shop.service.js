@@ -7,7 +7,7 @@ import Message from "../utils/message.js";
 const createShop = async (shopData) => {
   const newShop = await ShopModel.create({
     ...shopData,
-    imgUrl: shopData.image.path || ""
+    imgUrl: shopData.image.path || "",
   });
   return newShop;
 };
@@ -18,10 +18,14 @@ const searchShops = async (searchText) => {
   });
 };
 
-const updateShop = async (ShopId, ShopData) => {
-  const Shop = await ShopModel.findById(ShopId);
+const updateShop = async (shopId, shopData) => {
+  const Shop = await ShopModel.findById(shopId);
   throwBadRequest(!Shop, Message.ShopNotFound);
-  return ShopModel.findByIdAndUpdate(ShopId, ShopData, { new: true });
+  return ShopModel.findByIdAndUpdate(
+    shopId,
+    { ...shopData, imgUrl: shopData.image.path || undefined },
+    { new: true }
+  );
 };
 
 const getShopById = async (ShopId) => {
@@ -110,11 +114,13 @@ const getRevenueByMonth = async (shopId, month, year) => {
   }
 };
 
-
-const getShopsByUserId = async (userId, page,
+const getShopsByUserId = async (
+  userId,
+  page,
   limit,
   sortField = "createdAt",
-  sortType = "desc") => {
+  sortType = "desc"
+) => {
   const skip = (page - 1) * limit;
   const shops = await ShopModel.find({ userId })
     .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
@@ -131,7 +137,7 @@ export default {
   getShops,
   deleteShop,
   saveImageToDatabase,
- 
+
   getRevenueByMonth,
   getShopsByUserId,
 };

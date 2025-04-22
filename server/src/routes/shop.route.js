@@ -21,7 +21,7 @@ router.get("/user", verifyToken, getShopsByUserId);
 router.get("/revenue/:shopId", getRevenueByMonth);
 router.get("/:id", getShopById);
 router.post("/:id/upload-image", uploadImg.single("image"), uploadImage);
-router.put("/:id", updateShop);
+router.patch("/:id", verifyToken, uploadImg.single("image"), updateShop);
 router.delete("/:id", deleteShop);
 
 export default router;

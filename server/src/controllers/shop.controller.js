@@ -7,11 +7,12 @@ import { uploadToCloudinary } from "../utils/file.util.js";
 // Create a new Shop
 export const createShop = async (req, res) => {
   try {
-    const { shopName: name, address } = req.body;
+    console.log(req.body);
+    const { shopName: name, address, description } = req.body;
     const userId = req.user.id;
     const image = req.file;
     const imgUrl = await uploadToCloudinary(image);
-    const newShop = await ShopService.createShop({ name, address, userId, image: { path: imgUrl } });
+    const newShop = await ShopService.createShop({ name, address, userId, description, imgUrl });
     res.status(httpStatus.CREATED).send({
       code: httpStatus.CREATED,
       message: Message.ShopCreated,
@@ -48,7 +49,7 @@ export const searchShops = async (req, res) => {
 // Get all Shops
 export const getShops = async (req, res) => {
   try {
-    const { page } = req.query; 
+    const { page } = req.query;
     const { sortField, sortType } = req.query;
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
     const Shops = await ShopService.getShops(page, limit, sortField, sortType);
@@ -87,7 +88,14 @@ export const getShopById = async (req, res) => {
 // Update an Shop by ID
 export const updateShop = async (req, res) => {
   try {
-    const updatedShop = await ShopService.updateShop(req.params.id, req.body);
+    const { shopName: name, address, description } = req.body;
+    const image = req.file;
+    let imgUrl;
+    if(image) {
+      imgUrl = await uploadToCloudinary(image);
+    }
+    console.log(imgUrl);
+    const updatedShop = await ShopService.updateShop(req.params.id, { name, address, description, imgUrl });
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.ShopUpdated,
