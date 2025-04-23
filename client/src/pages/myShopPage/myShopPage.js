@@ -6,12 +6,12 @@ import axios from 'axios'
 import { FaAngleRight, FaEdit, FaTrash } from 'react-icons/fa'
 
 const MyShopPage = () => {
-  const { shopId } = useParams()
+  const { shopId, tab } = useParams()
   const [shop, setShop] = useState(null)
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState('shopInfo')
-  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState(tab)
+  const navigate = useNavigate()
 
   const tabs = [
     { id: 'shopInfo', label: 'Thông tin cửa hàng' },
@@ -37,8 +37,8 @@ const MyShopPage = () => {
     axios
       .get(`http://localhost:3000/item/shop/${shopId}`)
       .then((response) => {
-        const { items } = response.data.data;
-        setItems(items);
+        const { items } = response.data.data
+        setItems(items)
       })
       .catch((error) => {
         console.error('Error fetching items data:', error)
@@ -67,7 +67,10 @@ const MyShopPage = () => {
             <div
               key={tab.id}
               className={`tab-item ${activeTab === tab.id ? 'active' : ''} ${index !== tabs.length - 1 ? 'border-right' : ''}`}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => {
+                setActiveTab(tab.id)
+                navigate(routers.getMyShopPath(shopId, tab.id))
+              }}
             >
               {tab.label}
             </div>
@@ -97,22 +100,24 @@ const MyShopPage = () => {
                   </div>
                   <div className="shop-actions">
                     <Link
-                      to={`/shop-management/${shop.id}/edit`}
+                      to={routers.getShopUpsertPath('update', shop._id)}
                       className="btn btn-edit"
                     >
                       <FaEdit /> Chỉnh sửa
                     </Link>
                   </div>
                 </div>
-
               </div>
             </div>
           )}
 
           {activeTab === 'itemList' && (
             <>
-              <div className="btn-create-shop-wrapper">
-                <Link to={routers.getItemCreationPath(shopId)} className="btn-create-shop">
+              <div className="btn-create-item-wrapper">
+                <Link
+                  to={routers.getItemUpsertPath(shopId, 'create')}
+                  className="btn-create-item"
+                >
                   +
                 </Link>
                 <span className="btn-text">Thêm mới sản phẩm</span>
@@ -131,9 +136,19 @@ const MyShopPage = () => {
                   </thead>
                   <tbody>
                     {items.map((item) => (
-                      <tr key={item._id} className="item-row" onClick={() => navigate(routers.getItemDetailPath(item._id))}>
+                      <tr
+                        key={item._id}
+                        className="item-row"
+                        onClick={() =>
+                          navigate(routers.getItemDetailPath(item._id))
+                        }
+                      >
                         <td>
-                          <img src={item.imgUrl} alt={item.name} className="item-img" />
+                          <img
+                            src={item.imgUrl}
+                            alt={item.name}
+                            className="item-img"
+                          />
                         </td>
                         <td>{item.name}</td>
                         <td>{item.price}</td>
@@ -144,12 +159,21 @@ const MyShopPage = () => {
                             <FaEdit
                               className="icon edit-icon"
                               title="Chỉnh sửa"
-                            // onClick={() => navigate(`/item/${item._id}/edit`)}
+                              onClick={(e) => {
+                                e.stopPropagation() // Chặn sự kiện nổi bọt lên <tr>
+                                navigate(
+                                  routers.getItemUpsertPath(
+                                    shopId,
+                                    'update',
+                                    item._id
+                                  )
+                                )
+                              }}
                             />
                             <FaTrash
                               className="icon delete-icon"
                               title="Xóa"
-                            // onClick={() => handleDelete(item._id)}
+                              // onClick={() => handleDelete(item._id)}
                             />
                           </div>
                         </td>
@@ -161,8 +185,6 @@ const MyShopPage = () => {
             </>
           )}
         </div>
-
-
       </div>
     </div>
   )
