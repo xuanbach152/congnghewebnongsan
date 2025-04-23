@@ -24,6 +24,14 @@ const OrderHistoryPage = () => {
     }
   };
 
+  const checkOrderTotal = (order) => {
+    const calculatedTotal = order.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    if(calculatedTotal !== order.totalPrice) {
+      console.warn(`Tổng tiền không khớp cho đơn hàng ${order._id}: ${calculatedTotal} !== ${order.totalPrice}`);
+    }
+    return order.totalPrice;
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
@@ -67,7 +75,7 @@ const OrderHistoryPage = () => {
             </div>
             <div className="order-footer">
               <span>
-                Tổng tiền: <strong>{order.totalPrice.toLocaleString()} VNĐ</strong>
+                Tổng tiền: <strong>{checkOrderTotal(order).toLocaleString()} VNĐ</strong>
               </span>
             </div>
           </div>

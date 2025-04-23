@@ -28,11 +28,22 @@ const CheckoutPage = () => {
 
     try {
       setLoading(true);
+      const totalPrice = calculateTotal();
+      const cardId = location.state?.cartId;
       await axiosInstance.post('/order/create', {
         items: selectedItems,
         address,
-        paymentMethod
+        paymentMethod,
+        totalPrice,
       });
+
+      // Xóa các sản phẩm đã thanh toán khỏi giỏ hàng
+      for(const item of selectedItems) {
+        await axiosInstance.delete('/cart/remove', {
+          data: { cartId: cardId, itemId: item.itemId._id },
+        });
+      }
+      
       alert('Đặt hàng thành công!');
       navigate('/order/history');
     } catch (err) {
@@ -79,7 +90,7 @@ const CheckoutPage = () => {
             checked={paymentMethod === 'momo'}
             onChange={() => setPaymentMethod('momo')}
           />
-          Ví MoMo
+          Chuyển khoản qua ngân hàng
         </label>
       </div>
 

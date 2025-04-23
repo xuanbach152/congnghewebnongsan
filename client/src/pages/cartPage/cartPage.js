@@ -21,7 +21,7 @@ const CartPage = () => {
       setSelectedItems(response.data.data.cartItems.map(item => item.itemId._id));
     } catch (err) {
       if (err.response?.data?.message === 'Cart not found') {
-        setCart({ cartItems: [], _id: null }); // Giỏ hàng rỗng
+        setCart({ cartItems: [], _id: null, totalPrice: 0 }); // Giỏ hàng rỗng
         setSelectedItems([]);
         setError(null);
       } else {
@@ -34,7 +34,7 @@ const CartPage = () => {
 
   // Cập nhật số lượng sản phẩm
   const updateCartItem = async (itemId, quantity) => {
-    if (quantity < 1) return; // Ngăn số lượng < 1
+    if (quantity < 1) return; 
     try {
       const response = await axiosInstance.put('/cart/update', {
         cartId: cart._id,

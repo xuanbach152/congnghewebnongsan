@@ -225,7 +225,7 @@ const MainHeader = () => {
                 </li>
                 <li onClick={() => (isLoggedIn ? setIsDropdownOpen(!isDropdownOpen) : toggleAuthModal())}>
                   <AiOutlineUser />
-                  <span>{isLoggedIn && user ? user.userName : 'Tài khoản'}</span>
+                  <span>{isLoggedIn && user?.userName ? user.userName : 'Tài khoản'}</span>
                   {isLoggedIn && <AiOutlineDown className="dropdown-arrow" />}
                   {isLoggedIn && isDropdownOpen && (
                     <div className="user_dropdown">
