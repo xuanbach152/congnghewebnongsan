@@ -94,7 +94,7 @@ const ShopUpsertPage = () => {
           {mode === 'update' ? (
             <>
               <FaAngleRight className="nav-icon" />
-              <Link to={routers.getMyShopPath(shopId)} className="nav-my-shop">
+              <Link to={routers.getMyShopPath(shopId, 'shopInfo')} className="nav-my-shop">
                 {shop.name}
               </Link>
             </>
