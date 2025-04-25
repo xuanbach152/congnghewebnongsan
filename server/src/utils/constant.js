@@ -12,6 +12,8 @@ export const ItemTypeEnum = {
   TREE: "TREE",
   SEED: "SEED",
   DIRED: "DIRED",
+  SEAFOOD: "SEAFOOD",
+  MEAT: "MEAT",
 };
 
 export const DeliveryTypeEnum = {
