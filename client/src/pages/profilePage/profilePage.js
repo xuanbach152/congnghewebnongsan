@@ -1,6 +1,5 @@
 import { memo, useState, useEffect } from 'react';
 import axiosInstance from 'utils/api';
-import { AiOutlineUser, AiOutlineMail, AiOutlinePhone, AiOutlineCalendar, AiOutlinePicture, AiOutlineLock, AiOutlineBank, AiOutlineHome } from 'react-icons/ai';
 import './profilePage.scss';
 
 const ProfilePage = ({ userId }) => {
@@ -251,6 +250,7 @@ const ProfilePage = ({ userId }) => {
   };
 
   useEffect(() => {
+    console.log('userId:', userId);
     if (userId) fetchUserData();
   }, [userId]);
 
@@ -296,7 +296,8 @@ const ProfilePage = ({ userId }) => {
                     type="text"
                     name="userName"
                     value={userData.userName}
-                    onChange={handleChange}
+                    readOnly
+                    className="readonly_input"
                     disabled={loading}
                   />
                   {errors.userName && <span className="error_message">{errors.userName}</span>}

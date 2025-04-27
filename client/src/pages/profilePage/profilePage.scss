@@ -111,6 +111,12 @@
       font-size: 14px;
       max-width: 300px;
     }
+    
+    .readonly_input {
+      background-color: #f5f5f5;
+      color: #666;
+      cursor: not-allowed;
+    }
 
     textarea {
       min-height: 80px;
