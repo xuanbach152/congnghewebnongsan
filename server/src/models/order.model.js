@@ -11,6 +11,11 @@ const orderSchema = new Schema({
     required: true,
     ref: "User",
   },
+  shopId: {
+    type: Schema.ObjectId,
+    required: true,
+    ref: "Shop",
+  },
   items: [
     {
       itemId: {

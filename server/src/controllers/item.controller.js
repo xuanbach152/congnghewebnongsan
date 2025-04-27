@@ -8,8 +8,6 @@ import e from "express";
 // Create a new item
 export const createItem = async (req, res) => {
   try {
-    console.log("Request body:", req.body);
-    console.log("Uploaded File:", req.file);
     const { shopId, name, price, type, description, rate, quantity } = req.body;
     const image = req.file;
     const imgUrl = await uploadToCloudinary(image);
@@ -115,11 +113,11 @@ export const updateItem = async (req, res) => {
     const itemId = req.params.id; 
     const itemData = req.body; 
     const image = req.file;
-    const imgUrl = await uploadToCloudinary(image);
+    let imgUrl;
+    if (image) {
+      imgUrl = await uploadToCloudinary(image);
+    }
     itemData.imgUrl = imgUrl;
-    console.log("Item ID:", itemId);
-    console.log("Item Data:", itemData);
-
     const updateitem = await ItemService.updateItem(itemId, itemData);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
@@ -238,9 +236,6 @@ export const getItemsByShopId = async (req, res) => {
     const sortField = req.query.sortField || "createdAt";
     const sortType = req.query.sortType === "asc" ? 1 : -1;
 
-    console.log("Shop ID:", shopId);
-    console.log("Page:", page, "Limit:", limit);
-    console.log("Sort Field:", sortField, "Sort Type:", sortType);
     const items = await ItemService.getItemsByShopId(
       shopId,
       page,
