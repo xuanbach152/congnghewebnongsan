@@ -7,7 +7,7 @@ const imageStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: "images",
-    allowed_formats: ["jpg", "png", "jpeg"],
+    allowed_formats: ["jpg", "png", "jpeg", "jfif"],
     transformation: [{ width: 500, height: 500, crop: "limit" }],
   },
 });
@@ -21,7 +21,7 @@ const uploadImg = multer({
       console.error("No image file received");
       return cb(new Error("No image file received"), false);
     }
-    if (!["image/jpeg", "image/png", "image/jpg"].includes(file.mimetype)) {
+    if (!["image/jpeg", "image/png", "image/jpg", "image/jfif"].includes(file.mimetype)) {
       console.error("Invalid image file type");
       return cb(new Error("Invalid image file type"), false);
     }

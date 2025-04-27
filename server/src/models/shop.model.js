@@ -26,11 +26,7 @@ const shopSchema = Schema(
       type: Number,
       default: 5,
     },
-    // số lượt mua
-    purchaseCount: { 
-      type: Number,
-      default: 0,
-    }
+    
   },
   {
     timestamps: true,

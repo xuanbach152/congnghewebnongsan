@@ -11,42 +11,57 @@ const orderSchema = new Schema({
     required: true,
     ref: "User",
   },
-  shopId: {
-    type: Schema.ObjectId,
-    required: true,
-    ref: "Shop",
-  },
-  items: [
+  orderGroups: [
     {
-      itemId: {
+      shopId: {
         type: Schema.ObjectId,
         required: true,
-        ref: "Item",
+        ref: "Shop",
       },
-      // name: { type: String, required: true }, 
-      // price: { type: Number, required: true }, 
-      // type: { type: String, required: true }, 
-      quantity: {
+      items: [
+        {
+          itemId: {
+            type: Schema.ObjectId,
+            required: true,
+            ref: "Item",
+          },
+          name: {
+            type: String,
+            required: true,
+          },
+          quantity: {
+            type: Number,
+            required: true,
+            default: 1,
+          },
+          price: {
+            type: Number,
+            required: true,
+          }
+        },
+      ],
+      totalPriceShop: {
         type: Number,
         required: true,
-        default: 1,
+        default: 0,
       },
-    },
+     
+    }
   ],
   orderDate: {
     type: Date,
     default: Date.now,
   },
-  
-  totalPrice: {
-    type: Number,
-    required: true,
-  },
   totalDiscountAmount: {
     type: Number,
+    default: 0
   },
   deliveryAddress: {
     type: String,
+    required: true,
+  },
+  totalPrice: {
+    type: Number,
     required: true,
   },
   totalDeliveryFee: {
@@ -56,7 +71,6 @@ const orderSchema = new Schema({
   totalPaymentAmount: {
     type: Number,
     required: true,
-    default: 0,
   },
   deliveryType: {
     type: String,

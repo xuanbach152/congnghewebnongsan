@@ -70,7 +70,7 @@ const getItems = async (
   sortType = "desc",
 ) => {
   try {
-    const skip = (page - 1) * limit; //tính toán số lượng item cần bỏ qua trong database
+    const skip = (page - 1) * limit; 
     const items = await ItemModel.find()
       .sort({ [sortField]: sortType === "desc" ? -1 : 1 })
       .skip(skip)

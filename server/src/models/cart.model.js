@@ -7,17 +7,22 @@ const cartSchema = Schema(
       required: true,
       ref: "User",
     },
-    orderGroup: [
+    shopGroup: [
       {
         shopId: {
           type: Schema.ObjectId,
           required: true,
+          ref: "Shop",
         },
         cartItems: [
           {
             itemId: {
               type: Schema.ObjectId,
               ref: "Item",
+              required: true,
+            },
+            name: {
+              type: String,
               required: true,
             },
             quantity: {
@@ -31,12 +36,7 @@ const cartSchema = Schema(
             },
           },
         ],
-        totalDeliveryFee: {
-          type: Number,
-          required: true,
-          default: 0,
-        },
-        totalPrice: {
+        totalPriceShop: {
           type: Number,
           required: true,
           default: 0,

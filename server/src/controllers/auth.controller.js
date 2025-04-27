@@ -80,9 +80,11 @@ export const logout = (req, res) => {
 export const refreshToken = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken; //lấy từ cookie
-    console.log(refreshTokens);
     if (!refreshToken) {
       return res.status(403).json({ message: "Vui lòng đăng nhập" });
+    }
+    if (!refreshTokens.includes(refreshToken)) {
+      return res.status(403).json({ message: "Token không hợp lệ" });
     }
     refreshTokens = refreshTokens.filter((token) => token !== refreshToken); //lọc ra token cũ
     const user =  verifyRefreshToken(refreshToken);
