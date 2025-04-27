@@ -11,7 +11,7 @@ const CheckoutPage = () => {
   const [error, setError] = useState(null);
 
   const [address, setAddress] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('cod'); // 'cod' hoặc 'momo'
+  const [paymentMethod, setPaymentMethod] = useState('cod'); 
 
   const calculateTotal = () =>
     selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -90,7 +90,7 @@ const CheckoutPage = () => {
             checked={paymentMethod === 'momo'}
             onChange={() => setPaymentMethod('momo')}
           />
-          Chuyển khoản qua ngân hàng
+          momo
         </label>
       </div>
 

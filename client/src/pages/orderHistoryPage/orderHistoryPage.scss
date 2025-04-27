@@ -102,7 +102,7 @@
           color: #333;
   
           strong {
-            color: #ee4d2d;
+            color: map.get($theme-colors, 'main');
             font-size: 18px;
           }
         }
