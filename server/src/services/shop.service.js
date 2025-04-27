@@ -35,8 +35,8 @@ const getShopById = async (ShopId) => {
 };
 
 const getShops = async (
-  page=1,
-  limit=10,
+  page = 1,
+  limit = 10,
   sortField = "createdAt",
   sortType = "desc"
 ) => {
@@ -85,8 +85,8 @@ const saveImageToDatabase = async (shopId, imgUrl) => {
 };
 const getShopsByUserId = async (
   userId,
-  page=1,
-  limit=10,
+  page = 1,
+  limit = 10,
   sortField = "createdAt",
   sortType = "desc"
 ) => {
@@ -105,38 +105,29 @@ const getOrderStatistics = async (shopId, periodType, date) => {
     let endDate = new Date(date);
 
     if (periodType === "week") {
-    
       endDate.setDate(endDate.getDate() + 7);
     } else if (periodType === "month") {
-      
       endDate.setMonth(endDate.getMonth() + 1);
     } else {
       throw new Error("Invalid period type. Use 'week' or 'month'");
     }
 
-    // Tìm tất cả đơn hàng 
+    // Tìm tất cả đơn hàng
     const orders = await OrderModel.find({
-      "orderGroups.shopId": shopId,
+      shopId: shopId,
       orderDate: { $gte: startDate, $lt: endDate },
       paymentStatus: "COMPLETED",
     }).populate([
       { path: "userId", select: "name email" },
-      { path: "orderGroups.items.itemId", select: "name price imgUrl" },
+      { path: "items.itemId", select: "name price imgUrl" },
     ]);
 
-   
     let totalRevenue = 0;
     let totalOrders = orders.length;
 
     // Tính tổng doanh thu của shop từ các đơn hàng
     orders.forEach((order) => {
-      const shopGroup = order.orderGroups.find(
-        (group) => group.shopId.toString() === shopId.toString()
-      );
-
-      if (shopGroup) {
-        totalRevenue += shopGroup.totalPriceShop || 0;
-      }
+      totalRevenue += order.totalPrice || 0;
     });
 
     return {
@@ -159,68 +150,58 @@ const getItemStatistics = async (shopId, periodType, date) => {
     let endDate = new Date(date);
 
     if (periodType === "week") {
-    
       endDate.setDate(endDate.getDate() + 7);
     } else if (periodType === "month") {
-      
       endDate.setMonth(endDate.getMonth() + 1);
     } else {
       throw new Error("Invalid period type. Use 'week' or 'month'");
     }
     const orders = await OrderModel.find({
-      "orderGroups.shopId": shopId,
+      shopId: shopId,
       orderDate: { $gte: startDate, $lt: endDate },
       paymentStatus: "COMPLETED",
-    }).populate("orderGroups.items.itemId");
-
+    }).populate("items.itemId");
 
     const shopItems = await ItemModel.find({ shopId });
-    
+
     // Tạo map để theo dõi thống kê cho mỗi sản phẩm
     const productStats = {};
-    
+
     // Khởi tạo thống kê cho mỗi sản phẩm của shop
-    shopItems.forEach(item => {
+    shopItems.forEach((item) => {
       productStats[item._id.toString()] = {
         itemId: item._id,
         name: item.name,
         quantitySold: 0,
         quantityRemaining: item.quantity,
-        revenue: 0
+        revenue: 0,
       };
     });
-    
+
     // Cập nhật thống kê từ các đơn hàng
-    orders.forEach(order => {
-      order.orderGroups.forEach(group => {
-        if (group.shopId.toString() === shopId.toString()) {
-          group.items.forEach(item => {
-            const itemId = item.itemId._id.toString();
-            
-            // Nếu sản phẩm thuộc shop
-            if (productStats[itemId]) {
-              productStats[itemId].quantitySold += item.quantity;
-              productStats[itemId].revenue += item.price * item.quantity;
-            }
-          });
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        const itemId = item.itemId._id.toString();
+
+        // Nếu sản phẩm thuộc shop
+        if (productStats[itemId]) {
+          productStats[itemId].quantitySold += item.quantity;
+          productStats[itemId].revenue += item.price * item.quantity;
         }
       });
     });
-    
+
     return {
       periodType,
       startDate,
       endDate,
-      products: Object.values(productStats)
+      products: Object.values(productStats),
     };
-  
-  
+  } catch (error) {
+    console.error(`Error in getItemStatistics: ${error.message}`);
+    throw error;
   }
-    catch (error) {
-      console.error(`Error in getItemStatistics: ${error.message}`);
-      throw error;
-    }
-}
+};
 export default {
   createShop,
   searchShops,
@@ -232,5 +213,4 @@ export default {
   getShopsByUserId,
   getOrderStatistics,
   getItemStatistics,
-  
 };

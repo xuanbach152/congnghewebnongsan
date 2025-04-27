@@ -11,8 +11,6 @@ const orderSchema = new Schema({
     required: true,
     ref: "User",
   },
-  orderGroups: [
-    {
       shopId: {
         type: Schema.ObjectId,
         required: true,
@@ -40,14 +38,7 @@ const orderSchema = new Schema({
           }
         },
       ],
-      totalPriceShop: {
-        type: Number,
-        required: true,
-        default: 0,
-      },
-     
-    }
-  ],
+
   orderDate: {
     type: Date,
     default: Date.now,

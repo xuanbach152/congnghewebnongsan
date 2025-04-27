@@ -15,7 +15,7 @@ const createOrder = async (userId, deliveryAddress, paymentMethod, deliveryType)
   try {
     const cart = await CartModel.findOne({ userId }).populate(
       [
-        { path: "shopGroup.cartItems.itemId", select: "imgUrl type price name" },
+        { path: "shopGroup.cartItems.itemId", select: "imgUrl type price name quantity" },
         { path: "shopGroup.shopId", select: "address name" }
       ]
     );
@@ -23,10 +23,8 @@ const createOrder = async (userId, deliveryAddress, paymentMethod, deliveryType)
       throw new Error("Cart is empty");
     }
 
-    const orderGroups = [];
-    const totalprice = cart.totalPaymentAmount;
-    const totalPriceShop = cart.totalPriceShop;
-    let deliveryFee = 0;
+    const createdOrders = [];
+  
     for(const shopGroup of cart.shopGroup) {
       const items = shopGroup.cartItems.map(cartItem => ({
         itemId: cartItem.itemId._id,
@@ -42,39 +40,29 @@ const createOrder = async (userId, deliveryAddress, paymentMethod, deliveryType)
         deliveryAddress,
       );
 
-      const shopDeliveryFee = distanceService.calculateDeliveryFee(distanceInKm);
-     
-
-      orderGroups.push({
-        shopId: shopGroup.shopId,
+      const deliveryFee = distanceService.calculateDeliveryFee(distanceInKm);
+      const newOrder = await OrderModel.create({
+        userId,
+        shopId: shopGroup.shopId._id,
         items: items,
-        totalPriceShop: shopGroup.totalPriceShop,
+        orderDate: new Date(),
+        totalPrice: shopGroup.totalPriceShop,
+        totalDeliveryFee: deliveryFee,
+        totalPaymentAmount: shopGroup.totalPriceShop + deliveryFee,
+        totalDiscountAmount: 0,
+        deliveryAddress,
+        paymentMethod,
+        deliveryType,
+        paymentStatus: "PENDING",
       });
 
-      deliveryFee += shopDeliveryFee;
+      createdOrders.push(newOrder);
+     
     }
-    
-
-    const totalPaymentAmount = totalprice + deliveryFee;
-
-    const newOrder = await OrderModel.create({
-      userId,
-      totalPriceShop: totalPriceShop,
-      orderGroups: orderGroups,
-      orderDate: new Date(),
-      totalDiscountAmount: 0,
-      totalPrice: totalprice,
-      totalDeliveryFee: deliveryFee,
-      totalPaymentAmount: totalPaymentAmount,
-      deliveryAddress,
-      paymentMethod,
-      deliveryType,
-      paymentStatus: "PENDING",
-    });
 
     await CartService.clearCart(userId);
 
-    return newOrder;
+    return createdOrders;
   } catch (error) {
     console.error("Error in createOrder:", error.message);
     throw error;
@@ -103,8 +91,8 @@ const cancelOrder = async (orderId) => {
 const getOrderById = async (orderId) => {
   try {
     const order = await OrderModel.findById(orderId).populate([
-      { path: "orderGroups.shopId", select: "name address" },
-      { path: "orderGroups.items.itemId", select: "name imgUrl price" }
+      { path: "shopId", select: "name address" },
+      { path: "items.itemId", select: "name imgUrl price" }
     ]);
     
     throwBadRequest(!order, Message.OrderNotFound);
@@ -129,8 +117,8 @@ const getOrders = async (
       .sort({ [sortField]: sortType === "desc" ? -1 : 1 })
       .populate([
         { path: "userId", select: "name email" },  
-        { path: "orderGroups.shopId", select: "name address" },
-        { path: "orderGroups.items.itemId", select: "name imgUrl price type quantity" } 
+        { path: "shopId", select: "name address" },
+        { path: "items.itemId", select: "name imgUrl price type quantity" } 
       ])
       .exec();
 
@@ -193,8 +181,8 @@ const getOrdersByUser = async (userId, page,
       .limit(Math.min(limit, 100))
       .sort({ [sortField]: sortType === "desc" ? -1 : 1 })
       .populate([
-        { path: "orderGroups.shopId", select: "name address" },
-        { path: "orderGroups.items.itemId", select: "name imgUrl price type quantity" }
+        { path: "shopId", select: "name address" },
+        { path: "items.itemId", select: "name imgUrl price type quantity" }
       ]);
       const totalorders = await OrderModel.countDocuments({ userId });
       return {
@@ -215,7 +203,7 @@ const deleteOrder = async (OrderId) => {
 
 const confirmOrder = async (orderId) => {
   try {
-    const order = await OrderModel.findById(orderId).populate("orderGroups.items.itemId");
+    const order = await OrderModel.findById(orderId).populate("items.itemId");
     if (!order) {
       throw new Error("Order not found");
     }
@@ -224,8 +212,8 @@ const confirmOrder = async (orderId) => {
     }
     const updatePromises = [];
     
-    for (const group of order.orderGroups) {
-      for (const item of group.items) {
+     
+      for (const item of order.items) {
         const itemInDb = item.itemId;
         
         if (!itemInDb) {
@@ -245,7 +233,7 @@ const confirmOrder = async (orderId) => {
         // Thêm vào mảng promises để cập nhật
         updatePromises.push(itemInDb.save());
       }
-    }
+    
     
     // Cập nhật tất cả sản phẩm
     await Promise.all(updatePromises);

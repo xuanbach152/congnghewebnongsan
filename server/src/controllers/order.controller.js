@@ -18,7 +18,7 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    const order = await OrderService.createOrder(
+    const orders = await OrderService.createOrder(
       userId,
       deliveryAddress,
       paymentMethod,
@@ -27,7 +27,7 @@ export const createOrder = async (req, res) => {
     res.status(201).send({
       code: 201,
       message: "Order created successfully",
-      data: order,
+      data: orders,
     });
   } catch (error) {
     console.error("Error in createOrder:", error.message);
