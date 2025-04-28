@@ -11,7 +11,7 @@ const ShopUpsertPage = () => {
   const [shop, setShop] = useState(null);
   const [preview, setPreview] = useState(null);
   const [formData, setFormData] = useState({
-    shopName: '',
+    name: '',
     address: '',
     description: '',
     image: null,
@@ -28,7 +28,7 @@ const ShopUpsertPage = () => {
         const shopData = data.data;
         setShop(shopData);
         setFormData({
-          shopName: shopData.name,
+          name: shopData.name,
           address: shopData.address,
           description: shopData.description,
         });
@@ -107,12 +107,12 @@ const ShopUpsertPage = () => {
 
           <form onSubmit={handleSubmit} className="form-register">
             <div className="form-group">
-              <label htmlFor="shopName">Tên cửa hàng</label>
+              <label htmlFor="name">Tên cửa hàng</label>
               <input
                 type="text"
-                id="shopName"
-                name="shopName"
-                value={formData.shopName}
+                id="name"
+                name="name"
+                value={formData.name}
                 onChange={handleInputChange}
                 placeholder={shop?.name || "Nhập tên cửa hàng"}
                 required

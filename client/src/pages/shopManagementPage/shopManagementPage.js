@@ -7,7 +7,7 @@ import { default as axiosInstance } from 'utils/api'
 
 const ShopManagementPage = () => {
   const [shops, setShops] = useState([])
-  const [totalPages, setTotalPages] = useState(5)
+  const [totalPages, setTotalPages] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(false)
 
@@ -18,9 +18,10 @@ const ShopManagementPage = () => {
         const response = await axiosInstance.get(
           `http://localhost:3000/shop/user?page=${currentPage}`
         )
-        const { data: shops, totalPages } = response.data;
+        const { shops, totalPages } = response.data.data;
+        setTotalPages(totalPages)
         setShops(shops)
-      } catch (error) {
+        } catch (error) {
         console.error(
           'Error fetching shop data:',
           error.response?.data || error.message
@@ -45,7 +46,10 @@ const ShopManagementPage = () => {
           <div className="shop-list">
             <div className="shop-list-title">
               <div className="title-text">Danh sách cửa hàng của bạn</div>
-              <Link to={routers.getShopUpsertPath('create')} className="btn-create-shop">
+              <Link
+                to={routers.getShopUpsertPath('create')}
+                className="btn-create-shop"
+              >
                 +
               </Link>
               <span className="btn-text">Đăng ký cửa hàng</span>
@@ -55,7 +59,10 @@ const ShopManagementPage = () => {
             ) : shops.length > 0 ? (
               <>
                 {shops.map((shop) => (
-                  <Link key={shop._id} to={routers.getMyShopPath(shop._id, 'shopInfo')}>
+                  <Link
+                    key={shop._id}
+                    to={routers.getMyShopPath(shop._id, 'shopInfo')}
+                  >
                     <div className="shop">
                       <div className="shop-image">
                         <img src={shop.imgUrl} alt={shop.name} />
