@@ -1,9 +1,9 @@
 import { memo, useEffect, useState } from 'react'
 import './itemDetailPage.scss'
-import { Link, useParams } from 'react-router-dom'
-import axios from 'axios'
+import { useParams } from 'react-router-dom'
 import { FaCartPlus, FaStar } from 'react-icons/fa'
 import { formatter } from 'utils/formatter'
+import axiosInstance from 'utils/api'
 
 const ItemDetailPage = () => {
     const { itemId } = useParams()
@@ -16,7 +16,7 @@ const ItemDetailPage = () => {
     };
 
     useEffect(() => {
-        axios
+        axiosInstance
             .get(`http://localhost:3000/item/${itemId}`)
             .then((response) => {
                 setItem(response.data.data)
@@ -25,6 +25,16 @@ const ItemDetailPage = () => {
                 console.error('Error fetching item data:', error)
             })
     }, [itemId])
+
+    const handleAddToCart = async () => {
+        try {
+            await axiosInstance.post((`http://localhost:3000/cart/add`), {
+                itemId, quantity
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <div className="item-information-management">
@@ -74,13 +84,12 @@ const ItemDetailPage = () => {
                                     <div className="item-total-price">
                                         <strong>Tổng tiền: </strong> {formatter(quantity * item.price)}
                                     </div>
-                                    <div className="item-actions">
-                                        <Link
-                                            to={`/item-management/${item.id}/edit`}
+                                    <div className="item-actions" onClick={handleAddToCart}>
+                                        <button
                                             className="btn add-to-cart"
                                         >
                                             <FaCartPlus /> Thêm vào giỏ hàng
-                                        </Link>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
