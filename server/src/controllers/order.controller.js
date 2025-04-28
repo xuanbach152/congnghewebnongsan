@@ -5,7 +5,7 @@ import { PaginationEnum } from "../utils/constant.js";
 // Create a new Order
 export const createOrder = async (req, res) => {
   try {
-    const { deliveryAddress, paymentMethod,deliveryType } = req.body;
+    const { deliveryAddress, paymentMethod, deliveryType } = req.body;
     const userId = req.user.id;
     console.log("User ID:", userId); 
     console.log("Delivery Address:", deliveryAddress); 

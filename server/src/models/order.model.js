@@ -11,33 +11,33 @@ const orderSchema = new Schema({
     required: true,
     ref: "User",
   },
-      shopId: {
+  shopId: {
+    type: Schema.ObjectId,
+    required: true,
+    ref: "Shop",
+  },
+  items: [
+    {
+      itemId: {
         type: Schema.ObjectId,
         required: true,
-        ref: "Shop",
+        ref: "Item",
       },
-      items: [
-        {
-          itemId: {
-            type: Schema.ObjectId,
-            required: true,
-            ref: "Item",
-          },
-          name: {
-            type: String,
-            required: true,
-          },
-          quantity: {
-            type: Number,
-            required: true,
-            default: 1,
-          },
-          price: {
-            type: Number,
-            required: true,
-          }
-        },
-      ],
+      name: {
+        type: String,
+        required: true,
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        default: 1,
+      },
+      price: {
+        type: Number,
+        required: true,
+      }
+    },
+  ],
 
   orderDate: {
     type: Date,
