@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import { FaCartPlus, FaStar } from 'react-icons/fa'
 import { formatter } from 'utils/formatter'
 import axiosInstance from 'utils/api'
+import { itemTypes } from 'utils/enums'
 
 const ItemDetailPage = () => {
     const { itemId } = useParams()
@@ -59,7 +60,7 @@ const ItemDetailPage = () => {
                                         <strong>Tên sản phẩm: </strong> {item.name}
                                     </div>
                                     <div className="item-price"><strong>Đơn giá: </strong> {formatter(item.price)}</div>
-                                    <div className="item-type"><strong>Loại hàng: </strong> {item.type}</div>
+                                    <div className="item-type"><strong>Loại hàng: </strong> {itemTypes[item.type]}</div>
                                     <div className="item-rate">
                                         <strong>Đánh giá:</strong> {item.rate}
                                         <FaStar

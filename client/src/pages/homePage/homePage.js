@@ -6,6 +6,7 @@ import { default as axiosInstance } from 'utils/api'
 import ArrowPagination from 'layouts/arrowPagination/arrowPagination'
 import { FaStar } from 'react-icons/fa'
 import { formatter } from 'utils/formatter'
+import { itemTypes } from 'utils/enums'
 
 const HomePage = ({ searchQuery }) => {
   const [shops, setShops] = useState([])
@@ -106,7 +107,7 @@ const HomePage = ({ searchQuery }) => {
                           <div className="item-info">
                             <div className="item-name">{item.name}</div>
                             <div className="item-price">Đơn giá: {formatter(item.price)}</div>
-                            <div className="item-type">Loại hàng: {item.type}</div>
+                            <div className="item-type">Loại hàng: {itemTypes[item.type]}</div>
                             <div className="item-rate">
                               Đánh giá: {item.rate}
                               <FaStar
