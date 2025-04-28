@@ -49,6 +49,9 @@ app.use("/shop", shopRoutes);
 app.use("/comment", commentRoutes);
 app.use("/auth", authRoutes);
 app.use("/message", messageRoutes);
+app.get("/", (req, res) => {
+  res.send("Chào mừng đến với Website Nông Sản Việt Nam");
+});
 // Lắng nghe server
 server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);

@@ -5,7 +5,7 @@ import { PaginationEnum } from "../utils/constant.js";
 // Create a new Order
 export const createOrder = async (req, res) => {
   try {
-    const { deliveryAddress, paymentMethod,deliveryType } = req.body;
+    const { deliveryAddress, paymentMethod, deliveryType } = req.body;
     const userId = req.user.id;
     console.log("User ID:", userId); 
     console.log("Delivery Address:", deliveryAddress); 
@@ -18,7 +18,7 @@ export const createOrder = async (req, res) => {
       });
     }
 
-    const order = await OrderService.createOrder(
+    const orders = await OrderService.createOrder(
       userId,
       deliveryAddress,
       paymentMethod,
@@ -27,7 +27,7 @@ export const createOrder = async (req, res) => {
     res.status(201).send({
       code: 201,
       message: "Order created successfully",
-      data: order,
+      data: orders,
     });
   } catch (error) {
     console.error("Error in createOrder:", error.message);
@@ -104,7 +104,10 @@ export const getOrderById = async (req, res) => {
 export const getOrdersByUser = async (req, res) => {
   try {
     const userId = req.user.id;
-    const orders = await OrderService.getOrdersByUser(userId);
+    const { page } = req.query; //lấy page từ query params
+    const { sortField, sortType } = req.query;
+    const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
+    const orders = await OrderService.getOrdersByUser(userId, page, limit, sortField, sortType);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: "Orders retrieved successfully",
@@ -160,3 +163,22 @@ export const deleteOrder = async (req, res) => {
     });
   }
 };
+// Confirm an Order by ID
+ export const confirmOrder = async (req,res)=>{
+  try{
+    const orderId = req.params.id;
+    const order = await OrderService.confirmOrder(orderId);
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: "Order confirmed successfully",
+      data: order,
+    });
+  }
+  catch(error){
+    console.error("Error in ConfirmOrder:", error.message);
+    res.status(httpStatus.BAD_REQUEST).send({
+      code: httpStatus.BAD_REQUEST,
+      message: error.message || "Failed to Confirm order",
+    });
+  }
+ }

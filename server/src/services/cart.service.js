@@ -27,33 +27,62 @@ const addToCart = async (userId, itemId, quantity) => {
     if (!item) {
       throw new Error("Item not found");
     }
-
+    if (!item.quantity || item.quantity < quantity) {
+      throw new Error(`Not enough items in stock. Only ${item.quantity || 0} items available.`);
+    }
     let cart = await CartModel.findOne({ userId: userId });
     if (!cart) {
       throw new Error("Cart not found");
     }
 
-    const existingItem = cart.cartItems.find(
-      (cartItem) => cartItem.itemId.toString() === itemId,
+    let shopGroupIndex = cart.shopGroup.findIndex(
+      (group) => group.shopId.toString() === item.shopId.toString()
+    );
+    
+    if (shopGroupIndex === -1) {
+      cart.shopGroup.push({
+        shopId: item.shopId,
+        cartItems: [],
+        totalPriceShop: 0
+      });
+      shopGroupIndex = cart.shopGroup.length - 1;
+    }
+
+    const existingItemIndex = cart.shopGroup[shopGroupIndex].cartItems.findIndex(
+      (cartItem) => cartItem.itemId.toString() === itemId
     );
 
-    if (existingItem) {
-      existingItem.quantity += quantity;
+    if (existingItemIndex !== -1) {
+      // Item đã tồn tại - cập nhật số lượng
+      const existingItem = cart.shopGroup[shopGroupIndex].cartItems[existingItemIndex];
+      if (item.quantity < existingItem.quantity + quantity) {
+        throw new Error(`Not enough items. Only ${item.quantity} available.`);
+      }
+      cart.shopGroup[shopGroupIndex].cartItems[existingItemIndex].quantity += quantity;
     } else {
-      cart.cartItems.push({
+      // Thêm item mới vào cart
+      cart.shopGroup[shopGroupIndex].cartItems.push({
         itemId: item._id,
         quantity,
+        name: item.name,
         price: item.price,
       });
     }
-
-    cart.totalPrice = cart.cartItems.reduce(
+    cart.shopGroup[shopGroupIndex].totalPriceShop = cart.shopGroup[shopGroupIndex].cartItems.reduce(
       (total, cartItem) => total + cartItem.price * cartItem.quantity,
-      0,
+      0
+    );
+
+    cart.totalPaymentAmount = cart.shopGroup.reduce(
+      (total, group) => total + group.totalPriceShop,
+      0
     );
 
     await cart.save();
-    return cart;
+    return CartModel.findOne({ userId }).populate({
+      path: "shopGroup.cartItems.itemId",
+      select: "imgUrl"
+    });
   } catch (error) {
     console.error("Error in addToCart:", error.message);
     throw error;
@@ -61,24 +90,53 @@ const addToCart = async (userId, itemId, quantity) => {
 };
 const updateCartItem = async (userId, itemId, quantity) => {
   try {
+
+    const item = await ItemModel.findById(itemId);
+    if (!item) {
+      throw new Error("Item not found");
+    }
+    if (!item.quantity || item.quantity < quantity) {
+      throw new Error(`Not enough items. Only ${item.quantity || 0} items available.`);
+    }
+
     const cart = await CartModel.findOne({ userId: userId });
     if (!cart) {
       throw new Error("Cart not found");
     }
 
-    const cartItem = cart.cartItems.find(
-      (item) => item.itemId.toString() === itemId,
-    );
-
-    if (!cartItem) {
+    // Tìm vị trí shop group và item trong giỏ hàng
+    let shopGroupIndex = -1;
+    let itemIndex = -1;
+    
+    for (let i = 0; i < cart.shopGroup.length; i++) {
+      const group = cart.shopGroup[i];
+      const idx = group.cartItems.findIndex(
+        cartItem => cartItem.itemId.toString() === itemId
+      );
+      
+      if (idx !== -1) {
+        shopGroupIndex = i;
+        itemIndex = idx;
+        break;
+      }
+    }
+    
+    if (shopGroupIndex === -1 || itemIndex === -1) {
       throw new Error("Item not found in cart");
     }
 
-    cartItem.quantity = quantity;
-
-    cart.totalPrice = cart.cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0,
+    cart.shopGroup[shopGroupIndex].cartItems[itemIndex].quantity = quantity;
+    
+  
+    cart.shopGroup[shopGroupIndex].totalPriceShop = cart.shopGroup[shopGroupIndex].cartItems.reduce(
+      (total, cartItem) => total + cartItem.price * cartItem.quantity,
+      0
+    );
+    
+   
+    cart.totalPaymentAmount = cart.shopGroup.reduce(
+      (total, group) => total + group.totalPriceShop,
+      0
     );
 
     await cart.save();
@@ -93,8 +151,8 @@ const updateCartItem = async (userId, itemId, quantity) => {
 const getCartUser = async (userId) => {
   try {
     const cart = await CartModel.findOne({ userId }).populate({
-      path: "cartItems.itemId",
-      select: "name imgUrl price",
+      path: "shopGroup.cartItems.itemId",
+      select: "imgUrl"
     });
 
     if (!cart) {
@@ -114,8 +172,8 @@ const clearCart = async (userId) => {
       throw new Error("Cart not found");
     }
 
-    cart.cartItems = [];
-    cart.totalPrice = 0;
+    cart.shopGroup = [];
+    cart.totalPaymentAmount = 0;
 
     await cart.save();
     return cart;
@@ -130,14 +188,41 @@ const removeCartItem = async (userId, itemId) => {
     if (!cart) {
       throw new Error("Cart not found");
     }
+    let shopGroupIndex = -1;
+    let itemIndex = -1;
+    for (let i = 0; i < cart.shopGroup.length; i++) {
+      const group = cart.shopGroup[i];
+      const idx = group.cartItems.findIndex(
+        cartItem => cartItem.itemId.toString() === itemId
+      );
+      
+      if (idx !== -1) {
+        shopGroupIndex = i;
+        itemIndex = idx;
+        break;
+      }
+    }
+    if (shopGroupIndex === -1 || itemIndex === -1) {
+      throw new Error("Item not found in cart");
+    }
 
-    cart.cartItems = cart.cartItems.filter(
-      (item) => item.itemId.toString() !== itemId,
-    );
+    cart.shopGroup[shopGroupIndex].cartItems.splice(itemIndex, 1);
 
-    cart.totalPrice = cart.cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0,
+    // Kiểm tra nếu group rỗng thì xóa
+    if (cart.shopGroup[shopGroupIndex].cartItems.length === 0) {
+      cart.shopGroup.splice(shopGroupIndex, 1);
+    } else {
+      // Nếu group còn tồn tại thì tính lại totalPriceShop
+      cart.shopGroup[shopGroupIndex].totalPriceShop = cart.shopGroup[shopGroupIndex].cartItems.reduce(
+        (total, cartItem) => total + cartItem.price * cartItem.quantity,
+        0
+      );
+    }
+
+
+    cart.totalPaymentAmount = cart.shopGroup.reduce(
+      (total, group) => total + group.totalPriceShop,
+      0
     );
 
     await cart.save();
@@ -159,7 +244,6 @@ export default {
   createCart,
   updateCartItem,
   getAllCarts,
- 
   getCartUser,
   addToCart,
   deleteCart,

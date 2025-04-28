@@ -8,7 +8,7 @@ import { uploadToCloudinary } from "../utils/file.util.js";
 export const createShop = async (req, res) => {
   try {
     console.log(req.body);
-    const { shopName: name, address, description } = req.body;
+    const {  name, address, description } = req.body;
     const userId = req.user.id;
     const image = req.file;
     const imgUrl = await uploadToCloudinary(image);
@@ -88,14 +88,15 @@ export const getShopById = async (req, res) => {
 // Update an Shop by ID
 export const updateShop = async (req, res) => {
   try {
-    const { shopName: name, address, description } = req.body;
+    const shopId = req.params.id;
+    const {  name, address, description } = req.body;
     const image = req.file;
     let imgUrl;
     if(image) {
       imgUrl = await uploadToCloudinary(image);
     }
     console.log(imgUrl);
-    const updatedShop = await ShopService.updateShop(req.params.id, { name, address, description, imgUrl });
+    const updatedShop = await ShopService.updateShop(shopId, { name, address, description, imgUrl });
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.ShopUpdated,
@@ -113,7 +114,9 @@ export const updateShop = async (req, res) => {
 // Delete an Shop by ID
 export const deleteShop = async (req, res) => {
   try {
-    const Shopdelete = await ShopService.deleteShop(req.body);
+
+    const shopId = req.params.id;
+    const Shopdelete = await ShopService.deleteShop(shopId);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
@@ -136,7 +139,7 @@ export const uploadImage = async (req, res) => {
     const imgUrl = await uploadToCloudinary(req.file);
     console.log("Image uploaded to Cloudinary:", imgUrl);
 
-    const updatedItem = await ItemService.saveImageToDatabase(
+    const updatedItem = await ShopService.saveImageToDatabase(
       req.params.id,
       imgUrl,
     );
@@ -153,38 +156,6 @@ export const uploadImage = async (req, res) => {
       code: httpStatus.INTERNAL_SERVER_ERROR,
       message: Message.FAILED,
       error: error.message,
-    });
-  }
-};
-
-export const getRevenueByMonth = async (req, res) => {
-  try {
-    const { shopId } = req.params;
-    const { month, year } = req.query;
-
-    if (!shopId || !month || !year) {
-      return res.status(400).send({
-        code: 400,
-        message: "Missing required fields: shopId, month, or year",
-      });
-    }
-
-    const revenueData = await ShopService.getRevenueByMonth(
-      shopId,
-      parseInt(month),
-      parseInt(year),
-    );
-
-    res.status(200).send({
-      code: 200,
-      message: "Revenue data retrieved successfully",
-      data: revenueData,
-    });
-  } catch (error) {
-    console.error("Error in getRevenueByMonth:", error.message);
-    res.status(500).send({
-      code: 500,
-      message: error.message || "Failed to retrieve revenue data",
     });
   }
 };
@@ -208,3 +179,43 @@ export const getShopsByUserId = async (req, res) => {
     });
   }
 };
+
+export const getOrderStatistics = async (req,res)=>{
+  try{
+    const shopId = req.params.shopId;
+    const { periodType, date } = req.query;
+    const statistics = await ShopService.getOrderStatistics(shopId, periodType, date);
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: Message.OK,
+      data: statistics,
+    });
+  }
+  catch(error){
+    console.error("Error in getOrderStatistics:", error.message);
+    res.status(500).send({
+      code: 500,
+      message: error.message || "Failed to retrieve order statistics",
+    });
+  }
+}
+
+export const getItemStatistics = async (req,res)=>{
+  try{
+    const shopId = req.params.shopId;
+    const { periodType, date } = req.query;
+    const statistics = await ShopService.getItemStatistics(shopId, periodType, date);
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: Message.OK,
+      data: statistics,
+    });
+  }
+  catch(error){
+    console.error("Error in getItemStatistics:", error.message);
+    res.status(500).send({
+      code: 500,
+      message: error.message || "Failed to retrieve item statistics",
+    });
+  }
+}

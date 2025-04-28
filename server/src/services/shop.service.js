@@ -7,7 +7,7 @@ import Message from "../utils/message.js";
 const createShop = async (shopData) => {
   const newShop = await ShopModel.create({
     ...shopData,
-    imgUrl: shopData.image.path || "",
+    imgUrl: shopData.imgUrl || "",
   });
   return newShop;
 };
@@ -23,7 +23,7 @@ const updateShop = async (shopId, shopData) => {
   throwBadRequest(!Shop, Message.ShopNotFound);
   return ShopModel.findByIdAndUpdate(
     shopId,
-    { ...shopData, imgUrl: shopData.image.path || undefined },
+    { ...shopData, imgUrl: shopData.imgUrl || undefined },
     { new: true }
   );
 };
@@ -35,8 +35,8 @@ const getShopById = async (ShopId) => {
 };
 
 const getShops = async (
-  page,
-  limit,
+  page = 1,
+  limit = 10,
   sortField = "createdAt",
   sortType = "desc"
 ) => {
@@ -83,41 +83,10 @@ const saveImageToDatabase = async (shopId, imgUrl) => {
     throw error;
   }
 };
-
-const getRevenueByMonth = async (shopId, month, year) => {
-  try {
-    // Tính ngày bắt đầu và ngày kết thúc của tháng
-    const startDate = new Date(year, month - 1, 1);
-    const endDate = new Date(year, month, 0);
-
-    // Lấy tất cả các đơn hàng của shop trong khoảng thời gian
-    const orders = await OrderModel.find({
-      "items.itemId": { $in: await getItemIdsByShop(shopId) },
-      createdAt: { $gte: startDate, $lte: endDate },
-      paymentStatus: "COMPLETED",
-    });
-
-    // Tính tổng doanh thu
-    const totalRevenue = orders.reduce(
-      (sum, order) => sum + order.totalPrice,
-      0
-    );
-
-    return {
-      totalRevenue,
-      totalOrders: orders.length,
-      orders,
-    };
-  } catch (error) {
-    console.error("Error in getRevenueByMonth:", error.message);
-    throw error;
-  }
-};
-
 const getShopsByUserId = async (
   userId,
-  page,
-  limit,
+  page = 1,
+  limit = 10,
   sortField = "createdAt",
   sortType = "desc"
 ) => {
@@ -129,6 +98,110 @@ const getShopsByUserId = async (
     .exec();
   return shops;
 };
+const getOrderStatistics = async (shopId, periodType, date) => {
+  try {
+    // Xác định khoảng thời gian
+    const startDate = new Date(date);
+    let endDate = new Date(date);
+
+    if (periodType === "week") {
+      endDate.setDate(endDate.getDate() + 7);
+    } else if (periodType === "month") {
+      endDate.setMonth(endDate.getMonth() + 1);
+    } else {
+      throw new Error("Invalid period type. Use 'week' or 'month'");
+    }
+
+    // Tìm tất cả đơn hàng
+    const orders = await OrderModel.find({
+      shopId: shopId,
+      orderDate: { $gte: startDate, $lt: endDate },
+      paymentStatus: "COMPLETED",
+    }).populate([
+      { path: "userId", select: "name email" },
+      { path: "items.itemId", select: "name price imgUrl" },
+    ]);
+
+    let totalRevenue = 0;
+    let totalOrders = orders.length;
+
+    // Tính tổng doanh thu của shop từ các đơn hàng
+    orders.forEach((order) => {
+      totalRevenue += order.totalPrice || 0;
+    });
+
+    return {
+      totalRevenue,
+      totalOrders,
+      periodType,
+      startDate,
+      endDate,
+      orders,
+    };
+  } catch (error) {
+    console.error(`Error in getOrderStatistics: ${error.message}`);
+    throw error;
+  }
+};
+const getItemStatistics = async (shopId, periodType, date) => {
+  try {
+    // Xác định khoảng thời gian
+    const startDate = new Date(date);
+    let endDate = new Date(date);
+
+    if (periodType === "week") {
+      endDate.setDate(endDate.getDate() + 7);
+    } else if (periodType === "month") {
+      endDate.setMonth(endDate.getMonth() + 1);
+    } else {
+      throw new Error("Invalid period type. Use 'week' or 'month'");
+    }
+    const orders = await OrderModel.find({
+      shopId: shopId,
+      orderDate: { $gte: startDate, $lt: endDate },
+      paymentStatus: "COMPLETED",
+    }).populate("items.itemId");
+
+    const shopItems = await ItemModel.find({ shopId });
+
+    // Tạo map để theo dõi thống kê cho mỗi sản phẩm
+    const productStats = {};
+
+    // Khởi tạo thống kê cho mỗi sản phẩm của shop
+    shopItems.forEach((item) => {
+      productStats[item._id.toString()] = {
+        itemId: item._id,
+        name: item.name,
+        quantitySold: 0,
+        quantityRemaining: item.quantity,
+        revenue: 0,
+      };
+    });
+
+    // Cập nhật thống kê từ các đơn hàng
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        const itemId = item.itemId._id.toString();
+
+        // Nếu sản phẩm thuộc shop
+        if (productStats[itemId]) {
+          productStats[itemId].quantitySold += item.quantity;
+          productStats[itemId].revenue += item.price * item.quantity;
+        }
+      });
+    });
+
+    return {
+      periodType,
+      startDate,
+      endDate,
+      products: Object.values(productStats),
+    };
+  } catch (error) {
+    console.error(`Error in getItemStatistics: ${error.message}`);
+    throw error;
+  }
+};
 export default {
   createShop,
   searchShops,
@@ -137,7 +210,7 @@ export default {
   getShops,
   deleteShop,
   saveImageToDatabase,
-
-  getRevenueByMonth,
   getShopsByUserId,
+  getOrderStatistics,
+  getItemStatistics,
 };
