@@ -16,6 +16,7 @@ import { Link } from 'react-router-dom';
 import { formatter } from 'utils/formatter';
 import routers from 'utils/routers';
 import axiosInstance from 'utils/api';
+import { itemTypes, provinces } from 'utils/enums';
 
 const MainHeader = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -50,8 +51,8 @@ const MainHeader = () => {
   const register = async (userName, password, phone) => {
     try {
       const response = await axiosInstance.post('/auth/register', { userName, password, phone });
-      const { user , cart } = response.data;
-      return { user , cart }; 
+      const { user, cart } = response.data;
+      return { user, cart };
     } catch (error) {
       throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' }
     }
@@ -88,6 +89,7 @@ const MainHeader = () => {
         setIsLoggedIn(true);
         setIsAuthModalOpen(false);
         fetchCartData();
+        window.location.reload();
       } else {
         const confirmPassword = e.target.confirmPassword.value
         const phone = e.target.phone.value
@@ -136,7 +138,7 @@ const MainHeader = () => {
     } finally {
       setCartLoading(false)
     }
-  }; 
+  };
 
   const cartItemCount = () => {
     return cart?.cartItems?.length || 0;
@@ -152,7 +154,7 @@ const MainHeader = () => {
         return total + price * quantity;
       }, 0);
   };
-  
+
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken')
@@ -197,7 +199,7 @@ const MainHeader = () => {
     setIsLogin(!isLogin)
   }
 
-  const handleLogout = async() => {
+  const handleLogout = async () => {
     await logout();
     setIsLoggedIn(false);
     setIsDropdownOpen(false);
@@ -306,7 +308,7 @@ const MainHeader = () => {
                   </Link>
                 </li>
               </ul>
-             </div>
+            </div>
           </div>
         </div>
         {/* ?...? */}
@@ -319,10 +321,11 @@ const MainHeader = () => {
                 onChange={(e) => setFilterLocation(e.target.value)}
               >
                 <option value="all">Tất cả khu vực</option>
-                <option value="hanoi">Hà Nội</option>
-                <option value="hcm">TP.HCM</option>
-                <option value="danang">Đà Nẵng</option>
-                <option value="nearby">Gần tôi</option>
+                {Object.entries(provinces).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -333,10 +336,11 @@ const MainHeader = () => {
                 onChange={(e) => setFilterCategory(e.target.value)}
               >
                 <option value="all">Tất cả danh mục</option>
-                <option value="vegetables">Rau củ</option>
-                <option value="fruits">Trái cây</option>
-                <option value="organic">Hữu cơ</option>
-                <option value="processed">Thực phẩm chế biến</option>
+                {Object.entries(itemTypes).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
             </div>
 

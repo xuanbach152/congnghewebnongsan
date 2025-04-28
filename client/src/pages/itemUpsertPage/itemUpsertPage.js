@@ -5,6 +5,7 @@ import routers from 'utils/routers'
 import { FaAngleRight } from 'react-icons/fa'
 import axios from 'axios'
 import axiosInstance from 'utils/api'
+import { itemTypes } from 'utils/enums'
 
 const ItemUpsertPage = () => {
   const [formData, setFormData] = useState({
@@ -62,7 +63,7 @@ const ItemUpsertPage = () => {
     fetchItem();
   }, [itemId]);
 
-  if (loadingShop  && mode === 'create') {
+  if (loadingShop && mode === 'create') {
     return <div className="loading">Đang tải dữ liệu...</div>
   }
 
@@ -123,12 +124,12 @@ const ItemUpsertPage = () => {
               Quản lý cửa hàng
             </Link>
             <FaAngleRight className="nav-icon" />
-            <Link to={routers.getMyShopPath(shopId)} className="nav-my-shop">
+            <Link to={routers.getMyShopPath(shopId, 'itemList')} className="nav-my-shop">
               {shop.name}
             </Link>
             <FaAngleRight className="nav-icon" />
             <Link to={routers.SHOP_REGISTRATION} className="nav-item-creation">
-              { mode === 'create' ? 'Thêm sản phẩm mới' : 'Cập nhập thông tin sản phẩm' }
+              {mode === 'create' ? 'Thêm sản phẩm mới' : 'Cập nhập thông tin sản phẩm'}
             </Link>
           </div>
           <div className="item-creation-form">
@@ -163,15 +164,22 @@ const ItemUpsertPage = () => {
 
               <div className="form-group">
                 <label htmlFor="type">Loại sản phẩm</label>
-                <input
-                  type="text"
-                  id="type"
-                  name="type"
-                  value={formData.type}
-                  onChange={handleInputChange}
-                  placeholder={item?.type || "Nhập loại sản phẩm"}
-                  required
-                />
+                <div className="select-container">
+                  <select
+                    id="type"
+                    name="type"
+                    value={formData.type}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="" disabled>Chọn loại sản phẩm</option>
+                    {Object.entries(itemTypes).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="form-group">
@@ -221,7 +229,7 @@ const ItemUpsertPage = () => {
 
               <div className="form-group">
                 <button type="submit" className="btn-submit">
-                  { mode === 'create' ? 'Thêm mới' : 'Cập nhật' }
+                  {mode === 'create' ? 'Thêm mới' : 'Cập nhật'}
                 </button>
               </div>
             </form>
