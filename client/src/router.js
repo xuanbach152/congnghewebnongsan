@@ -13,11 +13,11 @@ import ItemDetailPage from 'pages/itemDetailPage/itemDetailPage'
 import ShopDetailPage from 'pages/shopDetailPage/shopDetailPage'
 import MyShopPage from 'pages/myShopPage/myShopPage'
 
-const renderRouter = () => {
+const renderRouter = ({ searchQuery }) => {
   const allRouters = [
     {
       path: routers.HOME,
-      component: <HomePage />,
+      component: <HomePage searchQuery={searchQuery} />, 
     },
     {
       path: routers.PROFILE,

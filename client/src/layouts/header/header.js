@@ -18,7 +18,7 @@ import routers from 'utils/routers';
 import axiosInstance from 'utils/api';
 import { itemTypes, provinces } from 'utils/enums';
 
-const MainHeader = () => {
+const MainHeader = ({ setSearchQuery }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -206,6 +206,13 @@ const MainHeader = () => {
     setIsProfileOpen(false);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const query = formData.get('search');
+    setSearchQuery(query); 
+  };
+
   return (
     <>
       {/* Top Bar */}
@@ -274,9 +281,10 @@ const MainHeader = () => {
           <div className="col-xl-6">
             <div className="header_search_container">
               <div className="header_search_form">
-                <form onSubmit={(e) => e.preventDefault()}>
+                <form onSubmit={handleSubmit}>
                   <input
                     type="text"
+                    name="search"
                     placeholder="Tìm kiếm sản phẩm hoặc cửa hàng..."
                   />
                   <button type="submit">Tìm kiếm</button>
