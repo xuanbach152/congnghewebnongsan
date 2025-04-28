@@ -31,11 +31,11 @@ export const createShop = async (req, res) => {
 export const searchShops = async (req, res) => {
   try {
     const searchText = req.query.searchText;
-    const shop = await ShopService.searchShops(searchText);
+    const shops = await ShopService.searchShops(searchText);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
-      data: shop,
+      data: shops,
     });
   } catch (error) {
     console.log(error);

@@ -7,14 +7,14 @@ import ArrowPagination from 'layouts/arrowPagination/arrowPagination'
 import { FaStar } from 'react-icons/fa'
 import { formatter } from 'utils/formatter'
 
-const HomePage = () => {
+const HomePage = ({ searchQuery }) => {
   const [shops, setShops] = useState([])
-  const [shopTotalPages, setShopTotalPages] = useState(5)
+  const [shopTotalPages, setShopTotalPages] = useState(1)
   const [shopCurrentPage, setShopCurrentPage] = useState(1)
   const [shopLoading, setShopLoading] = useState(false)
 
   const [items, setItems] = useState([])
-  const [itemTotalPages, setItemTotalPages] = useState(5)
+  const [itemTotalPages, setItemTotalPages] = useState(1)
   const [itemCurrentPage, setItemCurrentPage] = useState(1)
   const [itemLoading, setItemLoading] = useState(false)
 
@@ -22,12 +22,19 @@ const HomePage = () => {
     const fetchShops = async () => {
       setShopLoading(true)
       try {
+        const url = (searchQuery === '' ? `http://localhost:3000/shop?page=${shopCurrentPage}` : `http://localhost:3000/shop/search?searchText=${searchQuery}`)
         const response = await axiosInstance.get(
-          `http://localhost:3000/shop?page=${shopCurrentPage}`
+          url
         )
-        const { shops, totalPages } = response.data.data
-        setShopTotalPages(totalPages)
-        setShops(shops)
+        if (searchQuery === '') {
+          const { shops, totalPages } = response.data.data
+          setShopTotalPages(totalPages)
+          setShops(shops)
+        } 
+        else {
+          setShops(response.data.data);
+          console.log(response.data.data);
+        }
       } catch (error) {
         console.error(
           'Error fetching shop data:',
@@ -39,18 +46,25 @@ const HomePage = () => {
     }
 
     fetchShops()
-  }, [shopCurrentPage])
+  }, [searchQuery, shopCurrentPage])
 
   useEffect(() => {
     const fetchItems = async () => {
       setItemLoading(true)
       try {
+        const url = (searchQuery === '' ? `http://localhost:3000/item?page=${itemCurrentPage}` : `http://localhost:3000/item/search?searchText=${searchQuery}`)
         const response = await axiosInstance.get(
-          `http://localhost:3000/item?page=${itemCurrentPage}`
+          url
         )
-        const { items, totalPages } = response.data.data
-        setItemTotalPages(totalPages)
-        setItems(items)
+        if (searchQuery === '') {
+          const { items, totalPages } = response.data.data
+          setItemTotalPages(totalPages)
+          setItems(items)
+        }
+        else {
+          setItems(response.data.data);
+          console.log(response.data.data);
+        }
       } catch (error) {
         console.error(
           'Error fetching item data:',
@@ -62,7 +76,7 @@ const HomePage = () => {
     }
 
     fetchItems()
-  }, [itemCurrentPage])
+  }, [itemCurrentPage, searchQuery])
 
   return (
     <>
@@ -109,7 +123,7 @@ const HomePage = () => {
                 </div>
               </>
             ) : (
-              <p>Hiện chưa có sản phẩm nào</p>
+              <p>Không có sản phẩm phù hợp</p>
             )}
           </div>
           <div class="divider"></div>
@@ -145,7 +159,7 @@ const HomePage = () => {
                 </div>
               </>
             ) : (
-              <p>Hiện chưa có cửa hàng đăng ký</p>
+              <p>Không có cửa hàng phù hợp</p>
             )}
           </div>
         </div>

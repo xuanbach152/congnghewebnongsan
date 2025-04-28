@@ -21,13 +21,15 @@
     }
 
     p {
-        position: absolute;
-        font-size: 18px;
-        top: 50%;
-        left: 50%;
-        font-weight: bold;
-        transform: translate(-50%, -50%);
-        color: rgb(225, 21, 21);
+      font-size: 18px;
+      font-weight: bold;
+      color: rgb(225, 21, 21);
+      text-align: center;
+      margin: 20px 0;
+      position: static;
+      transform: none; 
+      top: auto;
+      left: auto;
     }
 
     .item-list {
