@@ -96,7 +96,13 @@ const getShopsByUserId = async (
     .skip(skip)
     .limit(limit)
     .exec();
-  return shops;
+  const totalShopsByUser = await ShopModel.countDocuments({ userId });
+  return {
+    shops,
+    totalShopsByUser,
+    totalPages: Math.ceil(totalShopsByUser / limit),
+    currentPage: parseInt(page),
+  };
 };
 const getOrderStatistics = async (shopId, periodType, date) => {
   try {

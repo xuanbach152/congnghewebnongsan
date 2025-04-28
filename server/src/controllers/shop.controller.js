@@ -52,11 +52,11 @@ export const getShops = async (req, res) => {
     const { page } = req.query;
     const { sortField, sortType } = req.query;
     const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
-    const Shops = await ShopService.getShops(page, limit, sortField, sortType);
+    const shops = await ShopService.getShops(page, limit, sortField, sortType);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
-      data: Shops,
+      data: shops,
     });
   } catch (error) {
     console.log(error);
