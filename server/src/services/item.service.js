@@ -26,8 +26,6 @@ const searchItems = async (searchText) => {
   return await ItemModel.find({
     $or: [
       { name: { $regex: regex } },
-      { type: { $regex: regex } },
-      { description: { $regex: regex } },
     ],
   });
 };
