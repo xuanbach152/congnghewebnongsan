@@ -118,10 +118,12 @@ const MainHeader = () => {
       const response = await axiosInstance.get('/cart/getcart');
       setCart(response.data.data);
       setError(null);
-      setSelectedItems(response.data.data.cartItems.map(item => item.itemId._id));
+      // setSelectedItems(response.data.data.cartItems.map(item => item.itemId._id));
+      setSelectedItems(response.data.data.shopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id)));
     } catch (err) {
       if (err.response?.data?.message === 'Cart not found') {
-        setCart({ cartItems: [], _id: null });
+        // setCart({ cartItems: [], _id: null });
+        setCart({ shopGroup: [], _id: null, totalPaymentAmount: 0 });
         setSelectedItems([]);
         setError(null);
       } else {
@@ -133,13 +135,24 @@ const MainHeader = () => {
   }; 
 
   const cartItemCount = () => {
-    return cart?.cartItems?.length || 0;
+    // return cart?.cartItems?.length || 0;
+    if (!cart?.shopGroup) return 0;
+    return cart.shopGroup.reduce((total, group) => total + group.cartItems.length, 0);
   };
 
   const cartTotal = () => {
-    if (!cart?.cartItems) return 0;
-    return cart.cartItems
-      .filter(item => selectedItems.includes(item.itemId._id))
+    // if (!cart?.cartItems) return 0;
+    // return cart.cartItems
+    //   .filter(item => selectedItems.includes(item.itemId._id))
+    //   .reduce((total, item) => {
+    //     const price = Number(item.price) || 0;
+    //     const quantity = Number(item.quantity) || 0;
+    //     return total + price * quantity;
+    //   }, 0);
+    if (!cart?.shopGroup) return 0;
+    return cart.shopGroup
+      .flatMap(group => group.cartItems)
+      .filter(item => selectedItems.includes(item._id || item.itemId._id))
       .reduce((total, item) => {
         const price = Number(item.price) || 0;
         const quantity = Number(item.quantity) || 0;
