@@ -9,7 +9,6 @@ const CartPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
   const fetchCart = async () => {

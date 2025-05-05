@@ -1,33 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../utils/api';
 import { memo } from 'react';
+import { toast } from 'react-toastify';
 import './orderHistoryPage.scss';
 
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [showPending, setShowPending] = useState(true); // Default: show PENDING orders
+  const [showCompleted, setShowCompleted] = useState(true); // Default: show COMPLETED orders
+  const [editingOrderId, setEditingOrderId] = useState(null);
+  const [editFormData, setEditFormData] = useState({ deliveryAddress: '', paymentMethod: '' });
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
+      toast.info('Đang tải lịch sử đơn hàng...', {
+        position: "top-center",
+        autoClose: false,
+        toastId: 'loading-toast',
+      });
+
       const token = localStorage.getItem('accessToken');
       if (!token) {
         throw new Error('Không tìm thấy token. Vui lòng đăng nhập lại.');
       }
 
-      const response = await axiosInstance.get(`/order/history?page=${page}&limit=10&status=${statusFilter}`);
-      console.log('Dữ liệu từ API /order/history:', response.data);
+      const response = await axiosInstance.get(`/order/user?page=${page}&limit=10`);
+      console.log('Dữ liệu từ API /order/user:', response.data);
       const { orders, totalPages } = response.data.data || {};
       
-      // Lọc bỏ các đơn hàng có trạng thái CANCELLED
-      const filteredOrders = (orders || []).filter(order => order.paymentStatus !== 'CANCELLED');
-      setOrders(filteredOrders);
+      setOrders(orders || []);
       setTotalPages(totalPages || 1);
-      setError(null);
+
+      if (!orders || orders.length === 0) {
+        toast.info('Bạn chưa có đơn hàng nào', {
+          position: "top-center",
+          autoClose: 3000,
+        });
+      }
     } catch (err) {
       console.error('Lỗi khi lấy lịch sử đơn hàng:', {
         message: err.message,
@@ -35,29 +48,112 @@ const OrderHistoryPage = () => {
         status: err.response?.status,
       });
       if (err.response?.status === 401) {
-        setError('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.', {
+          position: "top-center",
+          autoClose: 3000,
+        });
         localStorage.removeItem('accessToken');
       } else if (err.response?.status === 404) {
-        setError('Không tìm thấy API /order/history. Vui lòng kiểm tra backend.');
+        toast.error('Không tìm thấy API /order/user. Vui lòng kiểm tra backend.', {
+          position: "top-center",
+          autoClose: 3000,
+        });
       } else {
-        setError(err.response?.data?.message || err.message || 'Không thể tải lịch sử mua hàng');
+        toast.error(err.response?.data?.message || err.message || 'Không thể tải lịch sử mua hàng', {
+          position: "top-center",
+          autoClose: 3000,
+        });
       }
     } finally {
       setLoading(false);
+      toast.dismiss('loading-toast');
     }
   };
 
   const cancelOrder = async (orderId) => {
     try {
-      // Gọi API để hủy đơn hàng
       await axiosInstance.put(`/order/cancel/${orderId}`);
-
-      // Cập nhật state orders bằng cách loại bỏ đơn hàng vừa hủy
       setOrders(orders.filter(order => order._id !== orderId));
-      alert('Đơn hàng đã được hủy');
+      toast.success('Đơn hàng đã được hủy', {
+        position: "top-center",
+        autoClose: 3000,
+      });
     } catch (err) {
       console.error('Lỗi khi hủy đơn hàng:', err.response?.data || err.message);
-      alert(err.response?.data?.message || 'Không thể hủy đơn hàng');
+      toast.error(err.response?.data?.message || 'Không thể hủy đơn hàng', {
+        position: "top-center",
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const confirmOrder = async (orderId) => {
+    try {
+      const response = await axiosInstance.put(`/order/confirm/${orderId}`);
+      setOrders(orders.map(order =>
+        order._id === orderId ? { ...order, paymentStatus: 'COMPLETED' } : order
+      ));
+      toast.success('Đơn hàng đã được xác nhận hoàn tất', {
+        position: "top-center",
+        autoClose: 3000,
+      });
+    } catch (err) {
+      console.error('Lỗi khi xác nhận đơn hàng:', err.response?.data || err.message);
+      toast.error(err.response?.data?.message || 'Không thể xác nhận đơn hàng', {
+        position: "top-center",
+        autoClose: 3000,
+      });
+    }
+  };
+
+  const startEditing = (order) => {
+    setEditingOrderId(order._id);
+    setEditFormData({
+      deliveryAddress: order.deliveryAddress,
+      paymentMethod: order.paymentMethod === 'CASH' ? 'cod' : 'bank',
+    });
+  };
+
+  const cancelEditing = () => {
+    setEditingOrderId(null);
+    setEditFormData({ deliveryAddress: '', paymentMethod: '' });
+  };
+
+  const updateOrder = async (orderId) => {
+    try {
+      if (!editFormData.deliveryAddress.trim()) {
+        toast.error('Vui lòng nhập địa chỉ giao hàng', {
+          position: "top-center",
+          autoClose: 3000,
+        });
+        return;
+      }
+
+      const paymentMethodMap = {
+        cod: 'CASH',
+        bank: 'BANK_TRANSFER'
+      };
+
+      const updatedData = {
+        deliveryAddress: editFormData.deliveryAddress,
+        paymentMethod: paymentMethodMap[editFormData.paymentMethod],
+      };
+
+      const response = await axiosInstance.put(`/order/${orderId}`, updatedData);
+      setOrders(orders.map(order =>
+        order._id === orderId ? { ...order, ...updatedData } : order
+      ));
+      toast.success('Cập nhật đơn hàng thành công', {
+        position: "top-center",
+        autoClose: 3000,
+      });
+      setEditingOrderId(null);
+    } catch (err) {
+      console.error('Lỗi khi cập nhật đơn hàng:', err.response?.data || err.message);
+      toast.error(err.response?.data?.message || 'Không thể cập nhật đơn hàng', {
+        position: "top-center",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -73,36 +169,62 @@ const OrderHistoryPage = () => {
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      setError('Vui lòng đăng nhập để xem lịch sử mua hàng');
+      toast.error('Vui lòng đăng nhập để xem lịch sử mua hàng', {
+        position: "top-center",
+        autoClose: 3000,
+      });
       return;
     }
     fetchOrders();
-  }, [page, statusFilter]);
+  }, [page]);
 
-  if (loading) return <div className="loading">Đang tải...</div>;
-  if (error) return <div className="error">{error}</div>;
-  if (!orders.length) return <div className="empty">Bạn chưa có đơn hàng nào</div>;
+  // Filter orders based on checkbox states, excluding CANCELLED orders
+  const filteredOrders = orders.filter(order => {
+    if (order.paymentStatus === 'CANCELLED') return false;
+    if (showPending && order.paymentStatus === 'PENDING') return true;
+    if (showCompleted && order.paymentStatus === 'COMPLETED') return true;
+    return false;
+  });
+
+  if (loading || !orders) return null;
 
   return (
     <div className="order-history-page">
       <div className="header-section">
         <h2>Lịch sử mua hàng</h2>
         <div className="status-filter">
-          <select
-            value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value);
-              setPage(1);
-            }}
-          >
-            <option value="all">Tất cả</option>
-            <option value="PENDING">Đang xử lý</option>
-            <option value="COMPLETED">Đã giao</option>
-          </select>
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={showPending}
+              onChange={(e) => {
+                setShowPending(e.target.checked);
+                setPage(1);
+              }}
+            />
+            Đang xử lý
+          </label>
+          <label className="checkbox-label">
+            <input
+              type="checkbox"
+              checked={showCompleted}
+              onChange={(e) => {
+                setShowCompleted(e.target.checked);
+                setPage(1);
+              }}
+            />
+            Đã giao
+          </label>
         </div>
       </div>
       <div className="orders">
-        {orders.map((order) => (
+        {filteredOrders.length === 0 && !loading && (
+          toast.info('Không có đơn hàng nào phù hợp với bộ lọc', {
+            position: "top-center",
+            autoClose: 3000,
+          })
+        )}
+        {filteredOrders.map((order) => (
           <div key={order._id} className="order">
             <div className="order-header">
               <span>Mã đơn hàng: {order._id}</span>
@@ -110,46 +232,103 @@ const OrderHistoryPage = () => {
               <span>Ngày đặt: {new Date(order.orderDate).toLocaleDateString()}</span>
               <span className="status">Trạng thái: {order.paymentStatus}</span>
             </div>
-            <div className="order-items">
-              {order.items.map((item) => (
-                <div key={item._id} className="order-item">
-                  <img
-                    src={item.itemId?.imgUrl || 'https://via.placeholder.com/60'}
-                    alt={item.name || 'Sản phẩm'}
-                    className="item-image"
+            {editingOrderId === order._id ? (
+              <div className="edit-form">
+                <div className="form-group">
+                  <label>Địa chỉ giao hàng:</label>
+                  <textarea
+                    value={editFormData.deliveryAddress}
+                    onChange={(e) => setEditFormData({ ...editFormData, deliveryAddress: e.target.value })}
+                    placeholder="Nhập địa chỉ giao hàng..."
+                    required
                   />
-                  <span className="item-name">{item.name || 'Sản phẩm không xác định'}</span>
-                  <span className="item-price">{(item.price || 0).toLocaleString()} VNĐ</span>
-                  <div className="item-quantity">
-                    Số lượng: <span>{item.quantity}</span>
-                  </div>
-                  <span className="item-total">
-                    {(item.price * item.quantity || 0).toLocaleString()} VNĐ
-                  </span>
                 </div>
-              ))}
-            </div>
-            <div className="order-footer">
-              <div className="order-summary">
-                <span>Phí giao hàng: {(order.totalDeliveryFee || 0).toLocaleString()} VNĐ</span>
-                <span>Tổng tiền hàng: {(checkOrderTotal(order) || 0).toLocaleString()} VNĐ</span>
-                <span>
-                  Tổng thanh toán: <strong>{(order.totalPaymentAmount || 0).toLocaleString()} VNĐ</strong>
-                </span>
+                <div className="form-group">
+                  <label>Phương thức thanh toán:</label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="cod"
+                      checked={editFormData.paymentMethod === 'cod'}
+                      onChange={() => setEditFormData({ ...editFormData, paymentMethod: 'cod' })}
+                    />
+                    Thanh toán khi nhận hàng (COD)
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      value="bank"
+                      checked={editFormData.paymentMethod === 'bank'}
+                      onChange={() => setEditFormData({ ...editFormData, paymentMethod: 'bank' })}
+                    />
+                    Chuyển khoản ngân hàng
+                  </label>
+                </div>
+                <div className="form-actions">
+                  <button onClick={() => updateOrder(order._id)} className="save-button">Lưu</button>
+                  <button onClick={cancelEditing} className="cancel-edit-button">Hủy</button>
+                </div>
               </div>
-              {order.paymentStatus === 'PENDING' && (
-                <button
-                  className="cancel-order"
-                  onClick={() => {
-                    if (window.confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
-                      cancelOrder(order._id);
-                    }
-                  }}
-                >
-                  Hủy đơn
-                </button>
-              )}
-            </div>
+            ) : (
+              <>
+                <div className="order-items">
+                  {order.items.map((item) => (
+                    <div key={item._id} className="order-item">
+                      {item.itemId?.imgUrl ? (
+                        <img src={item.itemId.imgUrl} alt={item.name || 'Sản phẩm'} className="item-image" />
+                      ) : null}
+                      <span className="item-name">{item.name || 'Sản phẩm không xác định'}</span>
+                      <span className="item-price">{(item.price || 0).toLocaleString()} VNĐ</span>
+                      <div className="item-quantity">
+                        Số lượng: <span>{item.quantity}</span>
+                      </div>
+                      <span className="item-total">
+                        {(item.price * item.quantity || 0).toLocaleString()} VNĐ
+                      </span>
+                    </div>
+                  ))}
+                </div>
+                <div className="order-footer">
+                  <div className="order-summary">
+                    <span>Phí giao hàng: {(order.totalDeliveryFee || 0).toLocaleString()} VNĐ</span>
+                    <span>Tổng tiền hàng: {(checkOrderTotal(order) || 0).toLocaleString()} VNĐ</span>
+                    <span>
+                      Tổng thanh toán: <strong>{(order.totalPaymentAmount || 0).toLocaleString()} VNĐ</strong>
+                    </span>
+                  </div>
+                  {order.paymentStatus === 'PENDING' && (
+                    <div className="order-actions">
+                      <button
+                        className="confirm-order"
+                        onClick={() => {
+                          if (window.confirm('Bạn có chắc đã nhận được đơn hàng này?')) {
+                            confirmOrder(order._id);
+                          }
+                        }}
+                      >
+                        Đã nhận hàng
+                      </button>
+                      <button
+                        className="edit-order"
+                        onClick={() => startEditing(order)}
+                      >
+                        Sửa
+                      </button>
+                      <button
+                        className="cancel-order"
+                        onClick={() => {
+                          if (window.confirm('Bạn có chắc muốn hủy đơn hàng này?')) {
+                            cancelOrder(order._id);
+                          }
+                        }}
+                      >
+                        Hủy đơn
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>
