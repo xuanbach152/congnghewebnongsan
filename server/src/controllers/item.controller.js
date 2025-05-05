@@ -53,11 +53,11 @@ export const createItem = async (req, res) => {
 export const searchItems = async (req, res) => {
   try {
     const searchText = req.query.searchText;
-    const item = await ItemService.searchItems(searchText);
+    const items = await ItemService.searchItems(searchText);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
-      data: item,
+      data: items,
     });
   } catch (error) {
     console.log(error);

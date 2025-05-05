@@ -1,6 +1,9 @@
-export const formatter = (number) => {
-  return new Intl.NumberFormat('vi-VN', {
+export function formatter(amount, locale = 'vi-VN', currency = 'VND') {
+  const roundedAmount = Number(amount.toFixed(2)); 
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'VND',
-  }).format(number)
+    currency: currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(roundedAmount);
 }

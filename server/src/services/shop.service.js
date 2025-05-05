@@ -96,7 +96,117 @@ const getShopsByUserId = async (
     .skip(skip)
     .limit(limit)
     .exec();
-  return shops;
+  const totalShopsByUser = await ShopModel.countDocuments({ userId });
+  return {
+    shops,
+    totalShopsByUser,
+    totalPages: Math.ceil(totalShopsByUser / limit),
+    currentPage: parseInt(page),
+  };
+};
+const getOrderStatistics = async (shopId, periodType, date) => {
+  try {
+    // Xác định khoảng thời gian
+    const startDate = new Date(date);
+    let endDate = new Date(date);
+
+    if (periodType === "week") {
+      endDate.setDate(endDate.getDate() + 7);
+    } else if (periodType === "month") {
+      endDate.setMonth(endDate.getMonth() + 1);
+    } else {
+      throw new Error("Invalid period type. Use 'week' or 'month'");
+    }
+
+    // Tìm tất cả đơn hàng
+    const orders = await OrderModel.find({
+      shopId: shopId,
+      orderDate: { $gte: startDate, $lt: endDate },
+      paymentStatus: "COMPLETED",
+    }).populate([
+      { path: "userId", select: "name email" },
+      { path: "items.itemId", select: "name price imgUrl" },
+    ]);
+
+    let totalRevenue = 0;
+    let totalOrders = orders.length;
+
+    // Tính tổng doanh thu của shop từ các đơn hàng
+    orders.forEach((order) => {
+      totalRevenue += order.totalPrice || 0;
+    });
+
+    return {
+      totalRevenue,
+      totalOrders,
+      periodType,
+      startDate,
+      endDate,
+      orders,
+    };
+  } catch (error) {
+    console.error(`Error in getOrderStatistics: ${error.message}`);
+    throw error;
+  }
+};
+const getItemStatistics = async (shopId, periodType, date) => {
+  try {
+    // Xác định khoảng thời gian
+    const startDate = new Date(date);
+    let endDate = new Date(date);
+
+    if (periodType === "week") {
+      endDate.setDate(endDate.getDate() + 7);
+    } else if (periodType === "month") {
+      endDate.setMonth(endDate.getMonth() + 1);
+    } else {
+      throw new Error("Invalid period type. Use 'week' or 'month'");
+    }
+    const orders = await OrderModel.find({
+      shopId: shopId,
+      orderDate: { $gte: startDate, $lt: endDate },
+      paymentStatus: "COMPLETED",
+    }).populate("items.itemId");
+
+    const shopItems = await ItemModel.find({ shopId });
+
+    // Tạo map để theo dõi thống kê cho mỗi sản phẩm
+    const productStats = {};
+
+    // Khởi tạo thống kê cho mỗi sản phẩm của shop
+    shopItems.forEach((item) => {
+      productStats[item._id.toString()] = {
+        itemId: item._id,
+        name: item.name,
+        quantitySold: 0,
+        quantityRemaining: item.quantity,
+        revenue: 0,
+      };
+    });
+
+    // Cập nhật thống kê từ các đơn hàng
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        const itemId = item.itemId._id.toString();
+
+        // Nếu sản phẩm thuộc shop
+        if (productStats[itemId]) {
+          productStats[itemId].quantitySold += item.quantity;
+          productStats[itemId].revenue += item.price * item.quantity;
+        }
+      });
+    });
+
+    return {
+      periodType,
+      startDate,
+      endDate,
+      products: Object.values(productStats),
+    };
+  } catch (error) {
+    console.error(`Error in getItemStatistics: ${error.message}`);
+    throw error;
+  }
 };
 const getOrderStatistics = async (shopId, periodType, date) => {
   try {

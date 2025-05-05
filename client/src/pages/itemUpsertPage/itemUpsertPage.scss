@@ -1,0 +1,137 @@
+@use 'sass:map';
+@import '../../style/pages/theme.scss';
+
+.item-creation {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-bottom: 5px;
+
+  .container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .nav-item-creation {
+      color: #0153a5;
+      &:hover {
+        color: #0153a5;
+      }
+    }
+
+    .item-creation-form {
+      position: relative;
+      flex: 1;
+      padding: 10px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .title-text {
+        color: rgb(8, 15, 157);
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      .form-register {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+        
+          label {
+            font-size: 14px;
+            font-weight: bold;
+          }
+        
+          input {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+          }
+        
+          input[type='file'] {
+            margin-top: 5px;
+            padding: 5px;
+          }
+        
+          .select-container select {
+            max-height: 150px;
+            overflow-y: auto;
+            width: 100%;
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+            color: #333;
+            cursor: pointer;
+          }
+        
+          .select-container select:hover {
+            border-color: rgb(0, 0, 0);
+            background-color: #f8f8f8;
+          }
+        
+          .select-container select:focus {
+            outline: none;
+            border-color: rgb(0, 0, 0);
+          }
+        
+          button {
+            padding: 10px;
+            background-color: rgb(238, 28, 126);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 200px;
+            align-self: center;
+            font-weight: bold;
+        
+            &:hover {
+              background-color: rgb(225, 21, 21);
+            }
+          }
+          
+          .upload-box {
+            width: 160px;
+            height: 160px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #aaa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+          }
+          
+          .upload-box:hover {
+            border-color: #007bff;
+            color: #007bff;
+          }
+          
+          .upload-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+          }
+          
+          .upload-input {
+            display: none;
+          }
+        }
+        
+      }
+    }
+  }
+}

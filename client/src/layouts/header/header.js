@@ -1,6 +1,6 @@
-import './header.scss';
-import { memo, useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import './header.scss'
+import { memo, useEffect, useState } from 'react'
+import { jwtDecode } from 'jwt-decode'
 import {
   AiOutlineFacebook,
   AiOutlineUser,
@@ -16,8 +16,9 @@ import { Link } from 'react-router-dom';
 import { formatter } from 'utils/formatter';
 import routers from 'utils/routers';
 import axiosInstance from 'utils/api';
+import { itemTypes, provinces } from 'utils/enums';
 
-const MainHeader = () => {
+const MainHeader = ({ setSearchQuery }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -37,22 +38,25 @@ const MainHeader = () => {
 
   const login = async (userName, password) => {
     try {
-      const response = await axiosInstance.post('/auth/login', { userName, password });
-      return response.data; 
+      const response = await axiosInstance.post('/auth/login', {
+        userName,
+        password,
+      })
+      return response.data
     } catch (error) {
-      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng nhập' };
+      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng nhập' }
     }
-  };
+  }
 
   const register = async (userName, password, phone) => {
     try {
       const response = await axiosInstance.post('/auth/register', { userName, password, phone });
-      const { user , cart } = response.data;
-      return { user , cart }; 
+      const { user, cart } = response.data;
+      return { user, cart };
     } catch (error) {
-      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' };
+      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' }
     }
-  };
+  }
 
   const logout = async () => {
     try {
@@ -62,21 +66,22 @@ const MainHeader = () => {
       setIsLoggedIn(false);
       alert(response.data.message || 'Đăng xuất thành công!');
     } catch (error) {
-      console.error('Logout error:', error);
-      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi đăng xuất!';
-      alert(errorMsg);
+      console.error('Logout error:', error)
+      const errorMsg =
+        error.response?.data?.message || 'Có lỗi xảy ra khi đăng xuất!'
+      alert(errorMsg)
     }
-  };
+  }
 
   const handleAuthSubmit = async (e) => {
-    e.preventDefault();
-    const userName = e.target.userName.value;
-    const password = e.target.password.value;
+    e.preventDefault()
+    const userName = e.target.userName.value
+    const password = e.target.password.value
     try {
       if (isLogin) {
         if (!userName || !password) {
-          alert('Vui lòng điền đầy đủ userName và password!');
-          return;
+          alert('Vui lòng điền đầy đủ userName và password!')
+          return
         }
         const result = await login(userName, password);
         localStorage.setItem('accessToken', result.accessToken);
@@ -84,33 +89,37 @@ const MainHeader = () => {
         setIsLoggedIn(true);
         await fetchCartData();
         setIsAuthModalOpen(false);
+        fetchCartData();
+        window.location.reload();
       } else {
-        const confirmPassword = e.target.confirmPassword.value;
-        const phone = e.target.phone.value;
+        const confirmPassword = e.target.confirmPassword.value
+        const phone = e.target.phone.value
 
         if (!userName || !password || !confirmPassword || !phone) {
-          alert('Vui lòng điền đầy đủ các trường: userName, password, confirmPassword, phone!');
-          return;
+          alert(
+            'Vui lòng điền đầy đủ các trường: userName, password, confirmPassword, phone!'
+          )
+          return
         }
         if (password !== confirmPassword) {
-          alert('Mật khẩu không khớp!');
-          return;
+          alert('Mật khẩu không khớp!')
+          return
         }
-        const result = await register(userName, password, phone);
-        console.log('Register result:', result);
-        alert('Đăng ký thành công! Vui lòng đăng nhập.');
-        setIsLogin(true);
+        const result = await register(userName, password, phone)
+        console.log('Register result:', result)
+        alert('Đăng ký thành công! Vui lòng đăng nhập.')
+        setIsLogin(true)
       }
     } catch (error) {
-      console.error('Auth error details: ', error);
-      const errorMsg = error.message || 'Có lỗi xảy ra, vui lòng thử lại!';
-      alert(errorMsg);  
+      console.error('Auth error details: ', error)
+      const errorMsg = error.message || 'Có lỗi xảy ra, vui lòng thử lại!'
+      alert(errorMsg)
     }
-  };
+  }
 
   const handleAssistantClick = () => {
-    console.log('Gọi trợ lý ảo...');
-  };
+    console.log('Gọi trợ lý ảo...')
+  }
 
   const fetchCartData = async () => {
     try {
@@ -130,9 +139,9 @@ const MainHeader = () => {
         setError(err.response?.data?.message || 'Không thể tải giỏ hàng');
       }
     } finally {
-      setCartLoading(false);
+      setCartLoading(false)
     }
-  }; 
+  };
 
   const cartItemCount = () => {
     // return cart?.cartItems?.length || 0;
@@ -159,19 +168,19 @@ const MainHeader = () => {
         return total + price * quantity;
       }, 0);
   };
-  
+
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken')
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);
-        setUser(decodedToken);
-        setIsLoggedIn(true);
-        fetchCartData();
+        const decodedToken = jwtDecode(token)
+        setUser(decodedToken)
+        setIsLoggedIn(true)
+        fetchCartData()
       } catch (error) {
-        console.error('Lỗi khi giải mã token:', error.message);
-        logout();
+        console.error('Lỗi khi giải mã token:', error.message)
+        logout()
       }
     }
   }, []);
@@ -197,18 +206,25 @@ const MainHeader = () => {
   // };
 
   const toggleAuthModal = () => {
-    setIsAuthModalOpen(!isAuthModalOpen);
-  };
+    setIsAuthModalOpen(!isAuthModalOpen)
+  }
 
   const switchAuthMode = () => {
-    setIsLogin(!isLogin);
-  };
+    setIsLogin(!isLogin)
+  }
 
-  const handleLogout = async() => {
+  const handleLogout = async () => {
     await logout();
     setIsLoggedIn(false);
     setIsDropdownOpen(false);
     setIsProfileOpen(false);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const query = formData.get('search');
+    setSearchQuery(query); 
   };
 
   return (
@@ -236,7 +252,13 @@ const MainHeader = () => {
                     </Link>
                   </div>
                 </li>
-                <li onClick={() => (isLoggedIn ? setIsDropdownOpen(!isDropdownOpen) : toggleAuthModal())}>
+                <li
+                  onClick={() =>
+                    isLoggedIn
+                      ? setIsDropdownOpen(!isDropdownOpen)
+                      : toggleAuthModal()
+                  }
+                >
                   <AiOutlineUser />
                   <span>{isLoggedIn && user?.userName ? user.userName : 'Tài khoản'}</span>
                   {isLoggedIn && <AiOutlineDown className="dropdown-arrow" />}
@@ -273,11 +295,18 @@ const MainHeader = () => {
           <div className="col-xl-6">
             <div className="header_search_container">
               <div className="header_search_form">
-                <form onSubmit={(e) => e.preventDefault()}>
-                  <input type="text" placeholder="Tìm kiếm sản phẩm hoặc cửa hàng..." />
+                <form onSubmit={handleSubmit}>
+                  <input
+                    type="text"
+                    name="search"
+                    placeholder="Tìm kiếm sản phẩm hoặc cửa hàng..."
+                  />
                   <button type="submit">Tìm kiếm</button>
                 </form>
-                <div className="header_assistant_button" onClick={handleAssistantClick}>
+                <div
+                  className="header_assistant_button"
+                  onClick={handleAssistantClick}
+                >
                   <AiOutlineRocket />
                   <span>Trợ lý AI</span>
                 </div>
@@ -301,7 +330,7 @@ const MainHeader = () => {
                   </Link>
                 </li>
               </ul>
-             </div>
+            </div>
           </div>
         </div>
         {/* ?...? */}
@@ -314,10 +343,11 @@ const MainHeader = () => {
                 onChange={(e) => setFilterLocation(e.target.value)}
               >
                 <option value="all">Tất cả khu vực</option>
-                <option value="hanoi">Hà Nội</option>
-                <option value="hcm">TP.HCM</option>
-                <option value="danang">Đà Nẵng</option>
-                <option value="nearby">Gần tôi</option>
+                {Object.entries(provinces).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -328,10 +358,11 @@ const MainHeader = () => {
                 onChange={(e) => setFilterCategory(e.target.value)}
               >
                 <option value="all">Tất cả danh mục</option>
-                <option value="vegetables">Rau củ</option>
-                <option value="fruits">Trái cây</option>
-                <option value="organic">Hữu cơ</option>
-                <option value="processed">Thực phẩm chế biến</option>
+                {Object.entries(itemTypes).map(([value, label]) => (
+                  <option key={value} value={value}>
+                    {label}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -394,12 +425,32 @@ const MainHeader = () => {
           <div className="auth_content">
             <h2>{isLogin ? 'Đăng nhập' : 'Đăng ký'}</h2>
             <form onSubmit={handleAuthSubmit} className="auth_form">
-              <input name="userName" type="text" placeholder="Email hoặc số điện thoại" required />
-              <input name="password" type="password" placeholder="Mật khẩu" required />
+              <input
+                name="userName"
+                type="text"
+                placeholder="Tên đăng nhập"
+                required
+              />
+              <input
+                name="password"
+                type="password"
+                placeholder="Mật khẩu"
+                required
+              />
               {!isLogin && (
                 <>
-                  <input name="confirmPassword" type="password" placeholder="Xác nhận mật khẩu" required/>
-                  <input name="phone" type="text" placeholder="Số điện thoại" required/>
+                  <input
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="Xác nhận mật khẩu"
+                    required
+                  />
+                  <input
+                    name="phone"
+                    type="text"
+                    placeholder="Số điện thoại"
+                    required
+                  />
                 </>
               )}
               {/* Nút Submit */}
@@ -429,14 +480,16 @@ const MainHeader = () => {
                   <AiOutlineFacebook /> Facebook
                 </button>
                 <button type="button" className="social_button instagram">
-                  <AiOutlineInstagram/> Instagram
+                  <AiOutlineInstagram /> Instagram
                 </button>
               </div>
             </form>
 
             {/* Chuyển chế độ */}
             <p onClick={switchAuthMode} className="switch_mode">
-              {isLogin ? 'Chưa có tài khoản ? Đăng ký ngay' : 'Đã có tài khoản ? Đăng nhập'}
+              {isLogin
+                ? 'Chưa có tài khoản ? Đăng ký ngay'
+                : 'Đã có tài khoản ? Đăng nhập'}
             </p>
 
             {/* Nút đóng */}
@@ -447,7 +500,7 @@ const MainHeader = () => {
         </div>
       )}
     </>
-  );
-};
+  )
+}
 
-export default memo(MainHeader);
+export default memo(MainHeader)

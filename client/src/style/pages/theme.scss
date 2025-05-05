@@ -9,3 +9,33 @@ $theme-colors: (
   'dark-custom': #4d4d00,
   'mid-custom': #868602,
 );
+
+.navigation {
+  font-weight: 600;
+  border-bottom: 2px solid rgb(169, 168, 168);
+  margin-bottom: 5px;
+  font-size: 17px;
+
+  .nav-shop-management,
+  .nav-shop-registration,
+  .nav-item-creation,
+  .nav-my-shop {
+    color: rgb(162, 162, 162);
+    text-decoration: none;
+    &:hover {
+      color: rgb(31, 30, 43);
+    }
+  }
+
+  .nav-icon {
+    color: rgb(162, 162, 162);
+  }
+}
+
+.divider {
+  width: 100%;
+  height: 2px;
+  background-color: #ccc;
+  margin: 10px 0;
+  border-radius: 2px;
+}

@@ -1,11 +1,12 @@
 import { memo } from 'react'
 import Header from '../header/header'
 import Footer from '../footer/footer'
-const MasterLayout = ({ children, ...props }) => {
+import './masterLayout.scss'
+const MasterLayout = ({ children, setSearchQuery, ...props }) => {
   return (
-    <div {...props}>
-      <Header />
-      {children}
+    <div className="master-layout" {...props}>
+      <Header setSearchQuery={setSearchQuery} />
+      <div className="main-content">{children}</div>
       <Footer />
     </div>
   )

@@ -26,13 +26,28 @@ const ProfilePage = ({ userId }) => {
   const [success, setSuccess] = useState(false);
   const [previewAvatar, setPreviewAvatar] = useState(null);
 
+  // Validation rules
+  const validateForm = () => {
+    const newErrors = {}
+    if (!userData.userName.trim())
+      newErrors.userName = 'Tên người dùng không được để trống'
+    if (!userData.email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/))
+      newErrors.email = 'Email không hợp lệ'
+    if (!userData.phone.match(/^\d{10}$/))
+      newErrors.phone = 'Số điện thoại phải là 10 chữ số'
+    if (!userData.address.trim())
+      newErrors.address = 'Địa chỉ không được để trống'
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
   // Fetch user data
   const fetchUserData = async () => {
     if (!userId) {
-      setErrors({ fetch: 'Không có ID người dùng' });
-      return;
+      setErrors({ fetch: 'Không có ID người dùng' })
+      return
     }
-    setLoading(true);
+    setLoading(true)
     try {
       const response = await axiosInstance.get(`/api/users/${userId}`);
       if (response.data.code === 200) {
@@ -55,9 +70,9 @@ const ProfilePage = ({ userId }) => {
     } catch (err) {
       setErrors({ fetch: err.response?.data?.message || 'Lỗi kết nối server' });
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   // Validate profile form
   const validateProfileForm = () => {
@@ -101,7 +116,7 @@ const ProfilePage = ({ userId }) => {
     e.preventDefault();
     if (!validateProfileForm()) return;
 
-    setLoading(true);
+    setLoading(true)
     try {
       const response = await axiosInstance.put(`/api/users/${userId}`, userData);
       if (response.data.code === 200) {
@@ -210,16 +225,16 @@ const ProfilePage = ({ userId }) => {
     } catch (err) {
       setErrors({ submit: err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật địa chỉ mặc định' });
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   // Handle input changes
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUserData({ ...userData, [name]: value });
-    setErrors({ ...errors, [name]: '' });
-  };
+    const { name, value } = e.target
+    setUserData({ ...userData, [name]: value })
+    setErrors({ ...errors, [name]: '' })
+  }
 
   const handleBankChange = (e) => {
     const { name, value } = e.target;
@@ -560,7 +575,7 @@ const ProfilePage = ({ userId }) => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default memo(ProfilePage);
+export default memo(ProfilePage)
