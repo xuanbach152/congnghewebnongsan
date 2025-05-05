@@ -6,6 +6,8 @@ export const itemTypes = {
     TREE: "Cây trồng",
     SEED: "Hạt giống",
     DIRED: "Đồ khô",
+    SEAFOOD: "Hải sản",
+    MEAT: "Thịt"
   };
 
   export const provinces = {
