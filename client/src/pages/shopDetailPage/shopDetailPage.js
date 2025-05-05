@@ -2,11 +2,12 @@ import { memo, useEffect, useState } from 'react'
 import './shopDetailPage.scss'
 import { Link, useParams } from 'react-router-dom'
 import axios from 'axios'
-import { FaBox, FaEdit, FaStar } from 'react-icons/fa'
+import { FaStar } from 'react-icons/fa'
 import axiosInstance from 'utils/api'
 import Pagination from 'layouts/pagination/pagination'
 import routers from 'utils/routers'
 import { formatter } from 'utils/formatter'
+import { itemTypes } from 'utils/enums'
 
 const ShopDetailPage = () => {
   const { shopId } = useParams()
@@ -122,7 +123,7 @@ const ShopDetailPage = () => {
                               Đơn giá: {formatter(item.price)}
                             </div>
                             <div className="item-type">
-                              Loại hàng: {item.type}
+                              Loại hàng: {itemTypes[item.type]}
                             </div>
                             <div className="item-rate">
                               Đánh giá: {item.rate}
