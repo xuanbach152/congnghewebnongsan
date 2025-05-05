@@ -9,6 +9,7 @@ const CartPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
   const navigate = useNavigate();
 
   const fetchCart = async () => {
@@ -49,16 +50,32 @@ const CartPage = () => {
     }
   };
 
-  const updateCartItem = async (itemId, quantity) => {
-    if (quantity < 1) return; 
+  const updateCartItemQuantity = (itemId, newQuantity) => {
+    setCart((prevCart) => {
+      const updatedShopGroup = prevCart.shopGroup.map((group) => ({
+        ...group,
+        cartItems: group.cartItems.map((item) =>
+          item._id === itemId || item.itemId._id === itemId
+            ? { ...item, quantity: newQuantity }
+            : item
+        ).filter((item) => item.quantity > 0),
+      })).filter((group) => group.cartItems.length > 0);
+  
+      return { ...prevCart, shopGroup: updatedShopGroup };
+    });
+  };
+  
+
+  const updateCartItem = async (itemId, newQuantity) => {
+    if (newQuantity < 1) return; 
     try {
-      const response = await axiosInstance.put('/cart/update', {
+      await axiosInstance.put('/cart/update', {
         cartId: cart._id,
         itemId,
-        quantity,
+        quantity: newQuantity,
       });
-      setCart(response.data.data);
       setError(null);
+      updateCartItemQuantity(itemId, newQuantity);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update cart item');
     }
@@ -66,10 +83,10 @@ const CartPage = () => {
 
   const removeCartItem = async (itemId) => {
     try {
-      const response = await axiosInstance.delete('/cart/remove', {
+      await axiosInstance.delete('/cart/remove', {
         data: { cartId: cart._id, itemId },
       });
-      setCart(response.data.data);
+      updateCartItemQuantity(itemId, 0);
       setSelectedItems(selectedItems.filter(id => id !== itemId));
       setError(null);
     } catch (err) {
