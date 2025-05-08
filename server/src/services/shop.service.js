@@ -105,24 +105,19 @@ const getShopsByUserId = async (
   };
 };
 
-const getOrderStatistics = async (shopId, periodType, date) => {
+const getOrderStatistics = async (shopId, startDate = null, endDate = null) => {
   try {
-    // Xác định khoảng thời gian
-    const startDate = new Date(date);
-    let endDate = new Date(date);
-
-    if (periodType === "week") {
-      endDate.setDate(endDate.getDate() + 7);
-    } else if (periodType === "month") {
-      endDate.setMonth(endDate.getMonth() + 1);
-    } else {
-      throw new Error("Invalid period type. Use 'week' or 'month'");
-    }
+    
+    const end = endDate ? new Date(endDate) : new Date();
+    const start = startDate ? new Date(startDate) : new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    // Đảm bảo endDate có giờ cuối cùng của ngày
+    end.setHours(23, 59, 59, 999);
 
     // Tìm tất cả đơn hàng
     const orders = await OrderModel.find({
       shopId: shopId,
-      orderDate: { $gte: startDate, $lt: endDate },
+      orderDate: { $gte: start, $lte: end },
       paymentStatus: "COMPLETED",
     }).populate([
       { path: "userId", select: "name email" },
@@ -132,7 +127,7 @@ const getOrderStatistics = async (shopId, periodType, date) => {
     let totalRevenue = 0;
     let totalOrders = orders.length;
 
-    // Tính tổng doanh thu của shop từ các đơn hàng
+    
     orders.forEach((order) => {
       totalRevenue += order.totalPrice || 0;
     });
@@ -140,9 +135,8 @@ const getOrderStatistics = async (shopId, periodType, date) => {
     return {
       totalRevenue,
       totalOrders,
-      periodType,
-      startDate,
-      endDate,
+      startDate: start,
+      endDate: end,
       orders,
     };
   } catch (error) {
@@ -151,22 +145,18 @@ const getOrderStatistics = async (shopId, periodType, date) => {
   }
 };
 
-const getItemStatistics = async (shopId, periodType, date) => {
+const getItemStatistics = async (shopId, startDate = null, endDate = null) => {
   try {
-    // Xác định khoảng thời gian
-    const startDate = new Date(date);
-    let endDate = new Date(date);
 
-    if (periodType === "week") {
-      endDate.setDate(endDate.getDate() + 7);
-    } else if (periodType === "month") {
-      endDate.setMonth(endDate.getMonth() + 1);
-    } else {
-      throw new Error("Invalid period type. Use 'week' or 'month'");
-    }
+    const end = endDate ? new Date(endDate) : new Date();
+    const start = startDate ? new Date(startDate) : new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
+    
+    // Đảm bảo endDate có giờ cuối cùng của ngày
+    end.setHours(23, 59, 59, 999);
+
     const orders = await OrderModel.find({
       shopId: shopId,
-      orderDate: { $gte: startDate, $lt: endDate },
+      orderDate: { $gte: start, $lte: end },
       paymentStatus: "COMPLETED",
     }).populate("items.itemId");
 
@@ -189,20 +179,21 @@ const getItemStatistics = async (shopId, periodType, date) => {
     // Cập nhật thống kê từ các đơn hàng
     orders.forEach((order) => {
       order.items.forEach((item) => {
-        const itemId = item.itemId._id.toString();
+        if (item.itemId && item.itemId._id) {
+          const itemId = item.itemId._id.toString();
 
-        // Nếu sản phẩm thuộc shop
-        if (productStats[itemId]) {
-          productStats[itemId].quantitySold += item.quantity;
-          productStats[itemId].revenue += item.price * item.quantity;
+          // Nếu sản phẩm thuộc shop
+          if (productStats[itemId]) {
+            productStats[itemId].quantitySold += item.quantity;
+            productStats[itemId].revenue += item.price * item.quantity;
+          }
         }
       });
     });
 
     return {
-      periodType,
-      startDate,
-      endDate,
+      startDate: start,
+      endDate: end,
       products: Object.values(productStats),
     };
   } catch (error) {

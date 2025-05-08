@@ -22,6 +22,7 @@ const userSchema = Schema(
     },
     email: {
       type: String,
+      default: "none",
     },
     imgUrl: {
       type: String,

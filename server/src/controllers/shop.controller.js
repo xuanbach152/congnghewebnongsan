@@ -183,8 +183,8 @@ export const getShopsByUserId = async (req, res) => {
 export const getOrderStatistics = async (req,res)=>{
   try{
     const shopId = req.params.shopId;
-    const { periodType, date } = req.query;
-    const statistics = await ShopService.getOrderStatistics(shopId, periodType, date);
+    const { startDate, endDate } = req.query;
+    const statistics = await ShopService.getOrderStatistics(shopId, startDate, endDate);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
@@ -203,8 +203,8 @@ export const getOrderStatistics = async (req,res)=>{
 export const getItemStatistics = async (req,res)=>{
   try{
     const shopId = req.params.shopId;
-    const { periodType, date } = req.query;
-    const statistics = await ShopService.getItemStatistics(shopId, periodType, date);
+    const { startDate, endDate } = req.query;
+    const statistics = await ShopService.getItemStatistics(shopId, startDate, endDate);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,

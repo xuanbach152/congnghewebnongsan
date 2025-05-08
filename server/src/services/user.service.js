@@ -1,7 +1,8 @@
 import UserModel from "../models/user.model.js";
 import { throwBadRequest } from "../utils/error.util.js";
 import Message from "../utils/message.js";
-import { comparePassword } from "./auth.service.js";
+import { comparePassword, hashPassword } from "./auth.service.js";
+
 const createUser = async (userData) => {
   const newUser = await UserModel.create(userData);
   return newUser;
@@ -14,9 +15,34 @@ const searchUsers = async (searchText) => {
 };
 
 const updateUser = async (userId, userData) => {
+  const allowedFields = [
+    'userName', 
+    'password',
+    'phone',
+    'address', 
+    'email',
+    'gender',
+    'birthday',
+    'bankAccount',
+    'bankName',
+    'imgUrl'
+  ];
+  const filteredData = {};
+  Object.keys(userData).forEach(key => {
+    if (allowedFields.includes(key)) {
+      filteredData[key] = userData[key];
+    }
+  });
+
+  if (filteredData.password) {
+    const hashedPassword = await hashPassword(filteredData.password);
+    filteredData.password = hashedPassword;
+  }
+  
+  
   const user = await UserModel.findById(userId);
   throwBadRequest(!user, Message.userNotFound);
-  return UserModel.findByIdAndUpdate(userId, userData, { new: true });
+  return UserModel.findByIdAndUpdate(userId, filteredData, { new: true });
 };
 
 const getUserById = async (userId) => {
