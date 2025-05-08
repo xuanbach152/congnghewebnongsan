@@ -55,6 +55,25 @@ const getUserByName = async (userName) => {
   return user;
 };
 
+const saveImageToDatabase = async (userId, imgUrl) => {
+  try {
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    console.log("Saving image URL to database:", imgUrl);
+
+    user.imgUrl = imgUrl;
+    await user.save();
+
+    return user;
+  } catch (error) {
+    console.error("Error in saveImageToDatabase:", error.message);
+    throw error;
+  }
+};
+
 export default {
   createUser,
   searchUsers,
@@ -63,4 +82,5 @@ export default {
   getUsers,
   deleteUser,
   getUserByName,
+  saveImageToDatabase,
 };

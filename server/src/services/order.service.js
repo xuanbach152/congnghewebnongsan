@@ -11,6 +11,26 @@ import CartService from "./cart.service.js";
 import { PaginationEnum } from "../utils/constant.js";
 
 
+
+const generateOrderCode = async () => {
+  // Tạo mã đơn hàng theo định dạng: DH-YYYYMMDD-XXXX
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const random = Math.floor(1000 + Math.random() * 9000);
+  const orderCode = `DH-${year}${month}${day}-${random}`;
+  
+  // Kiểm tra mã đã tồn tại chưa
+  const existingOrder = await OrderModel.findOne({ orderCode });
+  if (existingOrder) {
+   
+    return generateOrderCode();
+  }
+  
+  return orderCode;
+};
+
 const createOrder = async (userId, deliveryAddress, paymentMethod, deliveryType) => {
   try {
     const cart = await CartModel.findOne({ userId }).populate(
@@ -41,7 +61,9 @@ const createOrder = async (userId, deliveryAddress, paymentMethod, deliveryType)
       );
 
       const deliveryFee = distanceService.calculateDeliveryFee(distanceInKm);
+      const orderCode = await generateOrderCode();
       const newOrder = await OrderModel.create({
+        orderCode: orderCode,
         userId,
         shopId: shopGroup.shopId._id,
         items: items,
