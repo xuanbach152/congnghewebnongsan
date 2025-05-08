@@ -8,20 +8,37 @@ const CartPage = () => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedItems, setSelectedItems] = useState([]); // Lưu danh sách itemId được chọn
+  const [selectedItems, setSelectedItems] = useState([]);
   const navigate = useNavigate();
 
-  // Lấy giỏ hàng của người dùng
   const fetchCart = async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get('/cart/getcart');
-      setCart(response.data.data);
+      const cartData = response.data.data;
+
+      // Lấy thông tin shop cho từng shopId trong shopGroup
+      const updatedShopGroup = await Promise.all(
+        cartData.shopGroup.map(async (group) => {
+          const shopResponse = await axiosInstance.get(`/shop/${group.shopId}`);
+          return {
+            ...group,
+            shopName: shopResponse.data.data.name,
+          };
+        })
+      );
+
+      // Cập nhật cart với thông tin shop 
+      setCart({
+        ...cartData,
+        shopGroup: updatedShopGroup,
+      });
+
       setError(null);
-      setSelectedItems(response.data.data.cartItems.map(item => item.itemId._id));
+      setSelectedItems(updatedShopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id)));
     } catch (err) {
       if (err.response?.data?.message === 'Cart not found') {
-        setCart({ cartItems: [], _id: null }); // Giỏ hàng rỗng
+        setCart({ shopGroup: [], _id: null, totalPaymentAmount: 0 });
         setSelectedItems([]);
         setError(null);
       } else {
@@ -32,51 +49,63 @@ const CartPage = () => {
     }
   };
 
-  // Cập nhật số lượng sản phẩm
-  const updateCartItem = async (itemId, quantity) => {
-    if (quantity < 1) return; // Ngăn số lượng < 1
+  const updateCartItemQuantity = (itemId, newQuantity) => {
+    setCart((prevCart) => {
+      const updatedShopGroup = prevCart.shopGroup.map((group) => ({
+        ...group,
+        cartItems: group.cartItems.map((item) =>
+          item._id === itemId || item.itemId._id === itemId
+            ? { ...item, quantity: newQuantity }
+            : item
+        ).filter((item) => item.quantity > 0),
+      })).filter((group) => group.cartItems.length > 0);
+  
+      return { ...prevCart, shopGroup: updatedShopGroup };
+    });
+  };
+  
+
+  const updateCartItem = async (itemId, newQuantity) => {
+    if (newQuantity < 1) return; 
     try {
-      const response = await axiosInstance.put('/cart/update', {
+      await axiosInstance.put('/cart/update', {
         cartId: cart._id,
         itemId,
-        quantity,
+        quantity: newQuantity,
       });
-      setCart(response.data.data);
       setError(null);
+      updateCartItemQuantity(itemId, newQuantity);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update cart item');
     }
   };
 
-  // Xóa sản phẩm khỏi giỏ hàng
   const removeCartItem = async (itemId) => {
     try {
-      const response = await axiosInstance.delete('/cart/remove', {
+      await axiosInstance.delete('/cart/remove', {
         data: { cartId: cart._id, itemId },
       });
-      setCart(response.data.data);
-      setSelectedItems(selectedItems.filter(id => id !== itemId)); // Bỏ chọn item đã xóa
+      updateCartItemQuantity(itemId, 0);
+      setSelectedItems(selectedItems.filter(id => id !== itemId));
       setError(null);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to remove cart item');
     }
   };
 
-  // Xóa toàn bộ giỏ hàng
   const clearCart = async () => {
     try {
       const response = await axiosInstance.delete('/cart/clear', {
         data: { cartId: cart._id },
       });
       setCart(response.data.data);
-      setSelectedItems([]); // Xóa danh sách chọn
+      setSelectedItems([]);
       setError(null);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to clear cart');
     }
   };
 
-  // Toggle chọn/bỏ chọn sản phẩm
   const toggleSelectItem = (itemId) => {
     setSelectedItems(prev =>
       prev.includes(itemId)
@@ -85,29 +114,33 @@ const CartPage = () => {
     );
   };
 
-  // Chọn hoặc bỏ chọn tất cả sản phẩm
   const toggleSelectAll = () => {
-    if (selectedItems.length === cart.cartItems.length) {
-      setSelectedItems([]); // Bỏ chọn tất cả
+    if (selectedItems.length === cart.shopGroup.flatMap(group => group.cartItems).length) {
+      setSelectedItems([]);
     } else {
-      setSelectedItems(cart.cartItems.map(item => item.itemId._id)); // Chọn tất cả
+      setSelectedItems(cart.shopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id)));
     }
   };
 
-  // Tính tổng tiền của các sản phẩm được chọn
   const calculateSelectedTotal = () => {
-    if (!cart?.cartItems) return 0;
-    return cart.cartItems
-      .filter(item => selectedItems.includes(item.itemId._id))
+    if (!cart?.shopGroup) return 0;
+    return cart.shopGroup
+      .flatMap(group => group.cartItems)
+      .filter(item => selectedItems.includes(item._id || item.itemId._id))
       .reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
   const handleCheckout = () => {
-    const itemsToCheckout = cart.cartItems.filter(item => selectedItems.includes(item.itemId._id));
+    const itemsToCheckout = cart.shopGroup
+      .flatMap(group => group.cartItems)
+      .filter(item => selectedItems.includes(item._id || item.itemId._id));
     navigate('/checkout', { state: { selectedItems: itemsToCheckout, cartId: cart._id } });
   };
 
-  // Tải giỏ hàng khi component được mount
+  const handleShopClick = (shopId) => {
+    navigate(`/shop/${shopId}`);
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if(!token) {
@@ -119,14 +152,14 @@ const CartPage = () => {
 
   if (loading) return <div className="loading">Đang tải...</div>;
   if (error) return <div className="error">{error}</div>;
-  if (!cart || !cart.cartItems?.length) return <div className="empty">Giỏ hàng rỗng</div>;
+  if (!cart || !cart.shopGroup?.length) return <div className="empty">Giỏ hàng rỗng</div>;
 
   return (
     <div className="cart-page">
       <div className="cart-header">
         <input
           type="checkbox"
-          checked={selectedItems.length === cart.cartItems.length && cart.cartItems.length > 0}
+          checked={selectedItems.length === cart.shopGroup.flatMap(group => group.cartItems).length && cart.shopGroup.length > 0}
           onChange={toggleSelectAll}
         />
         <span>Sản phẩm</span>
@@ -136,45 +169,53 @@ const CartPage = () => {
         <span>Thao tác</span>
       </div>
       <div className="cart-items">
-        {cart.cartItems.map((item) => (
-          <div key={item.itemId._id} className="cart-item">
-            <input
-              type="checkbox"
-              checked={selectedItems.includes(item.itemId._id)}
-              onChange={() => toggleSelectItem(item.itemId._id)}
-            />
-            <div className="item-info">
-              <img
-                src={item.itemId.imgUrl}
-                alt={item.itemId.name}
-                className="item-image"
-              />
-              <span className="item-name">{item.itemId.name}</span>
-            </div>
-            <span className="item-price">{item.price.toLocaleString()} VNĐ</span>
-            <div className="quantity-control">
-              <button
-                onClick={() => updateCartItem(item.itemId._id, item.quantity - 1)}
-                disabled={item.quantity <= 1}
-              >
-                -
-              </button>
-              <span>{item.quantity}</span>
-              <button
-                onClick={() => updateCartItem(item.itemId._id, item.quantity + 1)}
-              >
-                +
-              </button>
-            </div>
-            <span className="item-total">
-              {(item.price * item.quantity).toLocaleString()} VNĐ
-            </span>
-            <button
-              className="remove-button"
-              onClick={() => removeCartItem(item.itemId._id)}
-            >
-              Xóa
-            </button>
+        {cart.shopGroup.map((shopGroup) => (
+          <div key={shopGroup._id} className="shop-section">
+            <h3 onClick={() => handleShopClick(shopGroup.shopId)} style={{ cursor: 'pointer', color: '#0dac02' }}>
+              {/* Shop {shopGroup.shopId}  */}
+              {shopGroup.shopName || `Shop ${shopGroup.shopId}`}
+            </h3>
+            {shopGroup.cartItems.map((item) => (
+              <div key={item._id || item.itemId._id} className="cart-item">
+                <input
+                  type="checkbox"
+                  checked={selectedItems.includes(item._id || item.itemId._id)}
+                  onChange={() => toggleSelectItem(item._id || item.itemId._id)}
+                />
+                <div className="item-info">
+                  <img
+                    src={item.itemId?.imgUrl || ''}
+                    alt={item.name}
+                    className="item-image"
+                  />
+                  <span className="item-name">{item.name}</span>
+                </div>
+                <span className="item-price">{item.price.toLocaleString()} VNĐ</span>
+                <div className="quantity-control">
+                  <button
+                    onClick={() => updateCartItem(item.itemId._id, item.quantity - 1)}
+                    disabled={item.quantity <= 1}
+                  >
+                    -
+                  </button>
+                  <span>{item.quantity}</span>
+                  <button
+                    onClick={() => updateCartItem(item.itemId._id, item.quantity + 1)}
+                  >
+                    +
+                  </button>
+                </div>
+                <span className="item-total">
+                  {(item.price * item.quantity).toLocaleString()} VNĐ
+                </span>
+                <button
+                  className="remove-button"
+                  onClick={() => removeCartItem(item.itemId._id)}
+                >
+                  Xóa
+                </button>
+              </div>
+            ))}
           </div>
         ))}
       </div>
@@ -182,10 +223,10 @@ const CartPage = () => {
         <div className="footer-left">
           <input
             type="checkbox"
-            checked={selectedItems.length === cart.cartItems.length && cart.cartItems.length > 0}
+            checked={selectedItems.length === cart.shopGroup.flatMap(group => group.cartItems).length && cart.shopGroup.length > 0}
             onChange={toggleSelectAll}
           />
-          <span>Chọn tất cả ({cart.cartItems.length})</span>
+          <span>Chọn tất cả ({cart.shopGroup.flatMap(group => group.cartItems).length})</span>
           <button className="clear-cart" onClick={clearCart}>
             Xóa tất cả
           </button>

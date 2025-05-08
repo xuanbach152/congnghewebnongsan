@@ -104,6 +104,7 @@ const getShopsByUserId = async (
     currentPage: parseInt(page),
   };
 };
+
 const getOrderStatistics = async (shopId, periodType, date) => {
   try {
     // Xác định khoảng thời gian
@@ -149,6 +150,7 @@ const getOrderStatistics = async (shopId, periodType, date) => {
     throw error;
   }
 };
+
 const getItemStatistics = async (shopId, periodType, date) => {
   try {
     // Xác định khoảng thời gian

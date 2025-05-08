@@ -4,6 +4,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import routers from 'utils/routers'
 import axios from 'axios'
 import { FaAngleRight, FaEdit, FaTrash } from 'react-icons/fa'
+import { itemTypes } from 'utils/enums'
 
 const MyShopPage = () => {
   const { shopId, tab } = useParams()
@@ -152,7 +153,7 @@ const MyShopPage = () => {
                         </td>
                         <td>{item.name}</td>
                         <td>{item.price}</td>
-                        <td>{item.type}</td>
+                        <td>{itemTypes[item.type]}</td>
                         <td>{item.quantity}</td>
                         <td>
                           <div className="action-icons">

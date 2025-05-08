@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import routers from 'utils/routers'
 import { default as axiosInstance } from 'utils/api'
 import { FaAngleRight, FaStar } from 'react-icons/fa'
+import { itemTypes } from 'utils/enums'
 
 const ItemPage = () => {
   const [items, setItems] = useState([])
@@ -66,7 +67,7 @@ const ItemPage = () => {
                       <div className="item-info">
                         <div className="item-name">{item.name}</div>
                         <div className="item-price">Đơn giá: {item.price}</div>
-                        <div className="item-type">Loại hàng: {item.type}</div>
+                        <div className="item-type">Loại hàng: {itemTypes[item.type]}</div>
                         <div className="item-rate">
                           Đánh giá: {item.rate}
                           <FaStar
