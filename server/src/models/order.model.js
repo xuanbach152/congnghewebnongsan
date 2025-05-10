@@ -6,6 +6,11 @@ import {
 } from "../utils/constant.js";
 
 const orderSchema = new Schema({
+  orderCode: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   userId: {
     type: Schema.ObjectId,
     required: true,

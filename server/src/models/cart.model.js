@@ -43,6 +43,11 @@ const cartSchema = Schema(
         },
       }
     ],
+    distinctItemQuantity: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
     totalPaymentAmount: {
       type: Number,
       required: true,
