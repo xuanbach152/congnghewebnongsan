@@ -13,21 +13,18 @@ import {
   AiOutlineBell,
 } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
-import { formatter } from 'utils/formatter';
 import routers from 'utils/routers';
 import axiosInstance from 'utils/api';
 import { itemTypes, provinces } from 'utils/enums';
 
-const MainHeader = ({ setSearchQuery }) => {
+const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [cart, setCart] = useState(null);
   const [cartLoading, setCartLoading] = useState(false);
-  const [cartErrors, setError] = useState({});
   const [filterLocation, setFilterLocation] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterPrice, setFilterPrice] = useState('all');
@@ -35,6 +32,16 @@ const MainHeader = ({ setSearchQuery }) => {
   const [filterTrend, setFilterTrend] = useState(false);
   const [filterSth, setFilterSth] = useState(false);
   const [user, setUser] = useState(null);
+  const [itemQuantity, setItemQuantity] = useState(0);
+  const [paymentAmount, setPaymentAmount] = useState(0); 
+
+  useEffect(() => {
+    setItemQuantity(distinctItemQuantity);
+  }, [distinctItemQuantity]);
+
+  useEffect(() => {
+    setPaymentAmount(totalPaymentAmount);
+  }, [totalPaymentAmount]);
 
   const login = async (userName, password) => {
     try {
@@ -125,50 +132,18 @@ const MainHeader = ({ setSearchQuery }) => {
     try {
       setCartLoading(true);
       const response = await axiosInstance.get('/cart/getcart');
-      setCart(response.data.data);
-      setError(null);
+      setItemQuantity(response.data.data.distinctItemQuantity);
+      setPaymentAmount(response.data.data.totalPaymentAmount);
       // setSelectedItems(response.data.data.cartItems.map(item => item.itemId._id));
       setSelectedItems(response.data.data.shopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id)));
     } catch (err) {
       if (err.response?.data?.message === 'Cart not found') {
-        // setCart({ cartItems: [], _id: null });
-        setCart({ shopGroup: [], _id: null, totalPaymentAmount: 0 });
         setSelectedItems([]);
-        setError(null);
-      } else {
-        setError(err.response?.data?.message || 'Không thể tải giỏ hàng');
       }
     } finally {
       setCartLoading(false)
     }
   };
-
-  const cartItemCount = () => {
-    // return cart?.cartItems?.length || 0;
-    if (!cart?.shopGroup) return 0;
-    return cart.shopGroup.reduce((total, group) => total + group.cartItems.length, 0);
-  };
-
-  const cartTotal = () => {
-    // if (!cart?.cartItems) return 0;
-    // return cart.cartItems
-    //   .filter(item => selectedItems.includes(item.itemId._id))
-    //   .reduce((total, item) => {
-    //     const price = Number(item.price) || 0;
-    //     const quantity = Number(item.quantity) || 0;
-    //     return total + price * quantity;
-    //   }, 0);
-    if (!cart?.shopGroup) return 0;
-    return cart.shopGroup
-      .flatMap(group => group.cartItems)
-      .filter(item => selectedItems.includes(item._id || item.itemId._id))
-      .reduce((total, item) => {
-        const price = Number(item.price) || 0;
-        const quantity = Number(item.quantity) || 0;
-        return total + price * quantity;
-      }, 0);
-  };
-
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken')
@@ -184,26 +159,6 @@ const MainHeader = ({ setSearchQuery }) => {
       }
     }
   }, []);
-
-  // const addToCart = async (productId, quantity = 1) => {
-  //   if (!user) {
-  //     alert('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!');
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axiosInstance.post('/cart/add', {
-  //       userId: user._id,
-  //       itemId: productId,
-  //       quantity,
-  //     });
-  //     alert('Sản phẩm đã được thêm vào giỏ hàng!');
-  //     fetchCartData(); // Cập nhật lại giỏ hàng sau khi thêm
-  //   } catch (error) {
-  //     console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error.response?.data || error.message);
-  //     alert('Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!');
-  //   }
-  // };
 
   const toggleAuthModal = () => {
     setIsAuthModalOpen(!isAuthModalOpen)
@@ -224,7 +179,7 @@ const MainHeader = ({ setSearchQuery }) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const query = formData.get('search');
-    setSearchQuery(query); 
+    setSearchQuery(query);
   };
 
   return (
@@ -320,13 +275,13 @@ const MainHeader = ({ setSearchQuery }) => {
                 <button onClick={() => addToCart('67e2bdb31762e4f8f670d8c0', 2)}>Thêm sản phẩm test</button>
               </div> */}
               <div className="header_cart_price">
-                {cartLoading ? (<span>Đang tải...</span>) : (<span>{formatter(cartTotal())}</span>)}
+                {cartLoading ? (<span>Đang tải...</span>) : (<span>{paymentAmount}</span>)}
               </div>
               <ul>
                 <li>
                   <Link to={routers.CART}>
                     <AiOutlineShoppingCart />
-                    <span>{cartItemCount()}</span>
+                    <span>{itemQuantity}</span>
                   </Link>
                 </li>
               </ul>

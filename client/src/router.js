@@ -13,7 +13,7 @@ import ItemDetailPage from 'pages/itemDetailPage/itemDetailPage'
 import ShopDetailPage from 'pages/shopDetailPage/shopDetailPage'
 import MyShopPage from 'pages/myShopPage/myShopPage'
 
-const renderRouter = ({ searchQuery }) => {
+const renderRouter = ({ searchQuery, setDistinctItemQuantity, setTotalPaymentAmount }) => {
   const allRouters = [
     {
       path: routers.HOME,
@@ -25,7 +25,7 @@ const renderRouter = ({ searchQuery }) => {
     },
     {
       path: routers.CART,
-      component: <CartPage />,
+      component: <CartPage setDistinctItemQuantity={setDistinctItemQuantity} setTotalPaymentAmount={setTotalPaymentAmount}/>,
     },
     {
       path: routers.CHECKOUT,
@@ -57,7 +57,7 @@ const renderRouter = ({ searchQuery }) => {
     },
     {
       path: routers.ITEM_DETAIL,
-      component: <ItemDetailPage />,
+      component: <ItemDetailPage setDistinctItemQuantity={setDistinctItemQuantity} setTotalPaymentAmount={setTotalPaymentAmount}/>,
     },
     {
       path: routers.MY_SHOP,

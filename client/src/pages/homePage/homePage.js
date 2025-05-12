@@ -127,7 +127,7 @@ const HomePage = ({ searchQuery }) => {
               <p>Không có sản phẩm phù hợp</p>
             )}
           </div>
-          <div class="divider"></div>
+          <div className="divider"></div>
           <div className="shop-list">
             <div className="shop-list-title">
               <div className="title-text">Cửa hàng nổi bật</div>

@@ -6,7 +6,7 @@ import { formatter } from 'utils/formatter'
 import axiosInstance from 'utils/api'
 import { itemTypes } from 'utils/enums'
 
-const ItemDetailPage = () => {
+const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
     const { itemId } = useParams()
     const [item, setItem] = useState(null)
     const [quantity, setQuantity] = useState(1);
@@ -32,6 +32,9 @@ const ItemDetailPage = () => {
             await axiosInstance.post((`http://localhost:3000/cart/add`), {
                 itemId, quantity
             })
+            const response = await axiosInstance.get('/cart/getcart');
+            setDistinctItemQuantity(response.data.data.distinctItemQuantity || 0);
+            setTotalPaymentAmount(response.data.data.totalPaymentAmount || 0)
         } catch (error) {
             console.log(error);
         }

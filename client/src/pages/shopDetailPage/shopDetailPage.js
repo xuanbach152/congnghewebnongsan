@@ -96,7 +96,7 @@ const ShopDetailPage = () => {
             </>
           )}
 
-          <div class="divider"></div>
+          <div className="divider"></div>
 
           <div className="item-list">
             <div className="item-list-title">

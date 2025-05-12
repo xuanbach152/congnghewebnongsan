@@ -4,7 +4,7 @@ import './cartPage.scss';
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const CartPage = () => {
+const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -16,6 +16,8 @@ const CartPage = () => {
       setLoading(true);
       const response = await axiosInstance.get('/cart/getcart');
       const cartData = response.data.data;
+      setDistinctItemQuantity(response.data.data.distinctItemQuantity || 0);
+      setTotalPaymentAmount(response.data.data.totalPaymentAmount || 0);
 
       // Lấy thông tin shop cho từng shopId trong shopGroup
       const updatedShopGroup = await Promise.all(
@@ -49,7 +51,7 @@ const CartPage = () => {
     }
   };
 
-  const updateCartItemQuantity = (itemId, newQuantity) => {
+  const _updateCartItemQuantity = (itemId, newQuantity) => {
     setCart((prevCart) => {
       const updatedShopGroup = prevCart.shopGroup.map((group) => ({
         ...group,
@@ -68,13 +70,14 @@ const CartPage = () => {
   const updateCartItem = async (itemId, newQuantity) => {
     if (newQuantity < 1) return; 
     try {
-      await axiosInstance.put('/cart/update', {
+      const response = await axiosInstance.put('/cart/update', {
         cartId: cart._id,
         itemId,
         quantity: newQuantity,
       });
+      setTotalPaymentAmount(response.data.data.totalPaymentAmount || 0);
       setError(null);
-      updateCartItemQuantity(itemId, newQuantity);
+      _updateCartItemQuantity(itemId, newQuantity);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to update cart item');
     }
@@ -82,10 +85,12 @@ const CartPage = () => {
 
   const removeCartItem = async (itemId) => {
     try {
-      await axiosInstance.delete('/cart/remove', {
+      const response = await axiosInstance.delete('/cart/remove', {
         data: { cartId: cart._id, itemId },
       });
-      updateCartItemQuantity(itemId, 0);
+      _updateCartItemQuantity(itemId, 0);
+      setDistinctItemQuantity(response.data.data.distinctItemQuantity);
+      setTotalPaymentAmount(response.data.data.totalPaymentAmount || 0);
       setSelectedItems(selectedItems.filter(id => id !== itemId));
       setError(null);
     } catch (err) {
@@ -99,6 +104,7 @@ const CartPage = () => {
         data: { cartId: cart._id },
       });
       setCart(response.data.data);
+      setDistinctItemQuantity(0);
       setSelectedItems([]);
       setError(null);
     } catch (err) {
