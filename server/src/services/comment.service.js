@@ -39,7 +39,25 @@ const getComments = async (page, limit) => {
     throw error;
   }
 };
-
+const getCommentsByUser = async (userId, page, limit) => {
+  try {
+    const skip = (page - 1) * limit;
+    const comments = await CommentModel.find({ userId })
+      .skip(skip)
+      .limit(Math.min(limit, 100))
+      .exec();
+    const totalcomments = await CommentModel.countDocuments({ userId });
+    return {
+      comments,
+      totalcomments,
+      totalPages: Math.ceil(totalcomments / limit),
+      currentPage: parseInt(page),
+    };
+  } catch (error) {
+    console.error("Error in getCommentsByUser:", error.message);
+    throw error;
+  }
+};
 const deleteComment = async (CommentId) => {
   await CommentModel.findByIdAndDelete(CommentId);
 };
@@ -49,5 +67,6 @@ export default {
   updateComment,
   getCommentById,
   getComments,
+  getCommentsByUser,
   deleteComment,
 };

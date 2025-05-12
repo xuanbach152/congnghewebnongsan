@@ -11,28 +11,42 @@ import {
 } from "../services/auth.service.js";
 import httpStatus from "http-status";
 import Message from "../utils/message.js";
-
+import userModel from "../models/user.model.js";
 let refreshTokens = [];
 export const register = async (req, res) => {
   try {
-    console.log("Request body:", req.body);
+    const { userName, password } = req.body;
 
-    if (!req.body.password) {
+    if (!userName || !password) {
       return res.status(httpStatus.BAD_REQUEST).json({
-        message: "Password is required",
+        message:
+          "Vui lòng cung cấp đầy đủ thông tin (userName, password)",
       });
     }
-    const hashedPassword = await hashPassword(req.body.password);
+
+    const existingUser = await userModel.findOne({ userName });
+    if (existingUser) {
+      return res.status(httpStatus.CONFLICT).json({
+        message: "Tên đăng nhập đã tồn tại",
+      });
+    }
+
+    const hashedPassword = await hashPassword(password);
+
     const newUser = await userService.createUser({
       ...req.body,
       password: hashedPassword,
     });
 
-    const cart = await CartService.createCart({
+    await CartService.createCart({
       userId: newUser._id,
       shopGroup: [],
     });
-    res.status(httpStatus.CREATED).json({ user: newUser });
+
+    res.status(httpStatus.CREATED).json({
+      message: "Đăng ký tài khoản thành công",
+      user: newUser
+    });
   } catch (error) {
     res.status(httpStatus.BAD_REQUEST).json({ message: error.message });
   }
