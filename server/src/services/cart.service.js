@@ -3,12 +3,27 @@ import ItemModel from "../models/item.model.js";
 import { throwBadRequest } from "../utils/error.util.js";
 import Message from "../utils/message.js";
 
+const updateCartItemsCount = (cart) => {
+  const distinctItems = new Set();
+
+  // Thêm tất cả itemId vào Set để đếm số lượng sản phẩm khác nhau
+  cart.shopGroup.forEach((shop) => {
+    shop.cartItems.forEach((item) => {
+      distinctItems.add(item.itemId.toString());
+    });
+  });
+
+  cart.distinctItemQuantity = distinctItems.size;
+
+  return cart;
+};
+
 const createCart = async (CartData) => {
   const newCart = await CartModel.create(CartData);
   return newCart;
 };
 
-const getAllCarts = async (page , limit ) => {
+const getAllCarts = async (page, limit) => {
   const skip = (page - 1) * limit;
   const carts = await CartModel.find().skip(skip).limit(limit).exec();
   const totalCarts = await CartModel.countDocuments();
@@ -28,7 +43,9 @@ const addToCart = async (userId, itemId, quantity) => {
       throw new Error("Item not found");
     }
     if (!item.quantity || item.quantity < quantity) {
-      throw new Error(`Not enough items in stock. Only ${item.quantity || 0} items available.`);
+      throw new Error(
+        `Not enough items in stock. Only ${item.quantity || 0} items available.`
+      );
     }
     let cart = await CartModel.findOne({ userId: userId });
     if (!cart) {
@@ -38,27 +55,29 @@ const addToCart = async (userId, itemId, quantity) => {
     let shopGroupIndex = cart.shopGroup.findIndex(
       (group) => group.shopId.toString() === item.shopId.toString()
     );
-    
+
     if (shopGroupIndex === -1) {
       cart.shopGroup.push({
         shopId: item.shopId,
         cartItems: [],
-        totalPriceShop: 0
+        totalPriceShop: 0,
       });
       shopGroupIndex = cart.shopGroup.length - 1;
     }
 
-    const existingItemIndex = cart.shopGroup[shopGroupIndex].cartItems.findIndex(
-      (cartItem) => cartItem.itemId.toString() === itemId
-    );
+    const existingItemIndex = cart.shopGroup[
+      shopGroupIndex
+    ].cartItems.findIndex((cartItem) => cartItem.itemId.toString() === itemId);
 
     if (existingItemIndex !== -1) {
       // Item đã tồn tại - cập nhật số lượng
-      const existingItem = cart.shopGroup[shopGroupIndex].cartItems[existingItemIndex];
+      const existingItem =
+        cart.shopGroup[shopGroupIndex].cartItems[existingItemIndex];
       if (item.quantity < existingItem.quantity + quantity) {
         throw new Error(`Not enough items. Only ${item.quantity} available.`);
       }
-      cart.shopGroup[shopGroupIndex].cartItems[existingItemIndex].quantity += quantity;
+      cart.shopGroup[shopGroupIndex].cartItems[existingItemIndex].quantity +=
+        quantity;
     } else {
       // Thêm item mới vào cart
       cart.shopGroup[shopGroupIndex].cartItems.push({
@@ -68,7 +87,9 @@ const addToCart = async (userId, itemId, quantity) => {
         price: item.price,
       });
     }
-    cart.shopGroup[shopGroupIndex].totalPriceShop = cart.shopGroup[shopGroupIndex].cartItems.reduce(
+    cart.shopGroup[shopGroupIndex].totalPriceShop = cart.shopGroup[
+      shopGroupIndex
+    ].cartItems.reduce(
       (total, cartItem) => total + cartItem.price * cartItem.quantity,
       0
     );
@@ -77,11 +98,11 @@ const addToCart = async (userId, itemId, quantity) => {
       (total, group) => total + group.totalPriceShop,
       0
     );
-
+    updateCartItemsCount(cart);
     await cart.save();
     return CartModel.findOne({ userId }).populate({
       path: "shopGroup.cartItems.itemId",
-      select: "imgUrl"
+      select: "imgUrl",
     });
   } catch (error) {
     console.error("Error in addToCart:", error.message);
@@ -90,13 +111,14 @@ const addToCart = async (userId, itemId, quantity) => {
 };
 const updateCartItem = async (userId, itemId, quantity) => {
   try {
-
     const item = await ItemModel.findById(itemId);
     if (!item) {
       throw new Error("Item not found");
     }
     if (!item.quantity || item.quantity < quantity) {
-      throw new Error(`Not enough items. Only ${item.quantity || 0} items available.`);
+      throw new Error(
+        `Not enough items. Only ${item.quantity || 0} items available.`
+      );
     }
 
     const cart = await CartModel.findOne({ userId: userId });
@@ -107,38 +129,38 @@ const updateCartItem = async (userId, itemId, quantity) => {
     // Tìm vị trí shop group và item trong giỏ hàng
     let shopGroupIndex = -1;
     let itemIndex = -1;
-    
+
     for (let i = 0; i < cart.shopGroup.length; i++) {
       const group = cart.shopGroup[i];
       const idx = group.cartItems.findIndex(
-        cartItem => cartItem.itemId.toString() === itemId
+        (cartItem) => cartItem.itemId.toString() === itemId
       );
-      
+
       if (idx !== -1) {
         shopGroupIndex = i;
         itemIndex = idx;
         break;
       }
     }
-    
+
     if (shopGroupIndex === -1 || itemIndex === -1) {
       throw new Error("Item not found in cart");
     }
 
     cart.shopGroup[shopGroupIndex].cartItems[itemIndex].quantity = quantity;
-    
-  
-    cart.shopGroup[shopGroupIndex].totalPriceShop = cart.shopGroup[shopGroupIndex].cartItems.reduce(
+
+    cart.shopGroup[shopGroupIndex].totalPriceShop = cart.shopGroup[
+      shopGroupIndex
+    ].cartItems.reduce(
       (total, cartItem) => total + cartItem.price * cartItem.quantity,
       0
     );
-    
-   
+
     cart.totalPaymentAmount = cart.shopGroup.reduce(
       (total, group) => total + group.totalPriceShop,
       0
     );
-
+    updateCartItemsCount(cart);
     await cart.save();
     return cart;
   } catch (error) {
@@ -147,12 +169,11 @@ const updateCartItem = async (userId, itemId, quantity) => {
   }
 };
 
-
 const getCartUser = async (userId) => {
   try {
     const cart = await CartModel.findOne({ userId }).populate({
       path: "shopGroup.cartItems.itemId",
-      select: "imgUrl"
+      select: "imgUrl",
     });
 
     if (!cart) {
@@ -174,6 +195,7 @@ const clearCart = async (userId) => {
 
     cart.shopGroup = [];
     cart.totalPaymentAmount = 0;
+    cart.distinctItemQuantity = 0;
 
     await cart.save();
     return cart;
@@ -193,9 +215,9 @@ const removeCartItem = async (userId, itemId) => {
     for (let i = 0; i < cart.shopGroup.length; i++) {
       const group = cart.shopGroup[i];
       const idx = group.cartItems.findIndex(
-        cartItem => cartItem.itemId.toString() === itemId
+        (cartItem) => cartItem.itemId.toString() === itemId
       );
-      
+
       if (idx !== -1) {
         shopGroupIndex = i;
         itemIndex = idx;
@@ -213,18 +235,19 @@ const removeCartItem = async (userId, itemId) => {
       cart.shopGroup.splice(shopGroupIndex, 1);
     } else {
       // Nếu group còn tồn tại thì tính lại totalPriceShop
-      cart.shopGroup[shopGroupIndex].totalPriceShop = cart.shopGroup[shopGroupIndex].cartItems.reduce(
+      cart.shopGroup[shopGroupIndex].totalPriceShop = cart.shopGroup[
+        shopGroupIndex
+      ].cartItems.reduce(
         (total, cartItem) => total + cartItem.price * cartItem.quantity,
         0
       );
     }
 
-
     cart.totalPaymentAmount = cart.shopGroup.reduce(
       (total, group) => total + group.totalPriceShop,
       0
     );
-
+    updateCartItemsCount(cart);
     await cart.save();
     return cart;
   } catch (error) {
@@ -249,4 +272,5 @@ export default {
   deleteCart,
   removeCartItem,
   clearCart,
+  updateCartItemsCount,
 };

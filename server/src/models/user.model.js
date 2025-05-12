@@ -20,6 +20,30 @@ const userSchema = Schema(
       required: true,
       default: "none",
     },
+    email: {
+      type: String,
+      default: "none",
+    },
+    imgUrl: {
+      type: String,
+      default: "",
+    },
+    gender: {
+      type: String,
+      default: "none",
+    },
+    birthday: {
+      type: Date,
+      default: null,
+    },
+    bankAccount: {
+      type: String,
+      default: "",
+    },
+    bankName: {
+      type: String,
+      default: "",
+    },
     role: {
       type: String,
       enum: UserRoleEnum,
@@ -29,7 +53,7 @@ const userSchema = Schema(
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 export default model("User", userSchema);
