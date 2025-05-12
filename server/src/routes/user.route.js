@@ -14,7 +14,7 @@ const router = express.Router();
 router.post("/", uploadImg.single("image"), createUser);
 router.get("/", verifyToken, getUsers);
 router.get("/search", verifyToken, searchUsers);
-router.put("/", uploadImg.single("image"),verifyToken, updateUser);
+router.patch("/", uploadImg.single("image"),verifyToken, updateUser);
 router.get("/:id", verifyToken, getUserById);
 router.delete("/", verifyToken, deleteUser);
 
