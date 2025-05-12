@@ -152,7 +152,7 @@ const CartPage = () => {
 
   if (loading) return <div className="loading">Đang tải...</div>;
   if (error) return <div className="error">{error}</div>;
-  if (!cart || !cart.shopGroup?.length) return <div className="empty">Giỏ hàng rỗng</div>;
+  if (!cart || !cart.shopGroup?.length) return <div className="empty"></div>;
 
   return (
     <div className="cart-page">

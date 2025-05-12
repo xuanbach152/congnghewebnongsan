@@ -127,11 +127,9 @@ const MainHeader = ({ setSearchQuery }) => {
       const response = await axiosInstance.get('/cart/getcart');
       setCart(response.data.data);
       setError(null);
-      // setSelectedItems(response.data.data.cartItems.map(item => item.itemId._id));
       setSelectedItems(response.data.data.shopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id)));
     } catch (err) {
       if (err.response?.data?.message === 'Cart not found') {
-        // setCart({ cartItems: [], _id: null });
         setCart({ shopGroup: [], _id: null, totalPaymentAmount: 0 });
         setSelectedItems([]);
         setError(null);
@@ -144,20 +142,11 @@ const MainHeader = ({ setSearchQuery }) => {
   };
 
   const cartItemCount = () => {
-    // return cart?.cartItems?.length || 0;
     if (!cart?.shopGroup) return 0;
     return cart.shopGroup.reduce((total, group) => total + group.cartItems.length, 0);
   };
 
   const cartTotal = () => {
-    // if (!cart?.cartItems) return 0;
-    // return cart.cartItems
-    //   .filter(item => selectedItems.includes(item.itemId._id))
-    //   .reduce((total, item) => {
-    //     const price = Number(item.price) || 0;
-    //     const quantity = Number(item.quantity) || 0;
-    //     return total + price * quantity;
-    //   }, 0);
     if (!cart?.shopGroup) return 0;
     return cart.shopGroup
       .flatMap(group => group.cartItems)
@@ -184,26 +173,6 @@ const MainHeader = ({ setSearchQuery }) => {
       }
     }
   }, []);
-
-  // const addToCart = async (productId, quantity = 1) => {
-  //   if (!user) {
-  //     alert('Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng!');
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axiosInstance.post('/cart/add', {
-  //       userId: user._id,
-  //       itemId: productId,
-  //       quantity,
-  //     });
-  //     alert('Sản phẩm đã được thêm vào giỏ hàng!');
-  //     fetchCartData(); // Cập nhật lại giỏ hàng sau khi thêm
-  //   } catch (error) {
-  //     console.error('Lỗi khi thêm sản phẩm vào giỏ hàng:', error.response?.data || error.message);
-  //     alert('Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại!');
-  //   }
-  // };
 
   const toggleAuthModal = () => {
     setIsAuthModalOpen(!isAuthModalOpen)
@@ -316,9 +285,6 @@ const MainHeader = ({ setSearchQuery }) => {
 
           <div className="col-xl-3">
             <div className="header_cart">
-              {/* <div className="test_add_to_cart">
-                <button onClick={() => addToCart('67e2bdb31762e4f8f670d8c0', 2)}>Thêm sản phẩm test</button>
-              </div> */}
               <div className="header_cart_price">
                 {cartLoading ? (<span>Đang tải...</span>) : (<span>{formatter(cartTotal())}</span>)}
               </div>
@@ -405,7 +371,7 @@ const MainHeader = ({ setSearchQuery }) => {
             </div>
 
             {/* Filter ??? */}
-            <div className="filter_group">
+            {/* <div className="filter_group">
               <label>
                 <input
                   type="checkbox"
@@ -414,7 +380,7 @@ const MainHeader = ({ setSearchQuery }) => {
                 />
                 Sth
               </label>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

@@ -1,8 +1,10 @@
 import { memo, useState, useEffect } from 'react';
 import axiosInstance from 'utils/api';
+import { useNavigate } from 'react-router-dom';
 import './profilePage.scss';
 
-const ProfilePage = ({ userId }) => {
+const ProfilePage = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
   const [userData, setUserData] = useState({
     userName: '',
@@ -26,30 +28,11 @@ const ProfilePage = ({ userId }) => {
   const [success, setSuccess] = useState(false);
   const [previewAvatar, setPreviewAvatar] = useState(null);
 
-  // Validation rules
-  const validateForm = () => {
-    const newErrors = {}
-    if (!userData.userName.trim())
-      newErrors.userName = 'Tên người dùng không được để trống'
-    if (!userData.email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/))
-      newErrors.email = 'Email không hợp lệ'
-    if (!userData.phone.match(/^\d{10}$/))
-      newErrors.phone = 'Số điện thoại phải là 10 chữ số'
-    if (!userData.address.trim())
-      newErrors.address = 'Địa chỉ không được để trống'
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
   // Fetch user data
   const fetchUserData = async () => {
-    if (!userId) {
-      setErrors({ fetch: 'Không có ID người dùng' })
-      return
-    }
-    setLoading(true)
     try {
-      const response = await axiosInstance.get(`/api/users/${userId}`);
+      setLoading(true);
+      const response = await axiosInstance.get(`/user`);
       if (response.data.code === 200) {
         const data = response.data.data;
         setUserData({
@@ -58,7 +41,7 @@ const ProfilePage = ({ userId }) => {
           phone: data.phone || '',
           gender: data.gender || '',
           birthday: data.birthday || '',
-          avatar: data.avatar || '',
+          avatar: data.avatar || data.imgUrl || '',
           addresses: data.addresses || [],
           defaultAddress: data.defaultAddress || '',
           bankInfo: data.bankInfo || { bankName: '', accountNumber: '' }
@@ -77,7 +60,6 @@ const ProfilePage = ({ userId }) => {
   // Validate profile form
   const validateProfileForm = () => {
     const newErrors = {};
-    if (!userData.userName.trim()) newErrors.userName = 'Tên người dùng không được để trống';
     if (!userData.email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) newErrors.email = 'Email không hợp lệ';
     if (userData.phone && !userData.phone.match(/^\d{10}$/)) newErrors.phone = 'Số điện thoại phải là 10 chữ số';
     setErrors(newErrors);
@@ -118,7 +100,8 @@ const ProfilePage = ({ userId }) => {
 
     setLoading(true)
     try {
-      const response = await axiosInstance.put(`/api/users/${userId}`, userData);
+      const { userName, ...updateData} = userData;
+      const response = await axiosInstance.patch(`/user`, updateData);
       if (response.data.code === 200) {
         setSuccess(true);
         setTimeout(() => setSuccess(false), 2000);
@@ -140,14 +123,14 @@ const ProfilePage = ({ userId }) => {
 
     setLoading(true);
     try {
-      const response = await axiosInstance.put(`/api/users/${userId}/password`, {
+      const response = await axiosInstance.patch(`/user`, {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });
       if (response.data.code === 200) {
         setSuccess(true);
-        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-        setTimeout(() => setSuccess(false), 2000);
+        localStorage.removeItem('accessToken');
+        setTimeout(() => {setSuccess(false); navigate('/login');}, 2000);
       } else {
         setErrors({ submit: response.data.message || 'Đổi mật khẩu thất bại' });
       }
@@ -165,7 +148,7 @@ const ProfilePage = ({ userId }) => {
 
     setLoading(true);
     try {
-      const response = await axiosInstance.put(`/api/users/${userId}`, { bankInfo: userData.bankInfo });
+      const response = await axiosInstance.patch(`/user`, { bankInfo: userData.bankInfo });
       if (response.data.code === 200) {
         setSuccess(true);
         setTimeout(() => setSuccess(false), 2000);
@@ -191,7 +174,7 @@ const ProfilePage = ({ userId }) => {
     const updatedAddresses = [...userData.addresses, newAddress];
     setLoading(true);
     try {
-      const response = await axiosInstance.put(`/api/users/${userId}`, {
+      const response = await axiosInstance.patch(`/user`, {
         addresses: updatedAddresses,
         defaultAddress: userData.defaultAddress || newAddress
       });
@@ -210,11 +193,40 @@ const ProfilePage = ({ userId }) => {
     }
   };
 
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+    const formData = new FormData();
+    formData.append('image', file); 
+
+    setLoading(true);
+      try {
+        const response = await axiosInstance.patch('/user', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        if (response.data.code === 200) {
+          const imgUrl = response.data.data?.imgUrl || response.data.data;
+          setUserData({ ...userData, avatar: imgUrl });
+          setPreviewAvatar(imgUrl);
+          await fetchUserData();
+        } else {
+          setErrors({ avatar: response.data.message || 'Tải ảnh lên thất bại' });
+        }
+      } catch (err) {
+        setErrors({ avatar: err.response?.data?.message || 'Có lỗi xảy ra khi tải ảnh lên' });
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   // Set default address
   const setDefaultAddress = async (address) => {
     setLoading(true);
     try {
-      const response = await axiosInstance.put(`/api/users/${userId}`, { defaultAddress: address });
+      const response = await axiosInstance.patch(`/user`, { defaultAddress: address });
       if (response.data.code === 200) {
         setSuccess(true);
         setTimeout(() => setSuccess(false), 2000);
@@ -251,30 +263,21 @@ const ProfilePage = ({ userId }) => {
     setErrors({ ...errors, [name]: '' });
   };
 
-  // Handle avatar upload
-  const handleAvatarChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUserData({ ...userData, avatar: reader.result });
-        setPreviewAvatar(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   useEffect(() => {
-    console.log('userId:', userId);
-    if (userId) fetchUserData();
-  }, [userId]);
+    const token = localStorage.getItem('accessToken');
+    if(!token) {
+      alert('Vui lòng đăng nhập để truy cập trang này');
+      navigate('/login');
+      return;
+    }
+    fetchUserData();
+  }, [navigate]);
 
   return (
     <div className="profile_container">
       <div className="sidebar">
         <div className="sidebar_user">
           <img src={previewAvatar || 'default-avatar.png'} alt="Avatar" className="sidebar_avatar" />
-          <span>{userData.userName || 'Người dùng'}</span>
         </div>
         <div className="menu_header">Tài Khoản Của Tôi</div>
         <ul className="sidebar_menu">
@@ -323,7 +326,7 @@ const ProfilePage = ({ userId }) => {
                   <input
                     type="email"
                     name="email"
-                    value={userData.email}
+                    value={userData.email || ''}
                     onChange={handleChange}
                     disabled={loading}
                   />
@@ -335,7 +338,7 @@ const ProfilePage = ({ userId }) => {
                   <input
                     type="text"
                     name="phone"
-                    value={userData.phone}
+                    value={userData.phone || ''}
                     onChange={handleChange}
                     disabled={loading}
                   />
@@ -386,7 +389,7 @@ const ProfilePage = ({ userId }) => {
                   <input
                     type="date"
                     name="birthday"
-                    value={userData.birthday}
+                    value={userData.birthday || ''}
                     onChange={handleChange}
                     disabled={loading}
                   />
@@ -410,7 +413,6 @@ const ProfilePage = ({ userId }) => {
                     hidden
                   />
                 </label>
-                <p>Dung lượng file tối đa 1 MB<br />Định dạng: .JPEG, .PNG</p>
               </div>
             </div>
           </>
@@ -482,7 +484,7 @@ const ProfilePage = ({ userId }) => {
                 <label>Tên ngân hàng</label>
                 <select
                   name="bankName"
-                  value={userData.bankInfo.bankName}
+                  value={userData.bankInfo.bankName || ''}
                   onChange={handleBankChange}
                   disabled={loading}
                 >
@@ -500,7 +502,7 @@ const ProfilePage = ({ userId }) => {
                 <input
                   type="text"
                   name="accountNumber"
-                  value={userData.bankInfo.accountNumber}
+                  value={userData.bankInfo.accountNumber || ''}
                   onChange={handleBankChange}
                   disabled={loading}
                 />
@@ -556,7 +558,7 @@ const ProfilePage = ({ userId }) => {
                 <label>Thêm địa chỉ mới</label>
                 <textarea
                   name="newAddress"
-                  value={newAddress}
+                  value={newAddress || ''}
                   onChange={(e) => {
                     setNewAddress(e.target.value);
                     setErrors({ ...errors, newAddress: '' });
