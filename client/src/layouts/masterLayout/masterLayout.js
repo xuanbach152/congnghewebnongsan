@@ -2,10 +2,10 @@ import { memo } from 'react'
 import Header from '../header/header'
 import Footer from '../footer/footer'
 import './masterLayout.scss'
-const MasterLayout = ({ children, setSearchQuery, ...props }) => {
+const MasterLayout = ({ children, setSearchQuery, distinctItemQuantity, totalPaymentAmount, ...props }) => {
   return (
     <div className="master-layout" {...props}>
-      <Header setSearchQuery={setSearchQuery} />
+      <Header setSearchQuery={setSearchQuery} distinctItemQuantity={distinctItemQuantity} totalPaymentAmount={totalPaymentAmount}/>
       <div className="main-content">{children}</div>
       <Footer />
     </div>
