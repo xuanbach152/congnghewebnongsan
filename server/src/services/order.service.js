@@ -31,6 +31,7 @@ const generateOrderCode = async () => {
   return orderCode;
 };
 
+
 const createOrder = async (userId, deliveryAddress, paymentMethod, deliveryType) => {
   try {
     const cart = await CartModel.findOne({ userId }).populate(

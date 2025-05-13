@@ -3,7 +3,7 @@ import {
   createCart,
   getAllCarts,
   getCartUser,
-
+calculateCartDeliveryFee,
   addToCart,
   removeCartItem,
   updateCartItem,
@@ -15,6 +15,7 @@ const router = express.Router();
 
 router.post("/", verifyToken, createCart);
 router.post("/add", verifyToken, addToCart);
+router.post("/calculate", verifyToken, calculateCartDeliveryFee);
 router.put("/update", verifyToken, updateCartItem);
 router.delete("/remove", verifyToken, removeCartItem);
 router.delete("/clear", verifyToken, clearCart);

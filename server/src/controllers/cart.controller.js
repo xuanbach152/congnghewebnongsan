@@ -183,3 +183,28 @@ export const clearCart = async (req, res) => {
     });
   }
 };
+export const calculateCartDeliveryFee = async (req, res) => {
+  try{
+    const userId = req.user.id;
+    const { deliveryAddress } = req.body;
+    if (!userId || !deliveryAddress) {
+      return res.status(400).send({
+        code: 400,
+        message: "Missing required fields: userId, deliveryAddress",
+      });
+    }
+    const cart = await CartService.calculateCartDeliveryFee(userId, deliveryAddress);
+    res.status(200).send({
+      code: 200,
+      message: "Delivery fee calculated successfully",
+      data: cart,
+    });
+  }
+  catch(error){
+    console.error("Error in calculateCartDeliveryFee:", error.message);
+    res.status(500).send({
+      code: 500,
+      message: error.message || "Failed to calculate delivery fee",
+    });
+  }
+};
