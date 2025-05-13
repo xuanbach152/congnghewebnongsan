@@ -15,8 +15,12 @@ const ShopUpsertPage = () => {
     address: '',
     description: '',
     image: null,
+    longitude: '',
+    latitude: '',
   });
   const [loading, setLoading] = useState(true)
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const [locationValue, setLocationValue] = useState('');
 
   const navigate = useNavigate();
 
@@ -48,6 +52,9 @@ const ShopUpsertPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'address') {
+      setLocationValue(value);
+    }
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -84,6 +91,48 @@ const ShopUpsertPage = () => {
     }
   };
 
+  const getLocationSuggestions = async (query) => {
+    if (query.length >= 2) {
+      try {
+        const response = await axios.get(`https://www.mapquestapi.com/search/v3/prediction`,
+          {
+            params: {
+              key: process.env.REACT_APP_MAPQUEST_API_KEY,
+              limit: 7,
+              collection: "address,adminArea,poi",
+              q: query,
+              location: `${process.env.REACT_APP_LONGITUDE_HANOI},${process.env.REACT_APP_LATITUDE_HANOI}`,
+              countryCode: "VN",
+            }
+          }
+        );
+        setLocationSuggestions(response.data.results || []);
+        console.log(locationSuggestions);
+      } catch (error) {
+        console.log('Error fetching suggestions:', error)
+      }
+    } else {
+      setLocationSuggestions([]);
+    }
+  }
+
+  const handleLocationChange = (event) => {
+    const query = event.target.value;
+    setLocationValue(query);
+    getLocationSuggestions(query);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setFormData((prev) => ({
+      ...prev,
+      address: suggestion.displayString,
+      longitude: suggestion.place.geometry.coordinates[0],
+      latitude: suggestion.place.geometry.coordinates[1],
+    }));
+    setLocationValue(suggestion.displayString);
+    setLocationSuggestions([]);
+  };
+
   return (
     <div className="shop-registration">
       <div className="container">
@@ -100,7 +149,7 @@ const ShopUpsertPage = () => {
             </>
           ) : null}
           <FaAngleRight className="nav-icon" />
-          <Link className="nav-shop-registration">{ mode === 'create' ? 'Đăng ký cửa hàng' : 'Cập nhật thông tin cửa hàng' }</Link>
+          <Link className="nav-shop-registration">{mode === 'create' ? 'Đăng ký cửa hàng' : 'Cập nhật thông tin cửa hàng'}</Link>
         </div>
         <div className="shop-registration-form">
           <div className="title-text">Thông tin cửa hàng</div>
@@ -125,11 +174,23 @@ const ShopUpsertPage = () => {
                 type="text"
                 id="address"
                 name="address"
-                value={formData.address}
+                value={locationValue}
                 onChange={handleInputChange}
+                onInput={handleLocationChange}
                 placeholder={shop?.address || "Nhập địa chỉ"}
                 required
               />
+              <ul className="suggestions-list">
+                {locationSuggestions.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    className="suggestion-item"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    {suggestion.displayString}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div className="form-group">
