@@ -269,44 +269,6 @@
   }
 }
 
-.address_list {
-  margin-bottom: 20px;
-
-  .address_item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #eee;
-
-    .default_tag {
-      color: #00bfa5;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .set_default_button {
-      background: #fff;
-      border: 1px solid map.get($theme-colors, 'light-custom');
-      color: map.get($theme-colors, 'custom');
-      padding: 5px 10px;
-      border-radius: 4px;
-      cursor: pointer;
-
-      &:hover {
-        background: map.get($theme-colors, 'main');
-        color: #fff;
-      }
-
-      &:disabled {
-        border-color: #ccc;
-        color: #ccc;
-        cursor: not-allowed;
-      }
-    }
-  }
-}
-
 .avatar_section {
   width: 250px;
   text-align: center;
@@ -354,6 +316,26 @@
 
   &:disabled {
     background: #ccc;
+    cursor: not-allowed;
+  }
+}
+
+.edit_button {
+  padding: 10px 20px;
+  background-color: #007bff; 
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3; 
+  }
+
+  &:disabled {
+    background-color: #cccccc;
     cursor: not-allowed;
   }
 }

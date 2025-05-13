@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/api';
 import { toast } from 'react-toastify';
@@ -11,6 +11,46 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('cod');
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      try {
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        setUserId(decodedToken.id);
+      } catch (err) {
+        console.error('Invalid token', err);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchUserAddress = async () => {
+      if (userId) {
+        try {
+          const response = await axiosInstance.get(`/user/${userId}`);
+          if (response.data.code === 200) {
+            const data = response.data.data;
+            if (data.address && data.address.trim() !== '') {
+              setAddress(data.address); 
+            }
+          } else {
+            toast.error('Không thể tải địa chỉ người dùng', {
+              position: 'top-center',
+              autoClose: 3000,
+            });
+          }
+        } catch (err) {
+          toast.error('Lỗi khi tải địa chỉ người dùng', {
+            position: 'top-center',
+            autoClose: 3000,
+          });
+        }
+      }
+    };
+    fetchUserAddress();
+  }, [userId]);
 
   const calculateTotal = () =>
     selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -18,7 +58,7 @@ const CheckoutPage = () => {
   const handleCheckout = async () => {
     if (!address.trim()) {
       toast.error('Vui lòng nhập địa chỉ giao hàng', {
-        position: "top-center",
+        position: 'top-center',
         autoClose: 3000,
       });
       return;
@@ -29,7 +69,7 @@ const CheckoutPage = () => {
 
       const paymentMethodMap = {
         cod: 'CASH',
-        bank: 'BANK_TRANSFER'
+        bank: 'BANK_TRANSFER',
       };
 
       const deliveryType = 'EXPRESS';
@@ -37,23 +77,23 @@ const CheckoutPage = () => {
       await axiosInstance.post('/order', {
         deliveryAddress: address,
         paymentMethod: paymentMethodMap[paymentMethod],
-        deliveryType: deliveryType
+        deliveryType: deliveryType,
       });
 
       if (cartId && selectedItems.length > 0) {
         await axiosInstance.delete('/cart/remove', {
-          data: { cartId, items: selectedItems.map(item => item.itemId._id) }
-        }).catch(err => {
+          data: { cartId, items: selectedItems.map((item) => item.itemId._id) },
+        }).catch((err) => {
           console.error('Error removing cart items:', err.response?.data || err.message);
           toast.warn('Không thể xóa giỏ hàng, nhưng đơn hàng đã được tạo.', {
-            position: "top-center",
+            position: 'top-center',
             autoClose: 3000,
           });
         });
       }
 
       toast.success('Đặt hàng thành công! Chuyển hướng đến Lịch sử đơn hàng...', {
-        position: "top-center",
+        position: 'top-center',
         autoClose: 2000,
       });
 
@@ -61,7 +101,7 @@ const CheckoutPage = () => {
       window.location.reload();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Không thể đặt hàng. Vui lòng thử lại.', {
-        position: "top-center",
+        position: 'top-center',
         autoClose: 3000,
       });
     } finally {
@@ -71,7 +111,7 @@ const CheckoutPage = () => {
 
   if (!selectedItems.length) {
     toast.info('Không có sản phẩm nào được chọn', {
-      position: "top-center",
+      position: 'top-center',
       autoClose: 3000,
     });
     return <div className="empty">Không có sản phẩm nào được chọn</div>;
@@ -85,7 +125,7 @@ const CheckoutPage = () => {
         <h3>Địa chỉ giao hàng</h3>
         <textarea
           className="address-input"
-          placeholder="Nhập địa chỉ giao hàng..."
+          placeholder={address.trim() === '' ? 'Vui lòng nhập địa chỉ giao hàng...' : ''}
           value={address}
           onChange={(e) => setAddress(e.target.value)}
           required
