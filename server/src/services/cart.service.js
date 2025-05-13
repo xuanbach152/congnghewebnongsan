@@ -2,6 +2,7 @@ import CartModel from "../models/cart.model.js";
 import ItemModel from "../models/item.model.js";
 import { throwBadRequest } from "../utils/error.util.js";
 import Message from "../utils/message.js";
+import distanceService from "../utils/distance.utils.js";
 
 const updateCartItemsCount = (cart) => {
   const distinctItems = new Set();
@@ -263,6 +264,54 @@ const deleteCart = async (userId) => {
   return CartModel.findByIdAndDelete(cart._id);
 };
 
+const calculateCartDeliveryFee = async (userId, deliveryAddress) => {
+  try {
+    const cart = await CartModel.findOne({ userId }).populate({
+      path: "shopGroup.shopId",
+      select: "name address",
+    });
+
+    if (!cart) {
+      throw new Error("Không tìm thấy giỏ hàng");
+    }
+
+    if (!deliveryAddress) {
+      throw new Error("Địa chỉ giao hàng không được để trống");
+    }
+    const cartWithDelivery = cart.toObject();
+    let totalDeliveryFee = 0;
+
+    for (let i = 0; i < cartWithDelivery.shopGroup.length; i++) {
+      const shop = cartWithDelivery.shopGroup[i];
+
+      const shopAddress = shop.shopId.address;
+
+      try {
+        const distance = await distanceService.calculateDistance(deliveryAddress, shopAddress);
+        const shopDeliveryFee = distanceService.calculateDeliveryFee(distance);
+        shop.deliveryFee = shopDeliveryFee;
+        shop.distance = distance;
+        totalDeliveryFee += shopDeliveryFee;
+      } catch (error) {
+        console.error(
+          `Lỗi khi tính phí vận chuyển cho shop ${shop.shopId._id}:`,
+          error.message
+        );
+
+        shop.deliveryFee = 30000;
+        shop.distance = null;
+        totalDeliveryFee += 30000;
+      }
+    }
+    cartWithDelivery.totalDeliveryFee = totalDeliveryFee;
+
+    return cartWithDelivery;
+  } catch (error) {
+    console.error("Error in calculateCartDeliveryFee:", error.message);
+    throw error;
+  }
+};
+
 export default {
   createCart,
   updateCartItem,
@@ -273,4 +322,5 @@ export default {
   removeCartItem,
   clearCart,
   updateCartItemsCount,
+  calculateCartDeliveryFee,
 };
