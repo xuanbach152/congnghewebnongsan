@@ -17,12 +17,11 @@ const userSchema = Schema(
     },
     address: {
       type: String,
-      required: true,
-      default: "none",
+      default: "",
     },
     email: {
       type: String,
-      default: "none",
+      default: "",
     },
     imgUrl: {
       type: String,

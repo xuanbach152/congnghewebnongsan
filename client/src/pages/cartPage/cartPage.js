@@ -178,7 +178,6 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
         {cart.shopGroup.map((shopGroup) => (
           <div key={shopGroup._id} className="shop-section">
             <h3 onClick={() => handleShopClick(shopGroup.shopId)} style={{ cursor: 'pointer', color: '#0dac02' }}>
-              {/* Shop {shopGroup.shopId}  */}
               {shopGroup.shopName || `Shop ${shopGroup.shopId}`}
             </h3>
             {shopGroup.cartItems.map((item) => (
