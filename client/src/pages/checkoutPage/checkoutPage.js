@@ -36,7 +36,7 @@ const CheckoutPage = () => {
           if (response.data.code === 200) {
             const data = response.data.data;
             if (data.address && data.address.trim() !== '') {
-              setAddress(data.address); 
+              // setAddress(data.address); 
             }
           } else {
             toast.error('Không thể tải địa chỉ người dùng', {
