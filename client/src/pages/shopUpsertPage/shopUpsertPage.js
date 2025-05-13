@@ -5,6 +5,7 @@ import routers from 'utils/routers';
 import { FaAngleRight } from 'react-icons/fa';
 import axiosInstance from 'utils/api';
 import axios from 'axios';
+import { getLocationSuggestions } from 'utils/mapquestApi';
 
 const ShopUpsertPage = () => {
   const { mode, shopId } = useParams();
@@ -91,35 +92,11 @@ const ShopUpsertPage = () => {
     }
   };
 
-  const getLocationSuggestions = async (query) => {
-    if (query.length >= 2) {
-      try {
-        const response = await axios.get(`https://www.mapquestapi.com/search/v3/prediction`,
-          {
-            params: {
-              key: process.env.REACT_APP_MAPQUEST_API_KEY,
-              limit: 7,
-              collection: "address,adminArea,poi",
-              q: query,
-              location: `${process.env.REACT_APP_LONGITUDE_HANOI},${process.env.REACT_APP_LATITUDE_HANOI}`,
-              countryCode: "VN",
-            }
-          }
-        );
-        setLocationSuggestions(response.data.results || []);
-        console.log(locationSuggestions);
-      } catch (error) {
-        console.log('Error fetching suggestions:', error)
-      }
-    } else {
-      setLocationSuggestions([]);
-    }
-  }
-
-  const handleLocationChange = (event) => {
+  const handleLocationChange = async (event) => {
     const query = event.target.value;
     setLocationValue(query);
-    getLocationSuggestions(query);
+    const response = await getLocationSuggestions(query);
+    setLocationSuggestions(response?.data?.results || []);
   };
 
   const handleSuggestionClick = (suggestion) => {
