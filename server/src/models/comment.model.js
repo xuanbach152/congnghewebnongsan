@@ -15,10 +15,11 @@ const commentSchema = Schema(
     content: {
       type: String,
       required: true,
+      default: "",
     },
-    imageUrl: {
+    imgUrl: {
       type: String,
-      required: true,
+      default: "",
     },
   },
   {
