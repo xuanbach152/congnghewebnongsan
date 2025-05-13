@@ -159,6 +159,7 @@ const ItemUpsertPage = () => {
                   onChange={handleInputChange}
                   placeholder={item?.price || "Nhập giá"}
                   required
+                  min="0"
                 />
               </div>
 
@@ -192,6 +193,7 @@ const ItemUpsertPage = () => {
                   onChange={handleInputChange}
                   placeholder={item?.quantity || "Nhập số lượng bán"}
                   required
+                  min="0"
                 />
               </div>
 

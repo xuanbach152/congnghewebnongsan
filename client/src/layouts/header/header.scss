@@ -125,6 +125,7 @@
 
 .header_logo {
   padding: 20px 0;
+
   h1 {
     font-size: 28px;
     font-weight: 700;
@@ -133,8 +134,10 @@
     text-transform: uppercase;
     letter-spacing: 1px;
   }
+
   a {
     text-decoration: none;
+
     &:hover {
       opacity: 0.9;
     }
@@ -143,6 +146,7 @@
 
 .header_menu {
   padding: 20px 0;
+
   ul {
     display: flex;
     justify-content: center;
@@ -153,6 +157,7 @@
     li {
       margin: 0 30px;
       white-space: nowrap;
+
       a {
         text-decoration: none;
         font-size: 14px;
@@ -185,6 +190,7 @@
 
   .header_cart_price {
     margin-right: 20px;
+
     span {
       font-size: 16px;
       font-weight: 600;
@@ -401,6 +407,12 @@
         background: #c82333;
       }
     }
+
+    .auth_error {
+      color: red;
+      text-align: center;
+      font-size: 14px;
+    }
   }
 }
 
@@ -424,6 +436,7 @@
       opacity: 0;
       transform: translateY(-10px);
     }
+
     to {
       opacity: 1;
       transform: translateY(0);
@@ -581,7 +594,7 @@
     }
 
     h2 {
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       font-size: 24px;
       font-weight: 700;
       color: map.get($theme-colors, 'main');
@@ -592,7 +605,6 @@
     .auth_form {
       display: flex;
       flex-direction: column;
-      gap: 20px; // Tăng khoảng cách giữa các phần tử
 
       input {
         width: 100%;
@@ -610,11 +622,9 @@
       }
 
       .auth_submit_button {
-        background: linear-gradient(
-          90deg,
-          #28a745,
-          #34c759
-        ); // Gradient cho nút
+        background: linear-gradient(90deg,
+            #28a745,
+            #34c759); // Gradient cho nút
         color: #fff;
         border: none;
         padding: 12px;
@@ -633,7 +643,6 @@
 
       .auth_separator {
         position: relative;
-        margin: 20px 0;
 
         span {
           background: #fff;
@@ -687,6 +696,7 @@
 
           &.facebook {
             background: #1877f2; // Màu chính thức của Facebook
+
             &:hover {
               background: #165ddb;
               border-color: #165ddb;
@@ -697,9 +707,11 @@
             background: #eeeeee;
             border: 1px solid #ffffff;
             color: #ffffff;
+
             .google_icon {
               font-weight: 700;
             }
+
             .google_text {
               display: flex;
               align-items: center;
@@ -708,22 +720,28 @@
               .g1 {
                 color: #4285f4; // Xanh dương cho "G" đầu tiên
               }
+
               .o1 {
                 color: #ea4335; // Đỏ cho "o" thứ nhất
               }
+
               .o2 {
                 color: #fbbc05; // Vàng cho "o" thứ hai
               }
+
               .g2 {
                 color: #4285f4; // Xanh dương cho "g"
               }
+
               .l {
                 color: #34a853; // Xanh lá cho "l"
               }
+
               .e {
                 color: #ea4335; // Đỏ cho "e"
               }
             }
+
             &:hover {
               background: #a7a6a6;
               border-color: #a7a6a6;
@@ -731,17 +749,17 @@
           }
 
           &.instagram {
-            background: radial-gradient(
-              circle at 30% 107%,
-              #fdf497 0%,
-              #fdf497 5%,
-              #fd5949 45%,
-              #d6249f 60%,
-              #285aeb 90%
-            ); // Gradient chính thức của Instagram
+            background: radial-gradient(circle at 30% 107%,
+                #fdf497 0%,
+                #fdf497 5%,
+                #fd5949 45%,
+                #d6249f 60%,
+                #285aeb 90%); // Gradient chính thức của Instagram
+
             .instagram_icon {
               color: #fff;
             }
+
             &:hover {
               filter: brightness(1.15);
             }
@@ -751,7 +769,6 @@
     }
 
     .switch_mode {
-      margin-top: 20px;
       color: #6f6f6f;
       cursor: pointer;
       font-size: 14px;
@@ -765,7 +782,7 @@
     }
 
     .close_button {
-      margin-top: 20px;
+      margin: 0;
       background: #dc3545;
       color: white;
       padding: 10px 20px;

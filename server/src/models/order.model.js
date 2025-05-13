@@ -53,8 +53,15 @@ const orderSchema = new Schema({
     default: 0
   },
   deliveryAddress: {
-    type: String,
-    required: true,
+    address: {
+      type: String,
+    },
+    longitude: {
+      type: Number,
+    },
+    latitude: {
+      type: Number,
+    }
   },
   totalPrice: {
     type: Number,

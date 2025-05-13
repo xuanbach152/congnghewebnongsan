@@ -7,10 +7,6 @@ export const createOrder = async (req, res) => {
   try {
     const { deliveryAddress, paymentMethod, deliveryType } = req.body;
     const userId = req.user.id;
-    console.log("User ID:", userId); 
-    console.log("Delivery Address:", deliveryAddress); 
-    console.log("Payment Method:", paymentMethod); 
-    console.log("Delivery Type:", deliveryType);
     if (!userId || !deliveryAddress || !paymentMethod || !deliveryType) {
       return res.status(400).send({
         code: 400,

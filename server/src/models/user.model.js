@@ -50,6 +50,12 @@ const userSchema = Schema(
       default: UserRoleEnum.BUYER,
       required: true,
     },
+    longitude: {
+      type: Number,
+    },
+    latitude: {
+      type: Number,
+    }
   },
   {
     timestamps: true,

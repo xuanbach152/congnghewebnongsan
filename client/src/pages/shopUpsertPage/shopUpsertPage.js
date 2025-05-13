@@ -5,6 +5,7 @@ import routers from 'utils/routers';
 import { FaAngleRight } from 'react-icons/fa';
 import axiosInstance from 'utils/api';
 import axios from 'axios';
+import { getLocationSuggestions } from 'utils/mapquestApi';
 
 const ShopUpsertPage = () => {
   const { mode, shopId } = useParams();
@@ -15,8 +16,12 @@ const ShopUpsertPage = () => {
     address: '',
     description: '',
     image: null,
+    longitude: '',
+    latitude: '',
   });
   const [loading, setLoading] = useState(true)
+  const [locationSuggestions, setLocationSuggestions] = useState([]);
+  const [locationValue, setLocationValue] = useState('');
 
   const navigate = useNavigate();
 
@@ -48,6 +53,9 @@ const ShopUpsertPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    if (name === 'address') {
+      setLocationValue(value);
+    }
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -84,6 +92,24 @@ const ShopUpsertPage = () => {
     }
   };
 
+  const handleLocationChange = async (event) => {
+    const query = event.target.value;
+    setLocationValue(query);
+    const response = await getLocationSuggestions(query);
+    setLocationSuggestions(response?.data?.results || []);
+  };
+
+  const handleSuggestionClick = (suggestion) => {
+    setFormData((prev) => ({
+      ...prev,
+      address: suggestion.displayString,
+      longitude: suggestion.place.geometry.coordinates[0],
+      latitude: suggestion.place.geometry.coordinates[1],
+    }));
+    setLocationValue(suggestion.displayString);
+    setLocationSuggestions([]);
+  };
+
   return (
     <div className="shop-registration">
       <div className="container">
@@ -100,7 +126,7 @@ const ShopUpsertPage = () => {
             </>
           ) : null}
           <FaAngleRight className="nav-icon" />
-          <Link className="nav-shop-registration">{ mode === 'create' ? 'Đăng ký cửa hàng' : 'Cập nhật thông tin cửa hàng' }</Link>
+          <Link className="nav-shop-registration">{mode === 'create' ? 'Đăng ký cửa hàng' : 'Cập nhật thông tin cửa hàng'}</Link>
         </div>
         <div className="shop-registration-form">
           <div className="title-text">Thông tin cửa hàng</div>
@@ -125,11 +151,23 @@ const ShopUpsertPage = () => {
                 type="text"
                 id="address"
                 name="address"
-                value={formData.address}
+                value={locationValue}
                 onChange={handleInputChange}
+                onInput={handleLocationChange}
                 placeholder={shop?.address || "Nhập địa chỉ"}
                 required
               />
+              <ul className="suggestions-list">
+                {locationSuggestions.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    className="suggestion-item"
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    {suggestion.displayString}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <div className="form-group">

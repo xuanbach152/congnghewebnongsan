@@ -34,7 +34,6 @@ const HomePage = ({ searchQuery }) => {
         } 
         else {
           setShops(response.data.data);
-          console.log(response.data.data);
         }
       } catch (error) {
         console.error(
@@ -64,7 +63,6 @@ const HomePage = ({ searchQuery }) => {
         }
         else {
           setItems(response.data.data);
-          console.log(response.data.data);
         }
       } catch (error) {
         console.error(
@@ -127,7 +125,7 @@ const HomePage = ({ searchQuery }) => {
               <p>Không có sản phẩm phù hợp</p>
             )}
           </div>
-          <div class="divider"></div>
+          <div className="divider"></div>
           <div className="shop-list">
             <div className="shop-list-title">
               <div className="title-text">Cửa hàng nổi bật</div>
