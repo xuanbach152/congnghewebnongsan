@@ -1,3 +1,6 @@
+import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
 
 const distances = {
   "Hà Nội": {
@@ -5,7 +8,7 @@ const distances = {
     "Hải Phòng": 120,
     "Quảng Ninh": 150,
     "Đà Nẵng": 800,
-    "Huế": 700,
+    Huế: 700,
     "Quảng Nam": 850,
     "TP.HCM": 1700,
     "Cần Thơ": 1800,
@@ -16,7 +19,7 @@ const distances = {
     "Hải Phòng": 0,
     "Quảng Ninh": 80,
     "Đà Nẵng": 850,
-    "Huế": 750,
+    Huế: 750,
     "Quảng Nam": 900,
     "TP.HCM": 1750,
     "Cần Thơ": 1850,
@@ -27,7 +30,7 @@ const distances = {
     "Hải Phòng": 80,
     "Quảng Ninh": 0,
     "Đà Nẵng": 900,
-    "Huế": 800,
+    Huế: 800,
     "Quảng Nam": 950,
     "TP.HCM": 1800,
     "Cần Thơ": 1900,
@@ -38,18 +41,18 @@ const distances = {
     "Hải Phòng": 850,
     "Quảng Ninh": 900,
     "Đà Nẵng": 0,
-    "Huế": 100,
+    Huế: 100,
     "Quảng Nam": 50,
     "TP.HCM": 900,
     "Cần Thơ": 1000,
     "Đồng Nai": 850,
   },
-  "Huế": {
+  Huế: {
     "Hà Nội": 700,
     "Hải Phòng": 750,
     "Quảng Ninh": 800,
     "Đà Nẵng": 100,
-    "Huế": 0,
+    Huế: 0,
     "Quảng Nam": 150,
     "TP.HCM": 950,
     "Cần Thơ": 1050,
@@ -60,7 +63,7 @@ const distances = {
     "Hải Phòng": 900,
     "Quảng Ninh": 950,
     "Đà Nẵng": 50,
-    "Huế": 150,
+    Huế: 150,
     "Quảng Nam": 0,
     "TP.HCM": 850,
     "Cần Thơ": 950,
@@ -71,7 +74,7 @@ const distances = {
     "Hải Phòng": 1750,
     "Quảng Ninh": 1800,
     "Đà Nẵng": 900,
-    "Huế": 950,
+    Huế: 950,
     "Quảng Nam": 850,
     "TP.HCM": 0,
     "Cần Thơ": 150,
@@ -82,7 +85,7 @@ const distances = {
     "Hải Phòng": 1850,
     "Quảng Ninh": 1900,
     "Đà Nẵng": 1000,
-    "Huế": 1050,
+    Huế: 1050,
     "Quảng Nam": 950,
     "TP.HCM": 150,
     "Cần Thơ": 0,
@@ -93,7 +96,7 @@ const distances = {
     "Hải Phòng": 1700,
     "Quảng Ninh": 1750,
     "Đà Nẵng": 850,
-    "Huế": 900,
+    Huế: 900,
     "Quảng Nam": 800,
     "TP.HCM": 50,
     "Cần Thơ": 200,
@@ -102,18 +105,86 @@ const distances = {
 };
 
 const calculateDistance = async (origin, destination) => {
- if(!distances[origin] || !distances[destination]) {
-    throw new Error("Invalid location");
+  try {
+    
+    if (process.env.MAPQUEST_API_KEY) {
+      
+      const originAddress = `${origin}, Việt Nam`;
+      const destinationAddress = `${destination}, Việt Nam`;
+
+      // Gọi MapQuest Directions API
+      const response = await axios.get(
+        "https://www.mapquestapi.com/directions/v2/route",
+        {
+          params: {
+            key: process.env.MAPQUEST_API_KEY,
+            from: originAddress,
+            to: destinationAddress,
+            unit: "k", // k = kilometer
+            routeType: "fastest",
+            locale: "vi_VN",
+          },
+        }
+      );
+
+      // Kiểm tra kết quả trả về
+      if (response.data.info.statuscode === 0) {
+        // MapQuest trả về khoảng cách trực tiếp bằng km
+        const distanceInKm = Math.round(response.data.route.distance);
+        console.log(`Khoảng cách từ MapQuest: ${distanceInKm} km`);
+        return distanceInKm;
+      } else {
+        console.log(
+          "MapQuest API không trả về kết quả hợp lệ:",
+          response.data.info.messages
+        );
+      }
+    }
+
+    // Sử dụng dữ liệu dự phòng 
+    if (!distances[origin] || !distances[origin][destination]) {
+      throw new Error("Không tìm thấy thông tin khoảng cách cho địa điểm này");
+    }
+
+    console.log(
+      `Sử dụng dữ liệu dự phòng: ${distances[origin][destination]} km`
+    );
+    return distances[origin][destination];
+  } catch (error) {
+    console.error("Lỗi khi tính khoảng cách:", error.message);
+
+    // Sử dụng dữ liệu dự phòng nếu có lỗi
+    if (distances[origin] && distances[origin][destination]) {
+      return distances[origin][destination];
+    }
+
+    throw new Error("Không thể tính khoảng cách vận chuyển");
   }
-  return distances[origin][destination];
 };
 
 const calculateDeliveryFee = (distanceInKm) => {
+  
   const baseFee = 10000;
-  const feePerKm = 5000;
+
+  
+  let feePerKm;
+
+  if (distanceInKm <= 10) {
+    feePerKm = 5000;
+  } else if (distanceInKm <= 50) {
+    feePerKm = 4500; 
+  } else if (distanceInKm <= 100) {
+    feePerKm = 4000; 
+  } else {
+    feePerKm = 3500; 
+  }
+
   const deliveryFee = baseFee + distanceInKm * feePerKm;
 
-  return Math.round(deliveryFee); // Làm tròn
+
+  const maxFee = 2000000; 
+
+  return Math.min(Math.round(deliveryFee), maxFee);
 };
 
 export default { calculateDistance, calculateDeliveryFee };
