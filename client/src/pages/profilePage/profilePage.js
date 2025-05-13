@@ -15,7 +15,7 @@ const ProfilePage = () => {
     gender: '',
     birthday: '',
     avatar: '',
-    address: '', // Single address as a string
+    address: '', 
     bankInfo: { bankName: '', accountNumber: '' },
   });
   const [passwordData, setPasswordData] = useState({
@@ -133,7 +133,7 @@ const ProfilePage = () => {
         gender: userData.gender,
         birthday: userData.birthday || null,
       };
-      const response = await axiosInstance.patch(`/user`, updateData);
+      const response = await axiosInstance.patch(`/user/${userId}`, updateData);
       if (response.data.code === 200) {
         setSuccess(true);
         setTimeout(() => setSuccess(false), 2000);
@@ -212,7 +212,7 @@ const ProfilePage = () => {
     setLoading(true);
     try {
       const updateData = {
-        address: newAddress, // Update single address
+        address: newAddress, 
       };
       const response = await axiosInstance.patch(`/user/${userId}`, updateData);
       if (response.data.code === 200) {
@@ -283,12 +283,11 @@ const ProfilePage = () => {
     setErrors({ ...errors, [name]: '' });
   };
 
-  // Fetch userId and validate token on mount
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
       alert('Vui lòng đăng nhập để truy cập trang này');
-      navigate('/auth/login');
+      navigate('/login');
       return;
     }
     try {
@@ -297,11 +296,10 @@ const ProfilePage = () => {
     } catch (err) {
       alert('Token không hợp lệ, vui lòng đăng nhập lại');
       localStorage.removeItem('accessToken');
-      navigate('/auth/login');
+      navigate('/login');
     }
   }, [navigate]);
 
-  // Fetch user data when userId changes
   useEffect(() => {
     if (userId) {
       fetchUserData();
@@ -613,7 +611,7 @@ const ProfilePage = () => {
                   className="edit_button"
                   onClick={() => {
                     setIsEditing({ ...isEditing, address: !isEditing.address });
-                    if (!isEditing.address) setNewAddress(userData.address); // Prefill when enabling edit
+                    if (!isEditing.address) setNewAddress(userData.address); 
                   }}
                   disabled={loading}
                 >
