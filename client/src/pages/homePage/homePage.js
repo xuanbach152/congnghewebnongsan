@@ -34,7 +34,6 @@ const HomePage = ({ searchQuery }) => {
         } 
         else {
           setShops(response.data.data);
-          console.log(response.data.data);
         }
       } catch (error) {
         console.error(
@@ -64,7 +63,6 @@ const HomePage = ({ searchQuery }) => {
         }
         else {
           setItems(response.data.data);
-          console.log(response.data.data);
         }
       } catch (error) {
         console.error(

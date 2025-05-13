@@ -55,6 +55,47 @@
         cursor: pointer;
       }
     }
+
+    .suggestions-list {
+      margin-top: 2px;
+      padding: 0;
+      list-style: none;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+      background-color: #fff;
+      z-index: 3;
+      width: 100%;
+      top: 100%;
+      left: 0;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      overflow-x: hidden;
+    }
+
+    .suggestions-list:empty {
+      display: none;
+    }
+
+    .suggestion-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      transition:
+        background-color 0.3s ease,
+        transform 0.2s ease;
+      font-size: 14px;
+      color: #333;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .suggestion-item:hover {
+      background-color: #e0e0e0;
+      transform: scale(1.02);
+    }
+
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
   }
 
   .checkout-items {
@@ -166,8 +207,8 @@
   .checkout-item {
     grid-template-columns: 1fr 100px;
     grid-template-areas:
-      "info info"
-      "quantity price";
+      'info info'
+      'quantity price';
     gap: 10px;
     padding: 10px;
 

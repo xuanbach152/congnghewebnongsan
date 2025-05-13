@@ -106,11 +106,12 @@ const distances = {
 
 const calculateDistance = async (origin, destination) => {
   try {
-    
+    console.log(origin);
+    console.log(destination);
     if (process.env.MAPQUEST_API_KEY) {
       
-      const originAddress = `${origin}, Việt Nam`;
-      const destinationAddress = `${destination}, Việt Nam`;
+      const originAddress = `${origin.latitude},${origin.longitude}`;
+      const destinationAddress = `${destination.latitude},${destination.longitude}`;
 
       // Gọi MapQuest Directions API
       const response = await axios.get(

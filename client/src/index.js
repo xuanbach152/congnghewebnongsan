@@ -29,6 +29,7 @@ function App() {
       <ToastContainer
         position="top-right"
         autoClose={3000}
+        pauseOnFocusLoss={false}  
       />
     </MasterLayout>
   )
