@@ -26,7 +26,12 @@ const shopSchema = Schema(
       type: Number,
       default: 5,
     },
-    
+    longitude: {
+      type: Number,
+    },
+    latitude: {
+      type: Number,
+    }
   },
   {
     timestamps: true,

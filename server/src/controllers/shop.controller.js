@@ -89,14 +89,13 @@ export const getShopById = async (req, res) => {
 export const updateShop = async (req, res) => {
   try {
     const shopId = req.params.id;
-    const {  name, address, description } = req.body;
+    const { name, address, description, longitude, latitude } = req.body;
     const image = req.file;
     let imgUrl;
     if(image) {
       imgUrl = await uploadToCloudinary(image);
     }
-    console.log(imgUrl);
-    const updatedShop = await ShopService.updateShop(shopId, { name, address, description, imgUrl });
+    const updatedShop = await ShopService.updateShop(shopId, { name, address, description, imgUrl, longitude, latitude });
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.ShopUpdated,
