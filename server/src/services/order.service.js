@@ -37,7 +37,7 @@ const createOrder = async (userId, deliveryAddress, paymentMethod, deliveryType)
     const cart = await CartModel.findOne({ userId }).populate(
       [
         { path: "shopGroup.cartItems.itemId", select: "imgUrl type price name quantity" },
-        { path: "shopGroup.shopId", select: "address name" }
+        { path: "shopGroup.shopId", select: "address name longitude latitude" }
       ]
     );
     if (!cart || !cart.shopGroup || cart.shopGroup.length === 0) {
@@ -54,7 +54,11 @@ const createOrder = async (userId, deliveryAddress, paymentMethod, deliveryType)
         quantity: cartItem.quantity,
       }));
 
-      const shopAddress = shopGroup.shopId.address;
+      const shopAddress = {
+        address: shopGroup.shopId.address,
+        longitude: shopGroup.shopId.longitude,
+        latitude: shopGroup.shopId.latitude,
+      }
 
       const distanceInKm = await distanceService.calculateDistance(
         shopAddress,

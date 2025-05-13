@@ -1,80 +1,151 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../utils/api';
-import { toast } from 'react-toastify';
-import './checkoutPage.scss';
+import React, { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import axiosInstance from '../../utils/api'
+import { toast } from 'react-toastify'
+import './checkoutPage.scss'
+import { getLocationSuggestions } from 'utils/mapquestApi'
 
 const CheckoutPage = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { selectedItems = [], cartId } = location.state || {};
-  const [loading, setLoading] = useState(false);
-  const [address, setAddress] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('cod');
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { selectedItems = [], cartId } = location.state || {}
+  const [loading, setLoading] = useState(false)
+  const [address, setAddress] = useState('')
+  const [locationSuggestions, setLocationSuggestions] = useState([])
+  const [locationValue, setLocationValue] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('cod')
+  const [userId, setUserId] = useState('');
+
+  useEffect(() => {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      try {
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        setUserId(decodedToken.id);
+      } catch (err) {
+        console.error('Invalid token', err);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchUserAddress = async () => {
+      if (userId) {
+        try {
+          const response = await axiosInstance.get(`/user/${userId}`);
+          if (response.data.code === 200) {
+            const data = response.data.data;
+            if (data.address && data.address.trim() !== '') {
+              // setAddress(data.address); 
+            }
+          } else {
+            toast.error('Không thể tải địa chỉ người dùng', {
+              position: 'top-center',
+              autoClose: 3000,
+            });
+          }
+        } catch (err) {
+          toast.error('Lỗi khi tải địa chỉ người dùng', {
+            position: 'top-center',
+            autoClose: 3000,
+          });
+        }
+      }
+    };
+    fetchUserAddress();
+  }, [userId]);
 
   const calculateTotal = () =>
-    selectedItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    selectedItems.reduce((total, item) => total + item.price * item.quantity, 0)
 
   const handleCheckout = async () => {
-    if (!address.trim()) {
+    if (!locationValue.trim()) {
       toast.error('Vui lòng nhập địa chỉ giao hàng', {
-        position: "top-center",
+        position: 'top-center',
         autoClose: 3000,
-      });
-      return;
+      })
+      return
     }
 
     try {
-      setLoading(true);
+      setLoading(true)
 
       const paymentMethodMap = {
         cod: 'CASH',
-        bank: 'BANK_TRANSFER'
-      };
+        bank: 'BANK_TRANSFER',
+      }
 
-      const deliveryType = 'EXPRESS';
+      const deliveryType = 'EXPRESS'
 
       await axiosInstance.post('/order', {
         deliveryAddress: address,
         paymentMethod: paymentMethodMap[paymentMethod],
-        deliveryType: deliveryType
-      });
+        deliveryType: deliveryType,
+      })
 
       if (cartId && selectedItems.length > 0) {
-        await axiosInstance.delete('/cart/remove', {
-          data: { cartId, items: selectedItems.map(item => item.itemId._id) }
-        }).catch(err => {
-          console.error('Error removing cart items:', err.response?.data || err.message);
-          toast.warn('Không thể xóa giỏ hàng, nhưng đơn hàng đã được tạo.', {
-            position: "top-center",
-            autoClose: 3000,
-          });
-        });
+        await axiosInstance
+          .delete('/cart/remove', {
+            data: {
+              cartId,
+              items: selectedItems.map((item) => item.itemId._id),
+            },
+          })
+          .catch((err) => {
+            console.error(
+              'Error removing cart items:',
+              err.response?.data || err.message
+            )
+            toast.warn('Không thể xóa giỏ hàng, nhưng đơn hàng đã được tạo.', {
+              position: 'top-center',
+              autoClose: 3000,
+            })
+          })
       }
 
-      toast.success('Đặt hàng thành công! Chuyển hướng đến Lịch sử đơn hàng...', {
-        position: "top-center",
-        autoClose: 2000,
-      });
+      toast.success(
+        'Đặt hàng thành công! Chuyển hướng đến Lịch sử đơn hàng...',
+        {
+          position: 'top-center',
+          autoClose: 2000,
+        }
+      )
 
-      navigate('/order/history');
-      window.location.reload();
+      navigate('/order/history')
+      window.location.reload()
     } catch (err) {
       toast.error(err.response?.data?.message || 'Không thể đặt hàng. Vui lòng thử lại.', {
-        position: "top-center",
+        position: 'top-center',
         autoClose: 3000,
       });
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   if (!selectedItems.length) {
     toast.info('Không có sản phẩm nào được chọn', {
-      position: "top-center",
+      position: 'top-center',
       autoClose: 3000,
-    });
-    return <div className="empty">Không có sản phẩm nào được chọn</div>;
+    })
+    return <div className="empty">Không có sản phẩm nào được chọn</div>
+  }
+
+  const handleLocationChange = async (event) => {
+    const query = event.target.value
+    setLocationValue(query)
+    const response = await getLocationSuggestions(query)
+    setLocationSuggestions(response?.data?.results || [])
+  }
+
+  const handleSuggestionClick = (suggestion) => {
+    setLocationValue(suggestion.displayString)
+    setLocationSuggestions([])
+    setAddress({
+      address: suggestion.displayString,
+      longitude: suggestion.place.geometry.coordinates[0],
+      latitude: suggestion.place.geometry.coordinates[1],
+    })
   }
 
   return (
@@ -86,10 +157,22 @@ const CheckoutPage = () => {
         <textarea
           className="address-input"
           placeholder="Nhập địa chỉ giao hàng..."
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
+          value={locationValue}
+          onChange={(e) => setLocationValue(e.target.value)}
+          onInput={handleLocationChange}
           required
         />
+        <ul className="suggestions-list">
+          {locationSuggestions.map((suggestion, index) => (
+            <li
+              key={index}
+              className="suggestion-item"
+              onClick={() => handleSuggestionClick(suggestion)}
+            >
+              {suggestion.displayString}
+            </li>
+          ))}
+        </ul>
       </div>
 
       <div className="section">
@@ -118,11 +201,17 @@ const CheckoutPage = () => {
         {selectedItems.map((item) => (
           <div key={item.itemId._id} className="checkout-item">
             {item.itemId.imgUrl ? (
-              <img src={item.itemId.imgUrl} alt={item.itemId.name} className="item-image" />
+              <img
+                src={item.itemId.imgUrl}
+                alt={item.itemId.name}
+                className="item-image"
+              />
             ) : null}
             <span className="item-name">{item.itemId.name}</span>
             <span className="item-quantity">x{item.quantity}</span>
-            <span className="item-price">{(item.price * item.quantity).toLocaleString()} VNĐ</span>
+            <span className="item-price">
+              {(item.price * item.quantity).toLocaleString()} VNĐ
+            </span>
           </div>
         ))}
       </div>
@@ -132,12 +221,12 @@ const CheckoutPage = () => {
           Tổng cộng ({selectedItems.length} sản phẩm):{' '}
           <strong>{calculateTotal().toLocaleString()} VNĐ</strong>
         </div>
-        <button onClick={handleCheckout} disabled={loading || !address.trim()}>
+        <button onClick={handleCheckout} disabled={loading || !locationValue.trim()}>
           {loading ? 'Đang xử lý...' : 'Đặt hàng'}
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CheckoutPage;
+export default CheckoutPage
