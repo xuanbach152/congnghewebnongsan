@@ -49,7 +49,7 @@ export const searchUsers = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.params.id;
     const userData = { ...req.body };
     if (req.file) {
       const imgUrl = await uploadToCloudinary(req.file);
@@ -58,14 +58,14 @@ export const updateUser = async (req, res) => {
     const updatedUser = await UserService.updateUser(userId, userData);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
-      message: Message.userUpdated,
+      message: Message.OK,
       data: updatedUser,
     });
   } catch (error) {
     console.log(error);
     res.status(httpStatus.BAD_REQUEST).send({
       code: httpStatus.BAD_REQUEST,
-      message: Message.userUpdatedFailed,
+      message: Message.FAILED,
     });
   }
 };

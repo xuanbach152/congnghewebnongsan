@@ -352,7 +352,8 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
               </label>
             </div>
 
-            <div className="filter_group">
+            {/* Filter ??? */}
+            {/* <div className="filter_group">
               <label>
                 <input
                   type="checkbox"
@@ -361,7 +362,7 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
                 />
                 Sth
               </label>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

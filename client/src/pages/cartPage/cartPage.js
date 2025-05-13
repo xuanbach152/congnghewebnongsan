@@ -158,7 +158,7 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
 
   if (loading) return <div className="loading">Đang tải...</div>;
   if (error) return <div className="error">{error}</div>;
-  if (!cart || !cart.shopGroup?.length) return <div className="empty">Giỏ hàng rỗng</div>;
+  if (!cart || !cart.shopGroup?.length) return <div className="empty"></div>;
 
   return (
     <div className="cart-page">
@@ -178,7 +178,6 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
         {cart.shopGroup.map((shopGroup) => (
           <div key={shopGroup._id} className="shop-section">
             <h3 onClick={() => handleShopClick(shopGroup.shopId)} style={{ cursor: 'pointer', color: '#0dac02' }}>
-              {/* Shop {shopGroup.shopId}  */}
               {shopGroup.shopName || `Shop ${shopGroup.shopId}`}
             </h3>
             {shopGroup.cartItems.map((item) => (
