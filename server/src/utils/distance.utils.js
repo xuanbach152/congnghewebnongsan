@@ -8,7 +8,7 @@ const distances = {
     "Hải Phòng": 120,
     "Quảng Ninh": 150,
     "Đà Nẵng": 800,
-    Huế: 700,
+    "Huế": 700,
     "Quảng Nam": 850,
     "TP.HCM": 1700,
     "Cần Thơ": 1800,
@@ -19,7 +19,7 @@ const distances = {
     "Hải Phòng": 0,
     "Quảng Ninh": 80,
     "Đà Nẵng": 850,
-    Huế: 750,
+    "Huế": 750,
     "Quảng Nam": 900,
     "TP.HCM": 1750,
     "Cần Thơ": 1850,
@@ -30,7 +30,7 @@ const distances = {
     "Hải Phòng": 80,
     "Quảng Ninh": 0,
     "Đà Nẵng": 900,
-    Huế: 800,
+    "Huế": 800,
     "Quảng Nam": 950,
     "TP.HCM": 1800,
     "Cần Thơ": 1900,
@@ -41,18 +41,18 @@ const distances = {
     "Hải Phòng": 850,
     "Quảng Ninh": 900,
     "Đà Nẵng": 0,
-    Huế: 100,
+    "Huế": 100,
     "Quảng Nam": 50,
     "TP.HCM": 900,
     "Cần Thơ": 1000,
     "Đồng Nai": 850,
   },
-  Huế: {
+  "Huế": {
     "Hà Nội": 700,
     "Hải Phòng": 750,
     "Quảng Ninh": 800,
     "Đà Nẵng": 100,
-    Huế: 0,
+    "Huế": 0,
     "Quảng Nam": 150,
     "TP.HCM": 950,
     "Cần Thơ": 1050,
@@ -63,7 +63,7 @@ const distances = {
     "Hải Phòng": 900,
     "Quảng Ninh": 950,
     "Đà Nẵng": 50,
-    Huế: 150,
+    "Huế": 150,
     "Quảng Nam": 0,
     "TP.HCM": 850,
     "Cần Thơ": 950,
@@ -74,7 +74,7 @@ const distances = {
     "Hải Phòng": 1750,
     "Quảng Ninh": 1800,
     "Đà Nẵng": 900,
-    Huế: 950,
+    "Huế": 950,
     "Quảng Nam": 850,
     "TP.HCM": 0,
     "Cần Thơ": 150,
@@ -85,7 +85,7 @@ const distances = {
     "Hải Phòng": 1850,
     "Quảng Ninh": 1900,
     "Đà Nẵng": 1000,
-    Huế: 1050,
+    "Huế": 1050,
     "Quảng Nam": 950,
     "TP.HCM": 150,
     "Cần Thơ": 0,
@@ -96,14 +96,56 @@ const distances = {
     "Hải Phòng": 1700,
     "Quảng Ninh": 1750,
     "Đà Nẵng": 850,
-    Huế: 900,
+    "Huế": 900,
     "Quảng Nam": 800,
     "TP.HCM": 50,
     "Cần Thơ": 200,
     "Đồng Nai": 0,
   },
 };
+const geocodeAddress = async (address) => {
+  try {
+    // Kiểm tra nếu đã có API key
+    if (!process.env.MAPQUEST_API_KEY) {
+      throw new Error("Thiếu MapQuest API key");
+    }
 
+    // Gọi MapQuest Geocoding API
+    const response = await axios.get(
+      "https://www.mapquestapi.com/geocoding/v1/address",
+      {
+        params: {
+          key: process.env.MAPQUEST_API_KEY,
+          location: address,
+          maxResults: 1,
+          thumbMaps: false
+        }
+      }
+    );
+
+    // Kiểm tra kết quả
+    if (
+      response.data.results &&
+      response.data.results.length > 0 &&
+      response.data.results[0].locations &&
+      response.data.results[0].locations.length > 0
+    ) {
+      const location = response.data.results[0].locations[0].latLng;
+      console.log(`Tọa độ cho địa chỉ "${address}":`, location);
+      
+      return {
+        latitude: location.lat,
+        longitude: location.lng
+      };
+    } else {
+      console.warn(`Không tìm thấy tọa độ cho địa chỉ: ${address}`);
+      throw new Error("Không tìm thấy tọa độ cho địa chỉ này");
+    }
+  } catch (error) {
+    console.error("Lỗi khi chuyển đổi địa chỉ thành tọa độ:", error.message);
+    throw new Error("Không thể chuyển đổi địa chỉ thành tọa độ");
+  }
+};
 const calculateDistance = async (origin, destination) => {
   try {
     console.log(origin);
@@ -188,4 +230,4 @@ const calculateDeliveryFee = (distanceInKm) => {
   return Math.min(Math.round(deliveryFee), maxFee);
 };
 
-export default { calculateDistance, calculateDeliveryFee };
+export default { calculateDistance, calculateDeliveryFee, geocodeAddress };
