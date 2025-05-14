@@ -34,7 +34,11 @@ const shopSchema = Schema(
       type: Number,
       required: true,
     },
-   
+   status:{
+    type : String,
+    enum: ["ENABLE", "DISABLE"],
+    default: "ENABLE",
+   }
   },
   {
     timestamps: true,

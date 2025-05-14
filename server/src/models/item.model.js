@@ -33,6 +33,11 @@ const itemSchema = new Schema({
     type: String,
     default: "",
   },
+  status: {
+    type: String,
+    enum: ["ENABLE", "DISABLE"],
+    default: "ENABLE",
+  },
   rate: {
     type: Number,
     default: 5.0,
@@ -61,7 +66,7 @@ const itemSchema = new Schema({
     default: "",
   },
   // số lượt mua
-  purchaseCount: { 
+  purchaseCount: {
     type: Number,
     default: 0,
   },
@@ -75,7 +80,7 @@ const itemSchema = new Schema({
       content: {
         type: String,
         required: true,
-      }
+      },
     },
   ],
 });
