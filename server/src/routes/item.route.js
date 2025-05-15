@@ -11,6 +11,7 @@ import {
   uploadImage,
   uploadVideo,
   getItemsByShopId,
+  getRelatedItems
 } from "../controllers/item.controller.js";
 import { verifyToken } from "../services/auth.service.js";
 const router = express.Router();
@@ -22,6 +23,8 @@ router.get("/", getItems);
 router.get("/search", searchItems);
 
 router.get("/:id", getItemById);
+
+router.get("/:id/related", getRelatedItems);
 
 router.get("/shop/:shopId", getItemsByShopId);
 

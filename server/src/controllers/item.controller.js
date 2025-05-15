@@ -257,3 +257,24 @@ export const getItemsByShopId = async (req, res) => {
     });
   }
 };
+export const getRelatedItems = async (req, res) => {
+  try {
+    const itemId = req.params.id;
+    const limit = parseInt(req.query.limit) || 4; // Mặc định lấy 4 sản phẩm liên quan
+    
+    const relatedItems = await ItemService.getRelatedItems(itemId, limit);
+    
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: Message.OK,
+      data: relatedItems,
+    });
+  } catch (error) {
+    console.error("Error in getRelatedItems:", error.message);
+    res.status(httpStatus.BAD_REQUEST).send({
+      code: httpStatus.BAD_REQUEST,
+      message: Message.FAILED,
+      error: error.message,
+    });
+  }
+};
