@@ -228,6 +228,51 @@ const getItemStatistics = async (shopId, startDate = null, endDate = null) => {
     throw error;
   }
 };
+
+const getAllShopPending = async (page = 1, limit = 10) => {
+  try {
+    const skip = (page - 1) * limit;
+    
+    
+    const [totalShops, shops] = await Promise.all([
+      ShopModel.countDocuments({ status: "PENDING" }),
+      ShopModel.find({ status: "PENDING" })
+        .skip(skip)
+        .limit(limit)
+        .lean() 
+    ]);
+    
+    return {
+      shops,
+      totalShops,
+      totalPages: Math.ceil(totalShops / limit),
+      currentPage: parseInt(page)
+    };
+  } catch (error) {
+    console.error(`Error in getAllShopPending: ${error.message}`);
+    throw error;
+  }
+}
+const acceptCreateShop = async (shopId) => {
+  try {
+    
+    const shop = await ShopModel.findOneAndUpdate(
+      { _id: shopId, status: "PENDING" }, 
+      { status: "ACCEPTED" },
+      { new: true }
+    );
+    
+    if (!shop) {
+      throwBadRequest(true, "Shop không tồn tại hoặc không ở trạng thái chờ duyệt");
+    }
+    
+    return shop;
+  } catch (error) {
+    console.error(`Error in acceptCreateShop: ${error.message}`);
+    throw error;
+  }
+};
+
 export default {
   createShop,
   searchShops,
@@ -239,4 +284,6 @@ export default {
   getShopsByUserId,
   getOrderStatistics,
   getItemStatistics,
+  getAllShopPending,
+  acceptCreateShop,
 };
