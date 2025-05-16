@@ -28,10 +28,17 @@ const shopSchema = Schema(
     },
     longitude: {
       type: Number,
+      required: true,
     },
     latitude: {
       type: Number,
-    }
+      required: true,
+    },
+   status:{
+    type : String,
+    enum: ["ENABLE", "DISABLE"],
+    default: "ENABLE",
+   }
   },
   {
     timestamps: true,

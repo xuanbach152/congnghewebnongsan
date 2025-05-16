@@ -3,8 +3,25 @@ import OrderModel from "../models/order.model.js";
 import ItemModel from "../models/item.model.js";
 import { throwBadRequest } from "../utils/error.util.js";
 import Message from "../utils/message.js";
-
+import distanceService from "../utils/distance.utils.js";
 const createShop = async (shopData) => {
+   if (!shopData.name) {
+      throwBadRequest(true, "Tên cửa hàng không được để trống");
+    }
+    
+    if (!shopData.address) {
+      throwBadRequest(true, "Địa chỉ cửa hàng không được để trống");
+    }
+
+        if (shopData.address && (!shopData.latitude || !shopData.longitude)) {
+      try {
+        const coordinates = await distanceService.geocodeAddress(shopData.address);
+        shopData.latitude = coordinates.latitude;
+        shopData.longitude = coordinates.longitude;
+      } catch (error) {
+        console.warn("Không thể lấy tọa độ từ địa chỉ:", error.message);
+      }
+    }
   const newShop = await ShopModel.create({
     ...shopData,
     imgUrl: shopData.imgUrl || "",
@@ -21,6 +38,16 @@ const searchShops = async (searchText) => {
 const updateShop = async (shopId, shopData) => {
   const Shop = await ShopModel.findById(shopId);
   throwBadRequest(!Shop, Message.ShopNotFound);
+
+  if (shopData.address && shopData.address !== Shop.address) {
+    try {
+      const coordinates = await distanceService.geocodeAddress(shopData.address);
+      shopData.latitude = coordinates.latitude;
+      shopData.longitude = coordinates.longitude;
+    } catch (error) {
+      console.warn("Không thể lấy tọa độ từ địa chỉ:", error.message);
+    }
+  }
   return ShopModel.findByIdAndUpdate(
     shopId,
     { ...shopData, imgUrl: shopData.imgUrl || undefined },

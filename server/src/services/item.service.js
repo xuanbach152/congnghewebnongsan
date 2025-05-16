@@ -182,6 +182,31 @@ const getItemsByShopId = async (shopId, page = 1, limit = 10, sortField = "creat
     currentPage: page,
   };
 };
+const getRelatedItems = async (itemId, limit = 4) => {
+  try {
+   
+    const item = await ItemModel.findById(itemId);
+    if (!item) {
+      throw new Error("Item not found");
+    }
+    
+    const shopId = item.shopId;
+    
+ 
+    const relatedItems = await ItemModel.find({
+      shopId: shopId,
+      _id: { $ne: itemId } // loại trừ sản phẩm hiện tại
+    })
+      .sort({ rate: -1 }) 
+      .limit(limit)
+      .exec();
+    
+    return relatedItems;
+  } catch (error) {
+    console.error("Error in getRelatedItems:", error.message);
+    throw error;
+  }
+};
 
 export default {
   createItem,
@@ -194,4 +219,5 @@ export default {
   rateItem,
   saveImageToDatabase,
   saveVideoToDatabase,
+  getRelatedItems
 };

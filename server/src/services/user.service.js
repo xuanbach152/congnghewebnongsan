@@ -2,7 +2,7 @@ import UserModel from "../models/user.model.js";
 import { throwBadRequest } from "../utils/error.util.js";
 import Message from "../utils/message.js";
 import { comparePassword, hashPassword } from "./auth.service.js";
-
+import distanceService from "../utils/distance.utils.js";
 const createUser = async (userData) => {
   const newUser = await UserModel.create(userData);
   return newUser;
@@ -16,32 +16,53 @@ const searchUsers = async (searchText) => {
 
 const updateUser = async (userId, userData) => {
   const allowedFields = [
-    'userName', 
-    'password',
-    'phone',
-    'address', 
-    'email',
-    'gender',
-    'birthday',
-    'bankAccount',
-    'bankName',
-    'imgUrl'
+    "userName",
+    "password",
+    "phone",
+    "address",
+    "email",
+    "gender",
+    "birthday",
+    "bankAccount",
+    "bankName",
+    "imgUrl",
+    "latitude",
+    "longitude",
   ];
   const filteredData = {};
-  Object.keys(userData).forEach(key => {
+  Object.keys(userData).forEach((key) => {
     if (allowedFields.includes(key)) {
       filteredData[key] = userData[key];
     }
   });
 
+  const user = await UserModel.findById(userId);
+  throwBadRequest(!user, Message.userNotFound);
   if (filteredData.password) {
     const hashedPassword = await hashPassword(filteredData.password);
     filteredData.password = hashedPassword;
   }
-  
-  
-  const user = await UserModel.findById(userId);
-  throwBadRequest(!user, Message.userNotFound);
+  if (filteredData.address && filteredData.address !== user.address) {
+    try {
+      console.log(`Cập nhật tọa độ cho địa chỉ mới: ${filteredData.address}`);
+
+      const coordinates = await distanceService.geocodeAddress(
+        filteredData.address
+      );
+
+      filteredData.latitude = coordinates.latitude;
+      filteredData.longitude = coordinates.longitude;
+
+      console.log(
+        `Tọa độ mới: ${coordinates.latitude}, ${coordinates.longitude}`
+      );
+    } catch (error) {
+      console.warn(
+        `Không thể lấy tọa độ từ địa chỉ ${filteredData.address}:`,
+        error.message
+      );
+    }
+  }
   return UserModel.findByIdAndUpdate(userId, filteredData, { new: true });
 };
 

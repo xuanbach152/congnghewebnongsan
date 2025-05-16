@@ -12,15 +12,18 @@ import {
 import httpStatus from "http-status";
 import Message from "../utils/message.js";
 import userModel from "../models/user.model.js";
+import distanceService from "../utils/distance.utils.js";
+
+
 let refreshTokens = [];
 export const register = async (req, res) => {
   try {
-    const { userName, password } = req.body;
+    const { userName, password, address, phone, email, gender } = req.body;
 
-    if (!userName || !password) {
+    if (!userName || !password || !address || !phone || !email || !gender) {
       return res.status(httpStatus.BAD_REQUEST).json({
         message:
-          "Vui lòng cung cấp đầy đủ thông tin (userName, password)",
+          "Vui lòng cung cấp đầy đủ thông tin (userName, password, address, phone, email, gender)",
       });
     }
 
@@ -32,7 +35,11 @@ export const register = async (req, res) => {
     }
 
     const hashedPassword = await hashPassword(password);
-
+    const coordinates = await distanceService.geocodeAddress(address);
+    if (coordinates) {
+      req.body.latitude = coordinates.latitude;
+      req.body.longitude = coordinates.longitude;
+    }
     const newUser = await userService.createUser({
       ...req.body,
       password: hashedPassword,
