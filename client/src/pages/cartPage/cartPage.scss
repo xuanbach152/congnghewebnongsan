@@ -1,6 +1,36 @@
 @use 'sass:map';
 @import '../../style/pages/theme.scss';
 
+.empty-cart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+
+  .empty-message {
+    text-align: center;
+
+    p {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .shop-now {
+      background: #0dac02;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &:hover {
+        background: #099902;
+      }
+    }
+  }
+}
+
 .cart-page {
     max-width: 1200px;
     margin: 0 auto;
@@ -9,13 +39,6 @@
   
     .loading,
     .error,
-    .empty {
-      text-align: center;
-      font-size: 16px;
-      color: #333;
-      margin: 20px 0;
-    }
-  
     .error {
       color: #ee4d2d;
     }
@@ -220,92 +243,3 @@
       }
     }
 }
-  
-//     // Responsive cho mobile
-//     @media (max-width: 768px) {
-//       .cart-header {
-//         display: none; // Ẩn header trên mobile
-//       }
-  
-//       .cart-item {
-//         grid-template-columns: 40px 1fr 100px;
-//         grid-template-areas:
-//           "checkbox info info"
-//           "checkbox price total"
-//           "checkbox quantity remove";
-//         gap: 10px;
-//         padding: 10px;
-  
-//         input[type="checkbox"] {
-//           grid-area: checkbox;
-//         }
-  
-//         .item-info {
-//           grid-area: info;
-//           flex-direction: column;
-//           align-items: flex-start;
-  
-//           .item-image {
-//             width: 50px;
-//             height: 50px;
-//           }
-  
-//           .item-name {
-//             font-size: 12px;
-//             max-width: 100%;
-//           }
-//         }
-  
-//         .item-price {
-//           grid-area: price;
-//           font-size: 12px;
-//           text-align: left;
-//         }
-  
-//         .quantity-control {
-//           grid-area: quantity;
-//           justify-content: flex-start;
-  
-//           button {
-//             width: 20px;
-//             height: 20px;
-//             font-size: 14px;
-//           }
-  
-//           span {
-//             width: 30px;
-//             font-size: 12px;
-//           }
-//         }
-  
-//         .item-total {
-//           grid-area: total;
-//           font-size: 12px;
-//           text-align: left;
-//         }
-  
-//         .remove-button {
-//           grid-area: remove;
-//           text-align: left;
-//           font-size: 12px;
-//         }
-//       }
-  
-//       .cart-footer {
-//         flex-direction: column;
-//         gap: 10px;
-//         padding: 10px;
-  
-//         .footer-right {
-//           flex-direction: column;
-//           gap: 10px;
-//           width: 100%;
-  
-//           .checkout-button {
-//             width: 100%;
-//             padding: 8px;
-//           }
-//         }
-//       }
-//     }
-//   }

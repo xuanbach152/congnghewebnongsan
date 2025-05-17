@@ -11,6 +11,7 @@ import {
 import { formatter } from 'utils/formatter'
 import axiosInstance from 'utils/api'
 import { itemTypes } from 'utils/enums'
+import { toast } from 'react-toastify'
 
 const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
   const navigate = useNavigate()
@@ -206,6 +207,7 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
       const response = await axiosInstance.get('/cart/getcart')
       setDistinctItemQuantity(response.data.data.distinctItemQuantity || 0)
       setTotalPaymentAmount(response.data.data.totalPaymentAmount || 0)
+      toast.success('Thêm vào giỏ hàng thành công!')
     } catch (error) {
       console.log(error)
     }

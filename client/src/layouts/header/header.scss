@@ -125,6 +125,10 @@
 
 .header_logo {
   padding: 20px 0;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  height: 100%;
 
   h1 {
     font-size: 28px;
@@ -185,7 +189,8 @@
 .header_cart {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
+  height: 100%;
   padding: 20px 0;
 
   .header_cart_price {
@@ -301,38 +306,6 @@
     }
   }
 
-  .header_assistant_button {
-    margin-left: 15px;
-    max-width: 600px;
-    display: flex;
-    align-items: center;
-    position: relative;
-    height: 50px;
-    width: 35%;
-    padding: 0 30px;
-    color: #ffffff;
-    font-size: 14px;
-    font-weight: 600;
-    text-transform: uppercase;
-    background: map.get($theme-colors, 'main');
-    border-radius: 25px 25px 25px 25px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    white-space: nowrap;
-
-    svg {
-      font-size: 24px;
-      color: #fff;
-    }
-
-    &:hover {
-      background: darken(map.get($theme-colors, 'main'), 10%);
-      transform: scale(1.05);
-    }
-  }
 }
 
 .auth_modal {
@@ -825,13 +798,12 @@
   max-width: 25%;
 }
 
-.col-xl-6 {
-  flex: 0 0 50%;
-  max-width: 50%;
+.col-xl-1 {
+  flex: 0 0 20%;
+  max-width: 20%;
 }
 
-.col-lg-9 {
-  flex: 0 0 75%;
-  max-width: 75%;
-  margin: 0 auto;
+.col-xl-6 {
+  flex: 0 0 55%;
+  max-width: 55%;
 }

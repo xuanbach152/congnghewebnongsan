@@ -6,7 +6,6 @@ import {
   AiOutlineUser,
   AiOutlineShoppingCart,
   AiOutlinePhone,
-  AiOutlineRocket,
   AiOutlineDown,
   AiOutlineInstagram,
   AiOutlineGoogle,
@@ -31,7 +30,6 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
   const [filterPrice, setFilterPrice] = useState('all');
   const [filterPromotion, setFilterPromotion] = useState(false);
   const [filterTrend, setFilterTrend] = useState(false);
-  const [filterSth, setFilterSth] = useState(false);
   const [user, setUser] = useState(null);
   const [itemQuantity, setItemQuantity] = useState(0);
   const [paymentAmount, setPaymentAmount] = useState(0);
@@ -119,10 +117,6 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
     }
   };
 
-  const handleAssistantClick = () => {
-    console.log('Gọi trợ lý ảo...');
-  };
-
   const fetchCartData = async () => {
     try {
       setCartLoading(true);
@@ -151,6 +145,16 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
         console.error('Lỗi khi giải mã token:', error.message);
       }
     }
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.header_top_right li')) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   const toggleAuthModal = () => {
@@ -258,18 +262,11 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
                   />
                   <button type="submit">Tìm kiếm</button>
                 </form>
-                <div
-                  className="header_assistant_button"
-                  onClick={handleAssistantClick}
-                >
-                  <AiOutlineRocket />
-                  <span>Trợ lý AI</span>
-                </div>
               </div>
             </div>
           </div>
 
-          <div className="col-xl-3">
+          <div className="col-xl-1">
             <div className="header_cart">
               <div className="header_cart_price">
                 {cartLoading ? (<span>Đang tải...</span>) : (<span>{paymentAmount}</span>)}
@@ -351,18 +348,6 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
                 Thịnh hành
               </label>
             </div>
-
-            {/* Filter ??? */}
-            {/* <div className="filter_group">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={filterSth}
-                  onChange={(e) => setFilterSth(e.target.checked)}
-                />
-                Sth
-              </label>
-            </div> */}
           </div>
         </div>
       </div>

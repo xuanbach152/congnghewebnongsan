@@ -39,16 +39,10 @@ const CheckoutPage = () => {
               // setAddress(data.address); 
             }
           } else {
-            toast.error('Không thể tải địa chỉ người dùng', {
-              position: 'top-center',
-              autoClose: 3000,
-            });
+            toast.error('Không thể tải địa chỉ người dùng');
           }
         } catch (err) {
-          toast.error('Lỗi khi tải địa chỉ người dùng', {
-            position: 'top-center',
-            autoClose: 3000,
-          });
+          toast.error('Lỗi khi tải địa chỉ người dùng');
         }
       }
     };
@@ -60,10 +54,7 @@ const CheckoutPage = () => {
 
   const handleCheckout = async () => {
     if (!locationValue.trim()) {
-      toast.error('Vui lòng nhập địa chỉ giao hàng', {
-        position: 'top-center',
-        autoClose: 3000,
-      })
+      toast.error('Vui lòng nhập địa chỉ giao hàng')
       return
     }
 
@@ -96,38 +87,25 @@ const CheckoutPage = () => {
               'Error removing cart items:',
               err.response?.data || err.message
             )
-            toast.warn('Không thể xóa giỏ hàng, nhưng đơn hàng đã được tạo.', {
-              position: 'top-center',
-              autoClose: 3000,
-            })
+            toast.warn('Không thể xóa giỏ hàng, nhưng đơn hàng đã được tạo.')
           })
       }
 
       toast.success(
-        'Đặt hàng thành công! Chuyển hướng đến Lịch sử đơn hàng...',
-        {
-          position: 'top-center',
-          autoClose: 2000,
-        }
+        'Đặt hàng thành công! Chuyển hướng đến Lịch sử đơn hàng...'
       )
 
       navigate('/order/history')
       window.location.reload()
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Không thể đặt hàng. Vui lòng thử lại.', {
-        position: 'top-center',
-        autoClose: 3000,
-      });
+      toast.error(err.response?.data?.message || 'Không thể đặt hàng. Vui lòng thử lại.');
     } finally {
       setLoading(false)
     }
   }
 
   if (!selectedItems.length) {
-    toast.info('Không có sản phẩm nào được chọn', {
-      position: 'top-center',
-      autoClose: 3000,
-    })
+    toast.info('Không có sản phẩm nào được chọn')
     return <div className="empty">Không có sản phẩm nào được chọn</div>
   }
 

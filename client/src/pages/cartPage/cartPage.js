@@ -3,6 +3,7 @@ import axiosInstance from '../../utils/api';
 import './cartPage.scss';
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
   const [cart, setCart] = useState(null);
@@ -35,16 +36,13 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
         ...cartData,
         shopGroup: updatedShopGroup,
       });
-
-      setError(null);
       setSelectedItems(updatedShopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id)));
     } catch (err) {
       if (err.response?.data?.message === 'Cart not found') {
         setCart({ shopGroup: [], _id: null, totalPaymentAmount: 0 });
         setSelectedItems([]);
-        setError(null);
       } else {
-        setError(err.response?.data?.message || 'Failed to fetch cart');
+        toast.error(err.response?.data?.message || 'Không thể tải giỏ hàng');
       }
     } finally {
       setLoading(false);
@@ -76,10 +74,9 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
         quantity: newQuantity,
       });
       setTotalPaymentAmount(response.data.data.totalPaymentAmount || 0);
-      setError(null);
       _updateCartItemQuantity(itemId, newQuantity);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update cart item');
+      toast.error(err.response?.data?.message || 'Cập nhật số lượng thất bại');
     }
   };
 
@@ -92,9 +89,8 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
       setDistinctItemQuantity(response.data.data.distinctItemQuantity);
       setTotalPaymentAmount(response.data.data.totalPaymentAmount || 0);
       setSelectedItems(selectedItems.filter(id => id !== itemId));
-      setError(null);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to remove cart item');
+      toast.error(err.response?.data?.message || 'Xóa sản phẩm thất bại');
     }
   };
 
@@ -106,9 +102,8 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
       setCart(response.data.data);
       setDistinctItemQuantity(0);
       setSelectedItems([]);
-      setError(null);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to clear cart');
+      error(err.response?.data?.message || 'Xóa giỏ hàng thất bại');
     }
   };
 
@@ -150,7 +145,8 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if(!token) {
-      setError('Vui lòng đăng nhập để xem giỏ hàng');
+      toast.error('Vui lòng đăng nhập để xem giỏ hàng');
+      navigate('/');
       return;
     }
     fetchCart();
@@ -158,7 +154,16 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
 
   if (loading) return <div className="loading">Đang tải...</div>;
   if (error) return <div className="error">{error}</div>;
-  if (!cart || !cart.shopGroup?.length) return <div className="empty"></div>;
+  if (!cart || !cart.shopGroup?.length) {
+    return (
+      <div className="cart-page empty-cart">
+        <div className="empty-message">
+          <p>Giỏ hàng của bạn trống, hãy thêm sản phẩm!</p>
+          <button className="shop-now" onClick={() => navigate('/')}>Mua sắm ngay</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="cart-page">
