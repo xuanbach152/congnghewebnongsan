@@ -37,6 +37,7 @@ const ShopUpsertPage = () => {
           address: shopData.address,
           description: shopData.description,
         });
+        setLocationValue(shopData.address);
         setPreview(shopData.imgUrl);
       } catch (error) {
         console.error('Error fetching shop data:', error);
@@ -80,7 +81,6 @@ const ShopUpsertPage = () => {
 
     const url = mode === 'create' ? 'http://localhost:3000/shop' : `http://localhost:3000/shop/${shopId}`;
     const method = mode === 'create' ? 'post' : 'patch';
-    console.log(formData);
     try {
       await axiosInstance[method](url, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
