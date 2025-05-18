@@ -34,6 +34,8 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
   const [itemQuantity, setItemQuantity] = useState(0);
   const [paymentAmount, setPaymentAmount] = useState(0);
   const [error, setError] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
 
   useEffect(() => {
     setItemQuantity(distinctItemQuantity);
@@ -90,8 +92,10 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
         }
         const result = await login(userName, password);
         localStorage.setItem('accessToken', result.accessToken);
+        localStorage.setItem('role', result.role);
         setUser(result.user);
         setIsLoggedIn(true);
+        setIsAdmin(result.role === 'ADMIN');
         await fetchCartData();
         setIsAuthModalOpen(false);
         window.location.reload();
@@ -182,9 +186,7 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const query = formData.get('search');
-    setSearchQuery(query);
+    setSearchQuery(searchInput);
   };
 
   return (
@@ -230,6 +232,7 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
                         </li>
                         <li><Link to={routers.SHOP_MANAGEMENT}>Quản lý cửa hàng</Link></li>
                         <li><Link to={routers.ORDER_HISTORY}>Lịch sử mua hàng</Link></li>
+                        {isAdmin && <li><Link to={routers.SHOP_CENSORSHIP}>Kiểm duyệt cửa hàng</Link></li>}
                         <li onClick={handleLogout}>Đăng xuất</li>
                       </ul>
                     </div>
@@ -247,7 +250,7 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
         <div className="row">
           <div className="col-xl-3">
             <div className="header_logo">
-              <Link to="/">
+              <Link to="/" onClick={() => { setSearchQuery(''); setSearchInput('') }}>
                 <h1>Nông sản Việt</h1>
               </Link>
             </div>
@@ -260,6 +263,8 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
                     type="text"
                     name="search"
                     placeholder="Tìm kiếm sản phẩm hoặc cửa hàng..."
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
                   />
                   <button type="submit">Tìm kiếm</button>
                 </form>
@@ -429,7 +434,8 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
           </div>
         </div>
       )}
-   </>
-)}
+    </>
+  )
+}
 
 export default memo(MainHeader)

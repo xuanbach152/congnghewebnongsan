@@ -110,7 +110,6 @@ export const logout = (req, res) => {
 export const refreshToken = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken; //lấy từ cookie
-    console.log(refreshTokens);
     if (!refreshToken) {
       return res.status(403).json({ message: "Vui lòng đăng nhập" });
     }

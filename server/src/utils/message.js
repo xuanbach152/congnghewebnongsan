@@ -37,7 +37,7 @@ const OrderUpdatedFailed = "Cập nhật Đơn hàng thất bại";
 const ShopNotFound = "Cửa hàng không tồn tại";
 const ShopCreated = "Tạo Cửa hàng thành cong";
 const ShopCreatedFailed = "Tạo Cửa hàng thất bại";
-const ShopUpdated = "Cập nhật Cửa hàng thành cong";
+const ShopUpdated = "Cập nhật Cửa hàng thành công";
 const ShopUpdatedFailed = "Cập nhật Cửa hàng thất bại";
 
 // Status

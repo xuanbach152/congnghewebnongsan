@@ -95,7 +95,7 @@ export const getShopById = async (req, res) => {
 export const updateShop = async (req, res) => {
   try {
     const shopId = req.params.id;
-    const { name, address, description, longitude, latitude } = req.body;
+    const { name, address, description, longitude, latitude, status } = req.body;
     const image = req.file;
     let imgUrl;
     if (image) {
@@ -108,6 +108,7 @@ export const updateShop = async (req, res) => {
       imgUrl,
       longitude,
       latitude,
+      status,
     });
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
@@ -186,7 +187,7 @@ export const getShopsByUserId = async (req, res) => {
       page,
       limit,
       sortField,
-      sortType
+      sortType,
     );
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
@@ -248,6 +249,25 @@ export const getItemStatistics = async (req, res) => {
   }
 };
 
+export const getAllShopAccepted = async (req, res) => {
+  try {
+    const { page, limit } = req.query;
+
+    const pendingShops = await ShopService.getAllShopAccepted(page, limit);
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: Message.OK,
+      data: pendingShops,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(httpStatus.BAD_REQUEST).send({
+      code: httpStatus.BAD_REQUEST,
+      message: Message.FAILED,
+    });
+  }
+};
+
 export const getAllShopPending = async (req, res) => {
   try {
     const { page, limit } = req.query;
@@ -267,13 +287,15 @@ export const getAllShopPending = async (req, res) => {
   }
 };
 
-export const acceptCreateShop = async (req, res) => {
-  try{const shopId = req.params.shopId;
-    const acceptedShop = await ShopService.acceptCreateShop(shopId);
+export const censorshipCreateShop = async (req, res) => {
+  try {
+    const shopId = req.params.shopId;
+    const { status } = req.body;
+    const shop = await ShopService.censorshipCreateShop(shopId, status);
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
-      data: acceptedShop,
+      data: shop,
     });
   } catch (error) {
     console.log(error);

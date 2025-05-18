@@ -23,7 +23,7 @@ const HomePage = ({ searchQuery }) => {
     const fetchShops = async () => {
       setShopLoading(true)
       try {
-        const url = (searchQuery === '' ? `http://localhost:3000/shop?page=${shopCurrentPage}` : `http://localhost:3000/shop/search?searchText=${searchQuery}`)
+        const url = (searchQuery === '' ? `http://localhost:3000/shop/accepted?page=${shopCurrentPage}` : `http://localhost:3000/shop/search?searchText=${searchQuery}`)
         const response = await axiosInstance.get(
           url
         )
