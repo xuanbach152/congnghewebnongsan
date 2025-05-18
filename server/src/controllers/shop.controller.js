@@ -8,11 +8,17 @@ import { uploadToCloudinary } from "../utils/file.util.js";
 export const createShop = async (req, res) => {
   try {
     console.log(req.body);
-    const {  name, address, description } = req.body;
+    const { name, address, description } = req.body;
     const userId = req.user.id;
     const image = req.file;
     const imgUrl = await uploadToCloudinary(image);
-    const newShop = await ShopService.createShop({ name, address, userId, description, imgUrl });
+    const newShop = await ShopService.createShop({
+      name,
+      address,
+      userId,
+      description,
+      imgUrl,
+    });
     res.status(httpStatus.CREATED).send({
       code: httpStatus.CREATED,
       message: Message.ShopCreated,
@@ -92,10 +98,17 @@ export const updateShop = async (req, res) => {
     const { name, address, description, longitude, latitude } = req.body;
     const image = req.file;
     let imgUrl;
-    if(image) {
+    if (image) {
       imgUrl = await uploadToCloudinary(image);
     }
-    const updatedShop = await ShopService.updateShop(shopId, { name, address, description, imgUrl, longitude, latitude });
+    const updatedShop = await ShopService.updateShop(shopId, {
+      name,
+      address,
+      description,
+      imgUrl,
+      longitude,
+      latitude,
+    });
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.ShopUpdated,
@@ -113,7 +126,6 @@ export const updateShop = async (req, res) => {
 // Delete an Shop by ID
 export const deleteShop = async (req, res) => {
   try {
-
     const shopId = req.params.id;
     const Shopdelete = await ShopService.deleteShop(shopId);
     res.status(httpStatus.OK).send({
@@ -140,7 +152,7 @@ export const uploadImage = async (req, res) => {
 
     const updatedItem = await ShopService.saveImageToDatabase(
       req.params.id,
-      imgUrl,
+      imgUrl
     );
     console.log("Image URL saved to database:", updatedItem);
 
@@ -163,8 +175,19 @@ export const getShopsByUserId = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const { page = 1, limit = 10, sortField = "createdAt", sortType = "desc" } = req.query;
-    const shop = await ShopService.getShopsByUserId(userId, page, limit, sortField, sortType);
+    const {
+      page = 1,
+      limit = 10,
+      sortField = "createdAt",
+      sortType = "desc",
+    } = req.query;
+    const shop = await ShopService.getShopsByUserId(
+      userId,
+      page,
+      limit,
+      sortField,
+      sortType
+    );
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: "Danh sách cửa hàng lấy thành công",
@@ -179,42 +202,84 @@ export const getShopsByUserId = async (req, res) => {
   }
 };
 
-export const getOrderStatistics = async (req,res)=>{
-  try{
+export const getOrderStatistics = async (req, res) => {
+  try {
     const shopId = req.params.shopId;
     const { startDate, endDate } = req.query;
-    const statistics = await ShopService.getOrderStatistics(shopId, startDate, endDate);
+    const statistics = await ShopService.getOrderStatistics(
+      shopId,
+      startDate,
+      endDate
+    );
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
       data: statistics,
     });
-  }
-  catch(error){
+  } catch (error) {
     console.error("Error in getOrderStatistics:", error.message);
     res.status(500).send({
       code: 500,
       message: error.message || "Failed to retrieve order statistics",
     });
   }
-}
+};
 
-export const getItemStatistics = async (req,res)=>{
-  try{
+export const getItemStatistics = async (req, res) => {
+  try {
     const shopId = req.params.shopId;
     const { startDate, endDate } = req.query;
-    const statistics = await ShopService.getItemStatistics(shopId, startDate, endDate);
+    const statistics = await ShopService.getItemStatistics(
+      shopId,
+      startDate,
+      endDate
+    );
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
       data: statistics,
     });
-  }
-  catch(error){
+  } catch (error) {
     console.error("Error in getItemStatistics:", error.message);
     res.status(500).send({
       code: 500,
       message: error.message || "Failed to retrieve item statistics",
     });
   }
-}
+};
+
+export const getAllShopPending = async (req, res) => {
+  try {
+    const { page, limit } = req.query;
+
+    const pendingShops = await ShopService.getAllShopPending(page, limit);
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: Message.OK,
+      data: pendingShops,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(httpStatus.BAD_REQUEST).send({
+      code: httpStatus.BAD_REQUEST,
+      message: Message.FAILED,
+    });
+  }
+};
+
+export const acceptCreateShop = async (req, res) => {
+  try{const shopId = req.params.shopId;
+    const acceptedShop = await ShopService.acceptCreateShop(shopId);
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: Message.OK,
+      data: acceptedShop,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(httpStatus.BAD_REQUEST).send({
+      code: httpStatus.BAD_REQUEST,
+      message: Message.FAILED,
+    });
+  }
+};
