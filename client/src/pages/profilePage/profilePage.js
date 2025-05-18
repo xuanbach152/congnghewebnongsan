@@ -3,6 +3,7 @@ import axiosInstance from 'utils/api';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import './profilePage.scss';
+import { toast } from 'react-toastify';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ const ProfilePage = () => {
           gender: data.gender || '',
           birthday: data.birthday ? new Date(data.birthday).toISOString().split('T')[0] : '',
           avatar: data.avatar || data.imgUrl || '',
-          address: data.address || '', // Single address as string
+          address: data.address || '', 
           bankInfo: {
             bankName: data.bankName || '',
             accountNumber: data.bankAccount || '',
@@ -58,10 +59,10 @@ const ProfilePage = () => {
         setPreviewAvatar(data.avatar || data.imgUrl || '');
         setErrors({});
       } else {
-        setErrors({ fetch: response.data.message || 'Không thể tải thông tin' });
+        toast.error(response.data.message || 'Không thể tải thông tin');
       }
     } catch (err) {
-      setErrors({ fetch: err.message || 'Lỗi kết nối server' });
+      toast.error(err.message || 'Lỗi kết nối server');
     } finally {
       setLoading(false);
     }
@@ -135,15 +136,14 @@ const ProfilePage = () => {
       };
       const response = await axiosInstance.patch(`/user/${userId}`, updateData);
       if (response.data.code === 200) {
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 2000);
+        toast.success('Cập nhật hồ sơ thành công!');
         setIsEditing({ ...isEditing, profile: false });
         await fetchUserData();
       } else {
-        setErrors({ submit: response.data.message || 'Cập nhật thất bại' });
+        toast.error(response.data.message || 'Cập nhật thất bại');
       }
     } catch (err) {
-      setErrors({ submit: err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật' });
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật');
     } finally {
       setLoading(false);
     }
@@ -161,17 +161,17 @@ const ProfilePage = () => {
         newPassword: passwordData.newPassword,
       });
       if (response.data.code === 200) {
-        setSuccess(true);
+        toast.success('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.');
         localStorage.removeItem('accessToken');
         setTimeout(() => {
           setSuccess(false);
           navigate('/'); 
         }, 2000);
       } else {
-        setErrors({ submit: response.data.message || 'Đổi mật khẩu thất bại' });
+        toast.error(response.data.message || 'Đổi mật khẩu thất bại');
       }
     } catch (err) {
-      setErrors({ submit: err.response?.data?.message || 'Có lỗi xảy ra khi đổi mật khẩu' });
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi đổi mật khẩu');
     } finally {
       setLoading(false);
     }
@@ -190,15 +190,14 @@ const ProfilePage = () => {
       };
       const response = await axiosInstance.patch(`/user/${userId}`, updateData);
       if (response.data.code === 200) {
-        setSuccess(true);
-        setTimeout(() => setSuccess(false), 2000);
+        toast.success('Liên kết ngân hàng thành công!');
         setIsEditing({ ...isEditing, bank: false });
         await fetchUserData();
       } else {
-        setErrors({ submit: response.data.message || 'Liên kết ngân hàng thất bại' });
+        toast.error(response.data.message || 'Liên kết ngân hàng thất bại');
       }
     } catch (err) {
-      setErrors({ submit: err.response?.data?.message || 'Có lỗi xảy ra khi liên kết ngân hàng' });
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi liên kết ngân hàng');
     } finally {
       setLoading(false);
     }
@@ -216,16 +215,15 @@ const ProfilePage = () => {
       };
       const response = await axiosInstance.patch(`/user/${userId}`, updateData);
       if (response.data.code === 200) {
-        setSuccess(true);
+        toast.success('Cập nhật địa chỉ thành công!');
         setNewAddress('');
-        setTimeout(() => setSuccess(false), 2000);
         setIsEditing({ ...isEditing, address: false });
         await fetchUserData();
       } else {
-        setErrors({ submit: response.data.message || 'Cập nhật địa chỉ thất bại' });
+        toast.error(response.data.message || 'Cập nhật địa chỉ thất bại');
       }
     } catch (err) {
-      setErrors({ submit: err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật địa chỉ' });
+      toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật địa chỉ');
     } finally {
       setLoading(false);
     }
@@ -249,12 +247,13 @@ const ProfilePage = () => {
           const imgUrl = response.data.data?.imgUrl || response.data.data;
           setUserData({ ...userData, avatar: imgUrl });
           setPreviewAvatar(imgUrl);
+          toast.success('Cập nhật ảnh đại diện thành công!');
           await fetchUserData();
         } else {
-          setErrors({ avatar: response.data.message || 'Tải ảnh lên thất bại' });
+          toast.error(response.data.message || 'Tải ảnh lên thất bại');
         }
       } catch (err) {
-        setErrors({ avatar: err.response?.data?.message || 'Có lỗi xảy ra khi tải ảnh lên' });
+        toast.error(err.response?.data?.message || 'Có lỗi xảy ra khi tải ảnh lên');
       } finally {
         setLoading(false);
       }
@@ -286,7 +285,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      alert('Vui lòng đăng nhập để truy cập trang này');
+      toast.error('Vui lòng đăng nhập để truy cập trang này');
       navigate('/login');
       return;
     }
@@ -294,7 +293,7 @@ const ProfilePage = () => {
       const decodedToken = jwtDecode(token);
       setUserId(decodedToken.id);
     } catch (err) {
-      alert('Token không hợp lệ, vui lòng đăng nhập lại');
+      toast.error('Token không hợp lệ, vui lòng đăng nhập lại');
       localStorage.removeItem('accessToken');
       navigate('/login');
     }
@@ -335,7 +334,6 @@ const ProfilePage = () => {
             <h2>Hồ Sơ Của Tôi</h2>
             <p>Quản lý thông tin hồ sơ để bảo mật tài khoản</p>
 
-            {loading && <div className="loading">Đang tải...</div>}
             {success && <div className="success_message">Cập nhật thành công!</div>}
             {errors.fetch && <div className="error_message">{errors.fetch}</div>}
 
@@ -474,7 +472,6 @@ const ProfilePage = () => {
             <h2>Đổi Mật Khẩu</h2>
             <p>Để bảo mật tài khoản, vui lòng không chia sẻ mật khẩu cho người khác</p>
 
-            {loading && <div className="loading">Đang tải...</div>}
             {success && <div className="success_message">Đổi mật khẩu thành công!</div>}
 
             <form onSubmit={handlePasswordSubmit} className="profile_form">
@@ -527,7 +524,6 @@ const ProfilePage = () => {
             <h2>Ngân Hàng</h2>
             <p>Quản lý thông tin tài khoản ngân hàng để thanh toán</p>
 
-            {loading && <div className="loading">Đang tải...</div>}
             {success && <div className="success_message">Liên kết ngân hàng thành công!</div>}
 
             <form onSubmit={handleBankSubmit} className="profile_form">
@@ -586,7 +582,6 @@ const ProfilePage = () => {
             <h2>Địa Chỉ</h2>
             <p>Quản lý địa chỉ giao hàng mặc định</p>
 
-            {loading && <div className="loading">Đang tải...</div>}
             {success && <div className="success_message">Cập nhật địa chỉ thành công!</div>}
 
             <form onSubmit={handleAddressSubmit} className="profile_form">

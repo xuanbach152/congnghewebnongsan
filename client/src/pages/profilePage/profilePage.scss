@@ -216,7 +216,14 @@
 }
 
 .profile_form {
-  flex: 1;
+  width: 600px; // Chiều rộng cố định
+  min-height: 400px; // Chiều cao tối thiểu (có thể điều chỉnh)
+  max-height: 400px; // Chiều cao tối đa
+  overflow-y: auto; // Cho phép cuộn nếu nội dung vượt quá
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box; // Đảm bảo padding không tăng kích thước
 
   .form_row {
     display: flex;
@@ -225,9 +232,10 @@
     gap: 20px;
 
     label {
-      width: 150px;
+      width: 150px; // Chiều rộng cố định cho label
       font-size: 14px;
       color: #333;
+      flex-shrink: 0; // Ngăn label co lại
     }
 
     input[type="text"],
@@ -237,13 +245,14 @@
     select,
     textarea {
       flex: 1;
+      max-width: 400px; // Chiều rộng tối đa cho input, phù hợp với width 600px
       padding: 8px;
       border: 1px solid #ddd;
       border-radius: 4px;
       font-size: 14px;
-      max-width: 300px;
+      box-sizing: border-box; // Đảm bảo padding không tăng kích thước
     }
-    
+
     .readonly_input {
       background-color: #f5f5f5;
       color: #666;
@@ -252,7 +261,8 @@
 
     textarea {
       min-height: 80px;
-      resize: vertical;
+      resize: vertical; // Cho phép điều chỉnh chiều cao theo chiều dọc
+      max-height: 100px; // Giới hạn chiều cao tối đa của textarea
     }
 
     .gender_options {
@@ -272,6 +282,7 @@
 .avatar_section {
   width: 250px;
   text-align: center;
+  margin-top: 20px;
 
   .profile_avatar {
     width: 100px;

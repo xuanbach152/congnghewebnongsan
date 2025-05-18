@@ -1,32 +1,39 @@
 @use 'sass:map';
 @import '../../style/pages/theme.scss';
 
-.empty {
-  margin: auto;
+.empty-cart {
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  text-align: center;
-  color: #888;
-}
+  min-height: 50vh;
 
+  .empty-message {
+    text-align: center;
+    svg {
+      font-size: 80px;
+      color: #ccc;
+      margin-bottom: 12px;
+    }
 
-.empty svg {
-  font-size: 80px;
-  color: #ccc;
-  margin-bottom: 12px;
-}
+    p {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 20px;
+    }
 
-.loading,
-.error {
-  text-align: center;
-  font-size: 16px;
-  color: #333;
-  margin: 20px 0;
-}
+    .shop-now {
+      background: #0dac02;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
 
-.error {
-  color: #ee4d2d;
+      &:hover {
+        background: #099902;
+      }
+    }
+  }
 }
 
 .cart-page {
@@ -35,6 +42,12 @@
   padding: 20px;
   font-family: Arial, sans-serif;
 
+  .loading,
+  .error,
+  .error {
+    color: #ee4d2d;
+  }
+
   .cart-header {
     display: grid;
     grid-template-columns: 50px 3fr 1fr 1fr 1fr 1fr;
@@ -42,114 +55,86 @@
     padding: 10px 15px;
     background-color: #f5f5f5;
     font-size: 14px;
-    font-weight: bold;
     color: #333;
-    border-bottom: 1px solid #ddd;
+  }
+
+  .quantity-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    button {
+      width: 24px;
+      height: 24px;
+      border: 1px solid #ddd;
+      background-color: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      border-radius: 2px;
+
+      &:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+      }
+    }
+
+    span {
+      width: 40px;
+      text-align: center;
+      font-size: 14px;
+      color: #333;
+    }
+  }
+
+  .item-total {
+    text-align: center;
+    font-size: 14px;
+    color: #0dac02;
+    font-weight: bold;
+  }
+
+  .remove-button {
+    text-align: right;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:hover {
+      color: #ee4d2d;
+    }
+  }
+}
+
+.cart-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #fff;
+  border-top: 1px solid #ddd;
+  margin-top: 10px;
+  position: sticky;
+  bottom: 0;
+
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
     input[type='checkbox'] {
       cursor: pointer;
     }
 
     span {
-      &:nth-child(2) {
-        text-align: left;
-      }
-
-      &:nth-child(3),
-      &:nth-child(4),
-      &:nth-child(5) {
-        text-align: center;
-      }
-
-      &:nth-child(6) {
-        text-align: right;
-      }
-    }
-  }
-
-  .cart-items {
-    margin-top: 10px;
-  }
-
-  .cart-item {
-    display: grid;
-    grid-template-columns: 50px 3fr 1fr 1fr 1fr 1fr;
-    align-items: center;
-    padding: 15px;
-    border-bottom: 1px solid #eee;
-    background-color: #fff;
-
-    input[type='checkbox'] {
-      cursor: pointer;
-    }
-
-    .item-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      .item-image {
-        width: 60px;
-        height: 60px;
-        object-fit: cover;
-        border-radius: 4px;
-      }
-
-      .item-name {
-        font-size: 14px;
-        color: #333;
-        max-width: 300px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-    }
-
-    .item-price {
-      text-align: center;
       font-size: 14px;
       color: #333;
     }
 
-    .quantity-control {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-
-      button {
-        width: 24px;
-        height: 24px;
-        border: 1px solid #ddd;
-        background-color: #fff;
-        cursor: pointer;
-        font-size: 16px;
-        line-height: 1;
-        border-radius: 2px;
-
-        &:disabled {
-          cursor: not-allowed;
-          opacity: 0.5;
-        }
-      }
-
-      span {
-        width: 40px;
-        text-align: center;
-        font-size: 14px;
-        color: #333;
-      }
-    }
-
-    .item-total {
-      text-align: center;
-      font-size: 14px;
-      color: #0dac02;
-      font-weight: bold;
-    }
-
-    .remove-button {
-      text-align: right;
+    .clear-cart {
       background: none;
       border: none;
       color: #333;
@@ -162,167 +147,39 @@
     }
   }
 
-  .cart-footer {
+  .footer-right {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 15px;
-    background-color: #fff;
-    border-top: 1px solid #ddd;
-    margin-top: 10px;
-    position: sticky;
-    bottom: 0;
+    gap: 20px;
 
-    .footer-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    span {
+      font-size: 14px;
+      color: #333;
 
-      input[type='checkbox'] {
-        cursor: pointer;
-      }
-
-      span {
-        font-size: 14px;
-        color: #333;
-      }
-
-      .clear-cart {
-        background: none;
-        border: none;
-        color: #333;
-        font-size: 14px;
-        cursor: pointer;
-
-        &:hover {
-          color: #ee4d2d;
-        }
+      strong {
+        font-size: 16px;
+        color: #0dac02;
       }
     }
 
-    .footer-right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
+    .checkout-button {
+      background-color: #0dac02;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 2px;
+      cursor: pointer;
 
-      span {
-        font-size: 14px;
-        color: #333;
-
-        strong {
-          font-size: 16px;
-          color: #0dac02;
-        }
+      &:hover {
+        background-color: map.get($theme-colors, 'main');
       }
 
-      .checkout-button {
-        background-color: #0dac02;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        font-size: 14px;
-        font-weight: bold;
-        border-radius: 2px;
-        cursor: pointer;
-
-        &:hover {
-          background-color: map.get($theme-colors, 'main');
-        }
-
-        &:disabled {
-          background-color: #ccc;
-          cursor: not-allowed;
-        }
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
       }
     }
   }
 }
-
-//     // Responsive cho mobile
-//     @media (max-width: 768px) {
-//       .cart-header {
-//         display: none; // Ẩn header trên mobile
-//       }
-
-//       .cart-item {
-//         grid-template-columns: 40px 1fr 100px;
-//         grid-template-areas:
-//           "checkbox info info"
-//           "checkbox price total"
-//           "checkbox quantity remove";
-//         gap: 10px;
-//         padding: 10px;
-
-//         input[type="checkbox"] {
-//           grid-area: checkbox;
-//         }
-
-//         .item-info {
-//           grid-area: info;
-//           flex-direction: column;
-//           align-items: flex-start;
-
-//           .item-image {
-//             width: 50px;
-//             height: 50px;
-//           }
-
-//           .item-name {
-//             font-size: 12px;
-//             max-width: 100%;
-//           }
-//         }
-
-//         .item-price {
-//           grid-area: price;
-//           font-size: 12px;
-//           text-align: left;
-//         }
-
-//         .quantity-control {
-//           grid-area: quantity;
-//           justify-content: flex-start;
-
-//           button {
-//             width: 20px;
-//             height: 20px;
-//             font-size: 14px;
-//           }
-
-//           span {
-//             width: 30px;
-//             font-size: 12px;
-//           }
-//         }
-
-//         .item-total {
-//           grid-area: total;
-//           font-size: 12px;
-//           text-align: left;
-//         }
-
-//         .remove-button {
-//           grid-area: remove;
-//           text-align: left;
-//           font-size: 12px;
-//         }
-//       }
-
-//       .cart-footer {
-//         flex-direction: column;
-//         gap: 10px;
-//         padding: 10px;
-
-//         .footer-right {
-//           flex-direction: column;
-//           gap: 10px;
-//           width: 100%;
-
-//           .checkout-button {
-//             width: 100%;
-//             padding: 8px;
-//           }
-//         }
-//       }
-//     }
-//   }

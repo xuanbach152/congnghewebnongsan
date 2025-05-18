@@ -21,30 +21,18 @@ const OrderHistoryPage = () => {
     if (!isVerified) return;
     try {
       setLoading(true);
-      toast.info('Đang tải lịch sử đơn hàng...', {
-        position: "top-center",
-        autoClose: false,
-        toastId: 'loading-toast',
-      });
-
       const token = localStorage.getItem('accessToken');
       if (!token) {
         throw new Error('Không tìm thấy token. Vui lòng đăng nhập lại.');
       }
 
-      const response = await axiosInstance.get(`/order/user?page=${page}&limit=10`);
+      const response = await axiosInstance.get(`/order/user?page=${page}&limit=5`);
       console.log('Dữ liệu từ API /order/user:', response.data);
       const { orders, totalPages } = response.data.data || {};
       
       setOrders(orders || []);
       setTotalPages(totalPages || 1);
 
-      if (!orders || orders.length === 0) {
-        toast.info('Bạn chưa có đơn hàng nào', {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      }
     } catch (err) {
       console.error('Lỗi khi lấy lịch sử đơn hàng:', {
         message: err.message,
@@ -52,25 +40,11 @@ const OrderHistoryPage = () => {
         status: err.response?.status,
       });
       if (err.response?.status === 401) {
-        toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.', {
-          position: "top-center",
-          autoClose: 3000,
-        });
+        toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
         localStorage.removeItem('accessToken');
-      } else if (err.response?.status === 404) {
-        toast.error('Không tìm thấy API /order/user. Vui lòng kiểm tra backend.', {
-          position: "top-center",
-          autoClose: 3000,
-        });
-      } else {
-        toast.error(err.response?.data?.message || err.message || 'Không thể tải lịch sử mua hàng', {
-          position: "top-center",
-          autoClose: 3000,
-        });
       }
     } finally {
       setLoading(false);
-      toast.dismiss('loading-toast');
     }
   };
 
@@ -79,16 +53,10 @@ const OrderHistoryPage = () => {
     try {
       await axiosInstance.put(`/order/cancel/${orderId}`);
       setOrders(orders.filter(order => order._id !== orderId));
-      toast.success('Đơn hàng đã được hủy', {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.success('Đơn hàng đã được hủy');
     } catch (err) {
       console.error('Lỗi khi hủy đơn hàng:', err.response?.data || err.message);
-      toast.error(err.response?.data?.message || 'Không thể hủy đơn hàng', {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error(err.response?.data?.message || 'Không thể hủy đơn hàng');
     }
   };
 
@@ -99,16 +67,10 @@ const OrderHistoryPage = () => {
       setOrders(orders.map(order =>
         order._id === orderId ? { ...order, paymentStatus: 'COMPLETED' } : order
       ));
-      toast.success('Đơn hàng đã được xác nhận hoàn tất', {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.success('Đơn hàng đã được xác nhận hoàn tất');
     } catch (err) {
       console.error('Lỗi khi xác nhận đơn hàng:', err.response?.data || err.message);
-      toast.error(err.response?.data?.message || 'Không thể xác nhận đơn hàng', {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error(err.response?.data?.message || 'Không thể xác nhận đơn hàng');
     }
   };
 
@@ -129,10 +91,7 @@ const OrderHistoryPage = () => {
     if (!isVerified) return;
     try {
       if (!editFormData.deliveryAddress.trim()) {
-        toast.error('Vui lòng nhập địa chỉ giao hàng', {
-          position: "top-center",
-          autoClose: 3000,
-        });
+        toast.error('Vui lòng nhập địa chỉ giao hàng');
         return;
       }
 
@@ -150,17 +109,11 @@ const OrderHistoryPage = () => {
       setOrders(orders.map(order =>
         order._id === orderId ? { ...order, ...updatedData } : order
       ));
-      toast.success('Cập nhật đơn hàng thành công', {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.success('Cập nhật đơn hàng thành công');
       setEditingOrderId(null);
     } catch (err) {
       console.error('Lỗi khi cập nhật đơn hàng:', err.response?.data || err.message);
-      toast.error(err.response?.data?.message || 'Không thể cập nhật đơn hàng', {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error(err.response?.data?.message || 'Không thể cập nhật đơn hàng');
     }
   };
 
@@ -177,14 +130,11 @@ const OrderHistoryPage = () => {
     if (!isVerified) return;
     const token = localStorage.getItem('accessToken');
     if (!token) {
-      toast.error('Vui lòng đăng nhập để xem lịch sử mua hàng', {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error('Vui lòng đăng nhập để xem lịch sử mua hàng');
       return;
     }
     fetchOrders();
-  }, [fetchOrders, isVerified, page]);
+  }, [isVerified, page]);
 
   // Filter orders based on checkbox states, excluding CANCELLED orders
   const filteredOrders = orders.filter(order => {
@@ -227,10 +177,9 @@ const OrderHistoryPage = () => {
       </div>
       <div className="orders">
         {filteredOrders.length === 0 && !loading && (
-          toast.info('Không có đơn hàng nào phù hợp với bộ lọc', {
-            position: "top-center",
-            autoClose: 3000,
-          })
+          <div className="no-orders-message">
+            Lịch sử mua hàng rỗng
+          </div>
         )}
         {filteredOrders.map((order) => (
           <div key={order._id} className="order">
@@ -340,21 +289,23 @@ const OrderHistoryPage = () => {
           </div>
         ))}
       </div>
-      <div className="pagination">
-        <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          disabled={page === 1}
-        >
-          Trang trước
-        </button>
-        <span>Trang {page} / {totalPages}</span>
-        <button
-          onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={page === totalPages}
-        >
-          Trang sau
-        </button>
-      </div>
+      {totalPages > 1 && (
+        <div className="pagination">
+          <button
+            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+            disabled={page === 1}
+          >
+            Trang trước
+          </button>
+          <span>Trang {page} / {totalPages}</span>
+          <button
+            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+            disabled={page === totalPages}
+          >
+            Trang sau
+          </button>
+        </div>
+      )}
     </div>
   );
 };
