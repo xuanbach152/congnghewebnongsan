@@ -10,8 +10,9 @@ import {
   getShopsByUserId,
   getOrderStatistics, 
   getItemStatistics,
-  getAllShopPending,
-  acceptCreateShop
+  getAllShopAccepted,
+  censorshipCreateShop,
+  getAllShopPending
 } from "../controllers/shop.controller.js";
 import { verifyToken } from "../services/auth.service.js";
 import { uploadImg } from "../utils/upload.middleware.js";
@@ -21,12 +22,13 @@ router.post("/", verifyToken, uploadImg.single("image"), createShop);
 router.get("/", getShops);
 router.get("/search", searchShops);
 router.get("/user", verifyToken, getShopsByUserId);
+router.get("/accepted", verifyToken, getAllShopAccepted);
 router.get("/pending", verifyToken, getAllShopPending);
 router.get("/:id", getShopById);
-router.patch("/accept/:shopId", verifyToken, acceptCreateShop);
+router.patch("/censorship/:shopId", verifyToken, censorshipCreateShop);
 router.post("/:id/upload-image", uploadImg.single("image"), uploadImage);
 router.patch("/:id", verifyToken, uploadImg.single("image"), updateShop);
-router.delete("/:id", deleteShop);
+router.delete("/:id", verifyToken, deleteShop);
 router.get("/item-statistics/:shopId", verifyToken, getItemStatistics);
 router.get("/order-statistics/:shopId", verifyToken, getOrderStatistics);
 export default router;

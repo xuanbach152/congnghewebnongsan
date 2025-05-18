@@ -20,7 +20,7 @@ const shopSchema = Schema(
       default: "",
     },
     description: {
-      type: String,    
+      type: String,
     },
     rate: {
       type: Number,
@@ -34,13 +34,11 @@ const shopSchema = Schema(
       type: Number,
       required: true,
     },
-
-    
-   status:{
-    type : String,
-    enum: ["REJECT", "PENDING", "DELETED","ACCEPTED"],
-    default: "PENDING",
-   }
+    status: {
+      type: String,
+      enum: ["REJECT", "PENDING", "DELETED", "ACCEPTED"],
+      default: "PENDING",
+    }
   },
   {
     timestamps: true,

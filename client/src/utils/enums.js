@@ -28,3 +28,9 @@ export const paymentMethodTypeEnum = {
   BANK_TRANSFER: "Chuyển khoản",
   CREDIT_CARD: "Quẹt thẻ",
 };
+
+export const shopStatusEnum = {
+  ACCEPTED: "Đã phê duyệt",
+  REJECTED: "Từ chối",
+  PENDING: "Đang chờ duyệt",
+};

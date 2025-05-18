@@ -12,6 +12,7 @@ import ItemPage from 'pages/itemPage/itemPage'
 import ItemDetailPage from 'pages/itemDetailPage/itemDetailPage'
 import ShopDetailPage from 'pages/shopDetailPage/shopDetailPage'
 import MyShopPage from 'pages/myShopPage/myShopPage'
+import ShopCensorshipPage from 'pages/shopCensorshipPage/shopCensorshipPage'
 
 const renderRouter = ({ searchQuery, setDistinctItemQuantity, setTotalPaymentAmount }) => {
   const allRouters = [
@@ -62,6 +63,10 @@ const renderRouter = ({ searchQuery, setDistinctItemQuantity, setTotalPaymentAmo
     {
       path: routers.MY_SHOP,
       component: <MyShopPage />,
+    },
+    {
+      path: routers.SHOP_CENSORSHIP,
+      component: <ShopCensorshipPage />,
     },
   ]
 

@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import routers from 'utils/routers'
 import { default as axiosInstance } from 'utils/api'
 import { useTokenVerification } from 'utils/tokenVerification'
+import { shopStatusEnum } from 'utils/enums'
 
 const ShopManagementPage = () => {
   const [shops, setShops] = useState([])
@@ -35,9 +36,13 @@ const ShopManagementPage = () => {
 
   useEffect(() => {
     if (!isVerified) return;
-
     fetchShops(currentPage);
   }, [isVerified, currentPage]);
+
+  const handleDeleteShop = async (shopId) => {
+    await axiosInstance.delete(`http://localhost:3000/shop/${shopId}`)
+    await fetchShops();
+  }
 
   return (
     <>
@@ -63,11 +68,10 @@ const ShopManagementPage = () => {
               <p>Đang tải dữ liệu...</p>
             ) : shops.length > 0 ? (
               <>
-                {shops.map((shop) => (
-                  <Link
-                    key={shop._id}
-                    to={routers.getMyShopPath(shop._id, 'shopInfo')}
-                  >
+                {shops.map((shop) => {
+                  const isAccepted = shop.status === 'ACCEPTED';
+                  const isPending = shop.status === 'PENDING';
+                  const shopContent = (
                     <div className="shop">
                       <div className="shop-image">
                         <img src={shop.imgUrl} alt={shop.name} />
@@ -76,9 +80,28 @@ const ShopManagementPage = () => {
                         <div className="shop-name">{shop.name}</div>
                         <div className="shop-address">{shop.address}</div>
                       </div>
+                      <div className={`shop-status ${shop.status}`}>
+                        {shopStatusEnum[shop.status]}
+                      </div>
+                      {isPending && <button onClick={() => handleDeleteShop(shop._id)}>Hủy đăng ký</button>}
                     </div>
-                  </Link>
-                ))}
+                  );
+
+                  if(shop.status === 'DELETED') return null;
+
+                  return isAccepted ? (
+                    <Link
+                      key={shop._id}
+                      to={routers.getMyShopPath(shop._id, 'shopInfo')}
+                    >
+                      {shopContent}
+                    </Link>
+                  ) : (
+                    <div key={shop._id} style={{ cursor: 'not-allowed' }}>
+                      {shopContent}
+                    </div>
+                  );
+                })}
                 <Pagination
                   totalPages={totalPages}
                   currentPage={currentPage}

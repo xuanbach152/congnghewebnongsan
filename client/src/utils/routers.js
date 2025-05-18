@@ -6,6 +6,7 @@ const routers = {
   CHECKOUT: 'checkout',
   ORDER_HISTORY: 'order/history',
   SHOP_MANAGEMENT: '/shop-management',
+  SHOP_CENSORSHIP: '/shop-censorship',
   SHOP_UPSERT: '/shop-upsert/:mode/:shopId?',
   getShopUpsertPath: (mode, shopId) => {
     return shopId ? `/shop-upsert/${mode}/${shopId}` : `/shop-upsert/${mode}`;

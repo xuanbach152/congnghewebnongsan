@@ -5,23 +5,23 @@ import { throwBadRequest } from "../utils/error.util.js";
 import Message from "../utils/message.js";
 import distanceService from "../utils/distance.utils.js";
 const createShop = async (shopData) => {
-   if (!shopData.name) {
-      throwBadRequest(true, "Tên cửa hàng không được để trống");
-    }
-    
-    if (!shopData.address) {
-      throwBadRequest(true, "Địa chỉ cửa hàng không được để trống");
-    }
+  if (!shopData.name) {
+    throwBadRequest(true, "Tên cửa hàng không được để trống");
+  }
 
-        if (shopData.address && (!shopData.latitude || !shopData.longitude)) {
-      try {
-        const coordinates = await distanceService.geocodeAddress(shopData.address);
-        shopData.latitude = coordinates.latitude;
-        shopData.longitude = coordinates.longitude;
-      } catch (error) {
-        console.warn("Không thể lấy tọa độ từ địa chỉ:", error.message);
-      }
+  if (!shopData.address) {
+    throwBadRequest(true, "Địa chỉ cửa hàng không được để trống");
+  }
+
+  if (shopData.address && (!shopData.latitude || !shopData.longitude)) {
+    try {
+      const coordinates = await distanceService.geocodeAddress(shopData.address);
+      shopData.latitude = coordinates.latitude;
+      shopData.longitude = coordinates.longitude;
+    } catch (error) {
+      console.warn("Không thể lấy tọa độ từ địa chỉ:", error.message);
     }
+  }
   const newShop = await ShopModel.create({
     ...shopData,
     imgUrl: shopData.imgUrl || "",
@@ -31,7 +31,8 @@ const createShop = async (shopData) => {
 const searchShops = async (searchText) => {
   const regex = new RegExp(searchText, "i");
   return await ShopModel.find({
-    $or: [{ name: { $regex: regex } }, { address: { $regex: regex } }],
+    status: 'ACCEPTED',
+    $or: [{ name: { $regex: regex } }],
   });
 };
 
@@ -118,7 +119,9 @@ const getShopsByUserId = async (
   sortType = "desc"
 ) => {
   const skip = (page - 1) * limit;
-  const shops = await ShopModel.find({ userId })
+  const shops = await ShopModel.find({
+    userId, status: { $ne: 'DELETED' },
+  })
     .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
     .skip(skip)
     .limit(limit)
@@ -134,10 +137,10 @@ const getShopsByUserId = async (
 
 const getOrderStatistics = async (shopId, startDate = null, endDate = null) => {
   try {
-    
+
     const end = endDate ? new Date(endDate) : new Date();
     const start = startDate ? new Date(startDate) : new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
-    
+
     // Đảm bảo endDate có giờ cuối cùng của ngày
     end.setHours(23, 59, 59, 999);
 
@@ -154,7 +157,7 @@ const getOrderStatistics = async (shopId, startDate = null, endDate = null) => {
     let totalRevenue = 0;
     let totalOrders = orders.length;
 
-    
+
     orders.forEach((order) => {
       totalRevenue += order.totalPrice || 0;
     });
@@ -177,7 +180,7 @@ const getItemStatistics = async (shopId, startDate = null, endDate = null) => {
 
     const end = endDate ? new Date(endDate) : new Date();
     const start = startDate ? new Date(startDate) : new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
-    
+
     // Đảm bảo endDate có giờ cuối cùng của ngày
     end.setHours(23, 59, 59, 999);
 
@@ -232,19 +235,17 @@ const getItemStatistics = async (shopId, startDate = null, endDate = null) => {
   }
 };
 
-const getAllShopPending = async (page = 1, limit = 10) => {
+const getAllShopAccepted = async (page = 1, limit = 10) => {
   try {
     const skip = (page - 1) * limit;
-    
-    
     const [totalShops, shops] = await Promise.all([
-      ShopModel.countDocuments({ status: "PENDING" }),
-      ShopModel.find({ status: "PENDING" })
+      ShopModel.countDocuments({ status: "ACCEPTED" }),
+      ShopModel.find({ status: "ACCEPTED" })
         .skip(skip)
         .limit(limit)
-        .lean() 
+        .lean()
     ]);
-    
+
     return {
       shops,
       totalShops,
@@ -256,25 +257,49 @@ const getAllShopPending = async (page = 1, limit = 10) => {
     throw error;
   }
 }
-const acceptCreateShop = async (shopId) => {
+
+const censorshipCreateShop = async (shopId, status) => {
   try {
-    
+
     const shop = await ShopModel.findOneAndUpdate(
-      { _id: shopId, status: "PENDING" }, 
-      { status: "ACCEPTED" },
+      { _id: shopId, status: "PENDING" },
+      { status },
       { new: true }
     );
-    
+
     if (!shop) {
       throwBadRequest(true, "Shop không tồn tại hoặc không ở trạng thái chờ duyệt");
     }
-    
+
     return shop;
   } catch (error) {
     console.error(`Error in acceptCreateShop: ${error.message}`);
     throw error;
   }
 };
+
+const getAllShopPending = async (page = 1, limit = 10) => {
+  try {
+    const skip = (page - 1) * limit;
+    const [totalShops, shops] = await Promise.all([
+      ShopModel.countDocuments({ status: "PENDING" }),
+      ShopModel.find({ status: "PENDING" })
+        .skip(skip)
+        .limit(limit)
+        .lean()
+    ]);
+
+    return {
+      shops,
+      totalShops,
+      totalPages: Math.ceil(totalShops / limit),
+      currentPage: parseInt(page)
+    };
+  } catch (error) {
+    console.error(`Error in getAllShopPending: ${error.message}`);
+    throw error;
+  }
+}
 
 export default {
   createShop,
@@ -287,6 +312,7 @@ export default {
   getShopsByUserId,
   getOrderStatistics,
   getItemStatistics,
+  getAllShopAccepted,
+  censorshipCreateShop,
   getAllShopPending,
-  acceptCreateShop,
 };
