@@ -7,7 +7,6 @@ import {
   AiOutlineShoppingCart,
   AiOutlinePhone,
   AiOutlineRocket,
-  AiOutlineDown,
   AiOutlineInstagram,
   AiOutlineGoogle,
   AiOutlineBell,
@@ -17,6 +16,7 @@ import routers from 'utils/routers';
 import axiosInstance from 'utils/api';
 import { itemTypes, provinces } from 'utils/enums';
 import { toast } from 'react-toastify';
+import { FaCaretDown } from 'react-icons/fa';
 
 const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -172,6 +172,7 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
     setIsProfileOpen(false);
     setItemQuantity(0);
     setPaymentAmount(0);
+    window.location.href = '/'
     toast.success('Đăng xuất thành công');
   };
 
@@ -216,7 +217,7 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
                 >
                   <AiOutlineUser />
                   <span>{isLoggedIn && user?.userName ? user.userName : 'Tài khoản'}</span>
-                  {isLoggedIn && <AiOutlineDown className="dropdown-arrow" />}
+                  {isLoggedIn && <FaCaretDown className="dropdown-arrow" />}
                   {isLoggedIn && isDropdownOpen && (
                     <div className="user_dropdown">
                       <ul>

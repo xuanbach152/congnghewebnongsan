@@ -21,7 +21,7 @@ const updateComment = async (CommentId, CommentData) => {
 
 const getCommentById = async (CommentId) => {
   const Comment = await CommentModel.findById(CommentId)
-    .populate("userId", "username imgUrl")
+    .populate("userId", "userName imgUrl")
     .populate("itemId", "name imgUrl");
   throwBadRequest(!Comment, Message.CommentNotFound);
   return Comment;
@@ -39,7 +39,7 @@ const getComments = async (
       .skip(skip)
       .limit(Math.min(limit, 100))
       .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
-      .populate("userId", "username imgUrl")
+      .populate("userId", "userName imgUrl")
       .populate("itemId", "name imgUrl")
       .exec();
 
@@ -95,7 +95,7 @@ const getCommentsByItem = async (
       .skip(skip)
       .limit(Math.min(limit, 100))
       .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
-      .populate("userId", "username imgUrl")
+      .populate("userId", "userName imgUrl")
       .exec();
     const totalcomments = await CommentModel.countDocuments({ itemId });
     return {
@@ -118,7 +118,7 @@ const searchComment = async (query) => {
     const comments = await CommentModel.find({
       $or: [{ content: { $regex: regex } }],
     })
-      .populate("userId", "username imgUrl")
+      .populate("userId", "userName imgUrl")
       .populate("itemId", "name imgUrl");
     return comments;
   } catch (error) {

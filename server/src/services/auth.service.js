@@ -79,7 +79,7 @@ export const verifyToken = (req, res, next) => {
   if (!token) {
     return res
       .status(401)
-      .json({ message: "Không có token, vui lòng đăng nhập" });
+      .json({ message: "Vui lòng đăng nhập" });
   }
 
   try {
