@@ -32,7 +32,7 @@
       border-radius: 4px;
       overflow: hidden;
     }
-    
+
     .tab-item {
       flex: 1;
       text-align: center;
@@ -41,19 +41,19 @@
       cursor: pointer;
       background-color: #f6f6f6;
       transition: background-color 0.2s;
-    
+
       &.active {
         background-color: #b8b8b9;
       }
-    
+
       &:hover {
         background-color: #b8b8b9;
       }
-    
+
       &.border-right {
         border-right: 1px solid #ddd;
       }
-    } 
+    }
 
     .tab-content-container {
       border: 1px solid #ddd;
@@ -126,9 +126,9 @@
     .btn-create-item-wrapper {
       display: flex;
       align-items: center;
-      gap: 10px; 
+      gap: 10px;
     }
-    
+
     .btn-create-item {
       display: flex;
       justify-content: center;
@@ -142,58 +142,70 @@
       height: 35px;
       cursor: pointer;
       transition: background-color 0.2s ease-in-out;
-    
+
       &:hover {
         background-color: rgb(170, 2, 80);
       }
     }
-    
+
     .btn-text {
       font-size: 16px;
       color: rgb(238, 28, 126);
       font-weight: bold;
-    } 
+    }
 
     .items-table {
       width: 100%;
       overflow-x: auto;
       margin-top: 20px;
-    
+
       table {
         width: 100%;
         border-collapse: collapse;
-    
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
         thead {
-          background-color: #f5f5f5;
-    
+          background-color: #e4e4e4;
+
           th {
-            padding: 12px;
+            padding: 14px 16px;
             text-align: center;
-            border-bottom: 2px solid #ddd;
+            font-weight: 600;
+            color: #333;
+            font-size: 15px;
+            border-bottom: 2px solid #e5e7eb;
           }
         }
-    
+
         tbody {
           tr {
             cursor: pointer;
-            transition: background-color 0.2s ease;
-    
+            transition:
+              background-color 0.25s ease,
+              transform 0.15s ease;
+
             &:hover {
-              background-color: #f9f9f9;
+              background-color: #f3f4f6;
+              transform: scale(1.01);
             }
-    
+
             td {
-              padding: 10px;
-              border-bottom: 1px solid #eee;
+              padding: 12px 14px;
+              border-bottom: 1px solid #e5e7eb;
               vertical-align: middle;
               text-align: center;
+              font-size: 14px;
+              color: #444;
             }
-    
+
             .item-img {
-              width: 100px;
-              height: 100px;
+              width: 80px;
+              height: 80px;
               object-fit: cover;
-              border-radius: 8px;
+              border-radius: 10px;
+              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
             }
           }
         }
@@ -204,7 +216,7 @@
         justify-content: center;
         align-items: center;
         gap: 12px;
-      
+
         .icon {
           width: 20px;
           height: 20px;
@@ -213,22 +225,24 @@
           justify-content: center;
           align-items: center;
           font-size: 18px;
-          transition: background-color 0.2s, color 0.2s;
+          transition:
+            background-color 0.2s,
+            color 0.2s;
           cursor: pointer;
-          border: none; 
-      
+          border: none;
+
           &.edit-icon {
             color: #0d6efd;
-      
+
             &:hover {
               background-color: #e8f1ff;
               color: #0a58ca;
             }
           }
-      
+
           &.delete-icon {
             color: #dc3545;
-      
+
             &:hover {
               background-color: #ffe6e9;
               color: #b02a37;
@@ -236,6 +250,101 @@
           }
         }
       }
-    }    
+    }
+
+    .revenue-header {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #333;
+      }
+
+      input[type='date'] {
+        padding: 0.5rem 0.75rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        outline: none;
+        transition:
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
+        background-color: #fff;
+        color: #333;
+        width: 180px;
+
+        &:hover {
+          border-color: #888;
+        }
+
+        &:focus {
+          border-color: #007bff;
+          box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+      }
+
+      .select-container {
+        display: flex;
+        justify-content: flex-end;
+        align-self: flex-end;
+      }
+
+      select {
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background-color: #fff;
+        font-size: 0.95rem;
+        color: #333;
+        cursor: pointer;
+        transition:
+          border-color 0.3s ease,
+          box-shadow 0.3s ease;
+        outline: none;
+        width: 200px;
+        height: 40px;
+
+        &:hover {
+          border-color: #888;
+        }
+
+        &:focus {
+          border-color: #007bff;
+          box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+
+        option {
+          background-color: #fff;
+          color: #333;
+        }
+      }
+    }
+
+    .revenue-info {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+
+      div {
+        background-color: #f1f5f9;
+        padding: 1rem 1.25rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        min-width: 200px;
+        text-align: center;
+        flex: 1;
+      }
+
+      p {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1a202c;
+      }
+    }
   }
 }

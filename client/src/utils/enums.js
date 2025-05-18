@@ -1,23 +1,30 @@
 export const itemTypes = {
-    FRUIT: "Trái cây",
-    VEGETABLE: "Rau củ",
-    NUT: "Hạt",
-    SPICE: "Gia vị",
-    TREE: "Cây trồng",
-    SEED: "Hạt giống",
-    DIRED: "Đồ khô",
-    SEAFOOD: "Hải sản",
-    MEAT: "Thịt"
-  };
+  FRUIT: "Trái cây",
+  VEGETABLE: "Rau củ",
+  NUT: "Hạt",
+  SPICE: "Gia vị",
+  TREE: "Cây trồng",
+  SEED: "Hạt giống",
+  DIRED: "Đồ khô",
+  SEAFOOD: "Hải sản",
+  MEAT: "Thịt"
+};
 
-  export const provinces = {
-    HANOI: "Hà Nội",
-    HAI_PHONG: "Hải Phòng",
-    QUANG_NINH: "Quảng Ninh",
-    DA_NANG: "Đà Nẵng",
-    HUE: "Huế",
-    QUANG_NAM: "Quảng Nam",
-    TP_HCM: "TP.HCM",
-    CAN_THO: "Cần Thơ",
-    DONG_NAI: "Đồng Nai"
-  }
+export const provinces = {
+  HANOI: "Hà Nội",
+  HAI_PHONG: "Hải Phòng",
+  QUANG_NINH: "Quảng Ninh",
+  DA_NANG: "Đà Nẵng",
+  HUE: "Huế",
+  QUANG_NAM: "Quảng Nam",
+  TP_HCM: "TP.HCM",
+  CAN_THO: "Cần Thơ",
+  DONG_NAI: "Đồng Nai"
+}
+
+
+export const paymentMethodTypeEnum = {
+  CASH: "Tiền mặt",
+  BANK_TRANSFER: "Chuyển khoản",
+  CREDIT_CARD: "Quẹt thẻ",
+};

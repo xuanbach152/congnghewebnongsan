@@ -147,7 +147,7 @@ const getOrderStatistics = async (shopId, startDate = null, endDate = null) => {
       orderDate: { $gte: start, $lte: end },
       paymentStatus: "COMPLETED",
     }).populate([
-      { path: "userId", select: "name email" },
+      { path: "userId", select: "userName email address" },
       { path: "items.itemId", select: "name price imgUrl" },
     ]);
 
@@ -199,6 +199,9 @@ const getItemStatistics = async (shopId, startDate = null, endDate = null) => {
         name: item.name,
         quantitySold: 0,
         quantityRemaining: item.quantity,
+        imgUrl: item.imgUrl,
+        price: item.price,
+        type: item.type,
         revenue: 0,
       };
     });

@@ -227,8 +227,8 @@ const OrderHistoryPage = () => {
         {filteredOrders.map((order) => (
           <div key={order._id} className="order">
             <div className="order-header">
-              <span>Mã đơn hàng: {order._id}</span>
-              <span>Cửa hàng: {order.shopId?.name || 'Không xác định'}</span>
+              <span>Mã đơn hàng: <b>{order.orderCode}</b></span>
+              <span>Cửa hàng: <b>{order.shopId?.name || 'Không xác định'}</b></span>
               <span>Ngày đặt: {new Date(order.orderDate).toLocaleDateString()}</span>
               <span className="status">Trạng thái: {order.paymentStatus}</span>
             </div>

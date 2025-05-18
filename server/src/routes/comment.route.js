@@ -17,7 +17,7 @@ const router = express.Router();
 router.post("/", verifyToken, uploadImg.single("image"), createComment);
 router.get("/", verifyToken, getComments);
 router.get("/user", verifyToken, getCommentsByUser);
-router.get("/item/:itemId", verifyToken, getCommentsByItem);
+router.get("/item/:itemId", getCommentsByItem);
 router.get("/search", verifyToken, searchComment);
 router.get("/:id", verifyToken, getCommentById);
 router.put("/:id", verifyToken, uploadImg.single("image"), updateComment);
