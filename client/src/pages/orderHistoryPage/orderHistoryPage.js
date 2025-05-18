@@ -16,6 +16,7 @@ const OrderHistoryPage = () => {
   const [editFormData, setEditFormData] = useState({ deliveryAddress: '', paymentMethod: '' });
   const isVerified = useTokenVerification();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchOrders = async () => {
     if (!isVerified) return;
     try {
