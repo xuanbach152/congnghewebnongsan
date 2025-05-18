@@ -21,7 +21,7 @@ export const generateAcessToken = (user) => {
   const accessToken = jwt.sign(
     { id: user.id, userName: user.userName, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "1h" },
+    { expiresIn: "1h" }
   );
   return accessToken;
 };
@@ -29,9 +29,9 @@ export const generateAcessToken = (user) => {
 export const generateRefreshToken = (user) => {
   // Tạo refresh token
   const refreshToken = jwt.sign(
-    { id: user.id },
+    { id: user.id, userName: user.userName, role: user.role },
     process.env.JWT_REFRESH_SECRET,
-    { expiresIn: "30d" },
+    { expiresIn: "30d" }
   );
   return refreshToken;
 };
@@ -79,7 +79,7 @@ export const verifyToken = (req, res, next) => {
   if (!token) {
     return res
       .status(401)
-      .json({ message: "Không có token, vui lòng đăng nhập" });
+      .json({ message: "Vui lòng đăng nhập" });
   }
 
   try {

@@ -3,6 +3,7 @@ import axiosInstance from '../../utils/api';
 import { memo } from 'react';
 import { toast } from 'react-toastify';
 import './orderHistoryPage.scss';
+import { useTokenVerification } from 'utils/tokenVerification';
 
 const OrderHistoryPage = () => {
   const [orders, setOrders] = useState([]);
@@ -13,8 +14,10 @@ const OrderHistoryPage = () => {
   const [showCompleted, setShowCompleted] = useState(true); // Default: show COMPLETED orders
   const [editingOrderId, setEditingOrderId] = useState(null);
   const [editFormData, setEditFormData] = useState({ deliveryAddress: '', paymentMethod: '' });
+  const isVerified = useTokenVerification();
 
   const fetchOrders = async () => {
+    if (!isVerified) return;
     try {
       setLoading(true);
       const token = localStorage.getItem('accessToken');
@@ -45,6 +48,7 @@ const OrderHistoryPage = () => {
   };
 
   const cancelOrder = async (orderId) => {
+    if (!isVerified) return;
     try {
       await axiosInstance.put(`/order/cancel/${orderId}`);
       setOrders(orders.filter(order => order._id !== orderId));
@@ -56,6 +60,7 @@ const OrderHistoryPage = () => {
   };
 
   const confirmOrder = async (orderId) => {
+    if (!isVerified) return;
     try {
       const response = await axiosInstance.put(`/order/confirm/${orderId}`);
       setOrders(orders.map(order =>
@@ -82,6 +87,7 @@ const OrderHistoryPage = () => {
   };
 
   const updateOrder = async (orderId) => {
+    if (!isVerified) return;
     try {
       if (!editFormData.deliveryAddress.trim()) {
         toast.error('Vui lòng nhập địa chỉ giao hàng');
@@ -120,13 +126,14 @@ const OrderHistoryPage = () => {
   };
 
   useEffect(() => {
+    if (!isVerified) return;
     const token = localStorage.getItem('accessToken');
     if (!token) {
       toast.error('Vui lòng đăng nhập để xem lịch sử mua hàng');
       return;
     }
     fetchOrders();
-  }, [page]);
+  }, [isVerified, page]);
 
   // Filter orders based on checkbox states, excluding CANCELLED orders
   const filteredOrders = orders.filter(order => {
@@ -176,8 +183,8 @@ const OrderHistoryPage = () => {
         {filteredOrders.map((order) => (
           <div key={order._id} className="order">
             <div className="order-header">
-              <span>Mã đơn hàng: {order._id}</span>
-              <span>Cửa hàng: {order.shopId?.name || 'Không xác định'}</span>
+              <span>Mã đơn hàng: <b>{order.orderCode}</b></span>
+              <span>Cửa hàng: <b>{order.shopId?.name || 'Không xác định'}</b></span>
               <span>Ngày đặt: {new Date(order.orderDate).toLocaleDateString()}</span>
               <span className="status">Trạng thái: {order.paymentStatus}</span>
             </div>

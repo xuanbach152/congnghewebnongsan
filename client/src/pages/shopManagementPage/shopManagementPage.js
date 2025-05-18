@@ -4,6 +4,7 @@ import Pagination from 'layouts/pagination/pagination'
 import { Link } from 'react-router-dom'
 import routers from 'utils/routers'
 import { default as axiosInstance } from 'utils/api'
+import { useTokenVerification } from 'utils/tokenVerification'
 
 const ShopManagementPage = () => {
   const [shops, setShops] = useState([])
@@ -11,28 +12,32 @@ const ShopManagementPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    const fetchShops = async () => {
-      setLoading(true)
-      try {
-        const response = await axiosInstance.get(
-          `http://localhost:3000/shop/user?page=${currentPage}`
-        )
-        const { shops, totalPages } = response.data.data;
-        setTotalPages(totalPages)
-        setShops(shops)
-        } catch (error) {
-        console.error(
-          'Error fetching shop data:',
-          error.response?.data || error.message
-        )
-      } finally {
-        setLoading(false)
-      }
-    }
+  const isVerified = useTokenVerification();
 
-    fetchShops()
-  }, [currentPage])
+  const fetchShops = async (page) => {
+    setLoading(true)
+    try {
+      const response = await axiosInstance.get(
+        `http://localhost:3000/shop/user?page=${page}`
+      )
+      const { shops, totalPages } = response.data.data;
+      setTotalPages(totalPages)
+      setShops(shops)
+    } catch (error) {
+      console.error(
+        'Error fetching shop data:',
+        error.response?.data || error.message
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!isVerified) return;
+
+    fetchShops(currentPage);
+  }, [isVerified, currentPage]);
 
   return (
     <>
