@@ -15,7 +15,9 @@ const createShop = async (shopData) => {
 
   if (shopData.address && (!shopData.latitude || !shopData.longitude)) {
     try {
-      const coordinates = await distanceService.geocodeAddress(shopData.address);
+      const coordinates = await distanceService.geocodeAddress(
+        shopData.address
+      );
       shopData.latitude = coordinates.latitude;
       shopData.longitude = coordinates.longitude;
     } catch (error) {
@@ -31,7 +33,7 @@ const createShop = async (shopData) => {
 const searchShops = async (searchText) => {
   const regex = new RegExp(searchText, "i");
   return await ShopModel.find({
-    status: 'ACCEPTED',
+    status: "ACCEPTED",
     $or: [{ name: { $regex: regex } }],
   });
 };
@@ -42,7 +44,9 @@ const updateShop = async (shopId, shopData) => {
 
   if (shopData.address && shopData.address !== Shop.address) {
     try {
-      const coordinates = await distanceService.geocodeAddress(shopData.address);
+      const coordinates = await distanceService.geocodeAddress(
+        shopData.address
+      );
       shopData.latitude = coordinates.latitude;
       shopData.longitude = coordinates.longitude;
     } catch (error) {
@@ -120,7 +124,8 @@ const getShopsByUserId = async (
 ) => {
   const skip = (page - 1) * limit;
   const shops = await ShopModel.find({
-    userId, status: { $ne: 'DELETED' },
+    userId,
+    status: { $ne: "DELETED" },
   })
     .sort({ [sortField]: sortType === "asc" ? 1 : -1 })
     .skip(skip)
@@ -137,9 +142,10 @@ const getShopsByUserId = async (
 
 const getOrderStatistics = async (shopId, startDate = null, endDate = null) => {
   try {
-
     const end = endDate ? new Date(endDate) : new Date();
-    const start = startDate ? new Date(startDate) : new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const start = startDate
+      ? new Date(startDate)
+      : new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     // Đảm bảo endDate có giờ cuối cùng của ngày
     end.setHours(23, 59, 59, 999);
@@ -156,7 +162,6 @@ const getOrderStatistics = async (shopId, startDate = null, endDate = null) => {
 
     let totalRevenue = 0;
     let totalOrders = orders.length;
-
 
     orders.forEach((order) => {
       totalRevenue += order.totalPrice || 0;
@@ -177,9 +182,10 @@ const getOrderStatistics = async (shopId, startDate = null, endDate = null) => {
 
 const getItemStatistics = async (shopId, startDate = null, endDate = null) => {
   try {
-
     const end = endDate ? new Date(endDate) : new Date();
-    const start = startDate ? new Date(startDate) : new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const start = startDate
+      ? new Date(startDate)
+      : new Date(end.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     // Đảm bảo endDate có giờ cuối cùng của ngày
     end.setHours(23, 59, 59, 999);
@@ -190,13 +196,26 @@ const getItemStatistics = async (shopId, startDate = null, endDate = null) => {
       paymentStatus: "COMPLETED",
     }).populate("items.itemId");
 
-    const shopItems = await ItemModel.find({ shopId });
+    const soldItemIds = new Set();
 
-    // Tạo map để theo dõi thống kê cho mỗi sản phẩm
+    // Thu thập ID của các sản phẩm đã bán từ đơn hàng
+    orders.forEach((order) => {
+      order.items.forEach((item) => {
+        if (item.itemId && item.itemId._id) {
+          soldItemIds.add(item.itemId._id.toString());
+        }
+      });
+    });
+
+    // Lấy thông tin chi tiết của các sản phẩm đã bán
+    const soldItems = await ItemModel.find({
+      shopId,
+      _id: { $in: Array.from(soldItemIds) },
+    });
+
     const productStats = {};
 
-    // Khởi tạo thống kê cho mỗi sản phẩm của shop
-    shopItems.forEach((item) => {
+    soldItems.forEach((item) => {
       productStats[item._id.toString()] = {
         itemId: item._id,
         name: item.name,
@@ -240,27 +259,23 @@ const getAllShopAccepted = async (page = 1, limit = 10) => {
     const skip = (page - 1) * limit;
     const [totalShops, shops] = await Promise.all([
       ShopModel.countDocuments({ status: "ACCEPTED" }),
-      ShopModel.find({ status: "ACCEPTED" })
-        .skip(skip)
-        .limit(limit)
-        .lean()
+      ShopModel.find({ status: "ACCEPTED" }).skip(skip).limit(limit).lean(),
     ]);
 
     return {
       shops,
       totalShops,
       totalPages: Math.ceil(totalShops / limit),
-      currentPage: parseInt(page)
+      currentPage: parseInt(page),
     };
   } catch (error) {
     console.error(`Error in getAllShopPending: ${error.message}`);
     throw error;
   }
-}
+};
 
 const censorshipCreateShop = async (shopId, status) => {
   try {
-
     const shop = await ShopModel.findOneAndUpdate(
       { _id: shopId, status: "PENDING" },
       { status },
@@ -268,7 +283,10 @@ const censorshipCreateShop = async (shopId, status) => {
     );
 
     if (!shop) {
-      throwBadRequest(true, "Shop không tồn tại hoặc không ở trạng thái chờ duyệt");
+      throwBadRequest(
+        true,
+        "Shop không tồn tại hoặc không ở trạng thái chờ duyệt"
+      );
     }
 
     return shop;
@@ -283,23 +301,20 @@ const getAllShopPending = async (page = 1, limit = 10) => {
     const skip = (page - 1) * limit;
     const [totalShops, shops] = await Promise.all([
       ShopModel.countDocuments({ status: "PENDING" }),
-      ShopModel.find({ status: "PENDING" })
-        .skip(skip)
-        .limit(limit)
-        .lean()
+      ShopModel.find({ status: "PENDING" }).skip(skip).limit(limit).lean(),
     ]);
 
     return {
       shops,
       totalShops,
       totalPages: Math.ceil(totalShops / limit),
-      currentPage: parseInt(page)
+      currentPage: parseInt(page),
     };
   } catch (error) {
     console.error(`Error in getAllShopPending: ${error.message}`);
     throw error;
   }
-}
+};
 
 export default {
   createShop,

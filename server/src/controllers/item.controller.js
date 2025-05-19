@@ -11,14 +11,7 @@ export const createItem = async (req, res) => {
     const { shopId, name, price, type, description, rate, quantity } = req.body;
     const image = req.file;
     const imgUrl = await uploadToCloudinary(image);
-    if (
-      !shopId ||
-      !name ||
-      !price ||
-      !type ||
-      !description ||
-      !quantity
-    ) {
+    if (!shopId || !name || !price || !type || !description || !quantity) {
       return res.status(httpStatus.BAD_REQUEST).send({
         code: httpStatus.BAD_REQUEST,
         message: "Thiếu dữ liệu bắt buộc",
@@ -110,8 +103,8 @@ export const getItemById = async (req, res) => {
 // Update an item by ID
 export const updateItem = async (req, res) => {
   try {
-    const itemId = req.params.id; 
-    const itemData = req.body; 
+    const itemId = req.params.id;
+    const itemData = req.body;
     const image = req.file;
     let imgUrl;
     if (image) {
@@ -261,9 +254,9 @@ export const getRelatedItems = async (req, res) => {
   try {
     const itemId = req.params.id;
     const limit = parseInt(req.query.limit) || 4; // Mặc định lấy 4 sản phẩm liên quan
-    
+
     const relatedItems = await ItemService.getRelatedItems(itemId, limit);
-    
+
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,
       message: Message.OK,
@@ -274,6 +267,40 @@ export const getRelatedItems = async (req, res) => {
     res.status(httpStatus.BAD_REQUEST).send({
       code: httpStatus.BAD_REQUEST,
       message: Message.FAILED,
+      error: error.message,
+    });
+  }
+};
+
+export const filterItems = async (req, res) => {
+  try {
+    const {
+      type,
+      minPrice,
+      maxPrice,
+      page = 1,
+      limit = PaginationEnum.DEFAULT_LIMIT,
+      sortField = "createdAt",
+      sortType = "desc",
+    } = req.query;
+
+    const items = await ItemService.filterItems(
+      { type, minPrice, maxPrice },
+      page,
+      limit,
+      sortField,
+      sortType
+    );
+    res.status(httpStatus.OK).send({
+      code: httpStatus.OK,
+      message: Message.OK,
+      data: items,
+    });
+  } catch (error) {
+    console.error("Error in filterItems:", error.message);
+    res.status(httpStatus.BAD_REQUEST).send({
+      code: httpStatus.BAD_REQUEST,
+      message: "Lọc sản phẩm không thành công",
       error: error.message,
     });
   }
