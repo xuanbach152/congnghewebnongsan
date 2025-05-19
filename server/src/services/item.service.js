@@ -24,23 +24,19 @@ const createItem = async (itemData) => {
 const searchItems = async (searchText) => {
   const regex = new RegExp(searchText, "i");
   return await ItemModel.find({
-    $or: [
-      { name: { $regex: regex } },
-    ],
+    $or: [{ name: { $regex: regex } }],
   });
 };
 
 const updateItem = async (itemId, itemData) => {
   try {
-   
     const item = await ItemModel.findById(itemId);
     throwBadRequest(!item, Message.ItemNotFound);
 
-    
     const updatedItem = await ItemModel.findByIdAndUpdate(
       itemId,
-      { $set: itemData }, 
-      { new: true, runValidators: true } 
+      { $set: itemData },
+      { new: true, runValidators: true }
     );
 
     return updatedItem;
@@ -65,10 +61,10 @@ const getItems = async (
   page,
   limit,
   sortField = "createdAt",
-  sortType = "desc",
+  sortType = "desc"
 ) => {
   try {
-    const skip = (page - 1) * limit; 
+    const skip = (page - 1) * limit;
     const items = await ItemModel.find()
       .sort({ [sortField]: sortType === "desc" ? -1 : 1 })
       .skip(skip)
@@ -109,7 +105,7 @@ const rateItem = async (itemId, userId, rating) => {
     }
 
     const existingRating = item.ratings.find(
-      (r) => r.userId.toString() === userId,
+      (r) => r.userId.toString() === userId
     );
     if (existingRating) {
       existingRating.rating = rating;
@@ -166,8 +162,13 @@ const saveVideoToDatabase = async (itemId, videoUrl) => {
   }
 };
 
-const getItemsByShopId = async (shopId, page = 1, limit = 10, sortField = "createdAt",
-  sortType = "desc") => {
+const getItemsByShopId = async (
+  shopId,
+  page = 1,
+  limit = 10,
+  sortField = "createdAt",
+  sortType = "desc"
+) => {
   const skip = (page - 1) * limit;
   const items = await ItemModel.find({ shopId })
     .sort({ [sortField]: sortType })
@@ -184,26 +185,70 @@ const getItemsByShopId = async (shopId, page = 1, limit = 10, sortField = "creat
 };
 const getRelatedItems = async (itemId, limit = 4) => {
   try {
-   
     const item = await ItemModel.findById(itemId);
     if (!item) {
       throw new Error("Item not found");
     }
-    
+
     const shopId = item.shopId;
-    
- 
+
     const relatedItems = await ItemModel.find({
       shopId: shopId,
-      _id: { $ne: itemId } // loại trừ sản phẩm hiện tại
+      _id: { $ne: itemId }, // loại trừ sản phẩm hiện tại
     })
-      .sort({ rate: -1 }) 
+      .sort({ rate: -1 })
       .limit(limit)
       .exec();
-    
+
     return relatedItems;
   } catch (error) {
     console.error("Error in getRelatedItems:", error.message);
+    throw error;
+  }
+};
+const filterItems = async (
+  option = {},
+  page = 1,
+  limit = 5,
+  sortField = "createdAt",
+  sortType = "desc"
+) => {
+  try {
+    const skip = (page - 1) * limit;
+    let filterQuery = {};
+    if (option.type) {
+      filterQuery.type = option.type;
+    }
+
+    // Lọc theo khoảng giá
+    if (option.minPrice || option.maxPrice) {
+      filterQuery.price = {};
+
+      if (option.minPrice) {
+        filterQuery.price.$gte = Number(option.minPrice);
+      }
+
+      if (option.maxPrice) {
+        filterQuery.price.$lte = Number(option.maxPrice);
+      }
+    }
+    // Thực hiện truy vấn
+    const items = await ItemModel.find(filterQuery)
+      .sort({ [sortField]: sortType === "desc" ? -1 : 1 })
+      .skip(skip)
+      .limit(Number(limit))
+      .exec();
+
+    const totalItems = await ItemModel.countDocuments(filterQuery);
+
+    return {
+      items,
+      totalItems,
+      totalPages: Math.ceil(totalItems / limit),
+      currentPage: Number(page),
+    };
+  } catch (error) {
+    console.error("Error in filterItems:", error.message);
     throw error;
   }
 };
@@ -219,5 +264,6 @@ export default {
   rateItem,
   saveImageToDatabase,
   saveVideoToDatabase,
-  getRelatedItems
+  getRelatedItems,
+  filterItems,
 };

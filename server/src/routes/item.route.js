@@ -11,7 +11,8 @@ import {
   uploadImage,
   uploadVideo,
   getItemsByShopId,
-  getRelatedItems
+  getRelatedItems,
+  filterItems,
 } from "../controllers/item.controller.js";
 import { verifyToken } from "../services/auth.service.js";
 const router = express.Router();
@@ -21,6 +22,8 @@ router.post("/", verifyToken, uploadImg.single("image"), createItem);
 router.get("/", getItems);
 
 router.get("/search", searchItems);
+
+router.get("/filter", filterItems);
 
 router.get("/:id", getItemById);
 
@@ -34,8 +37,18 @@ router.delete("/:id", verifyToken, deleteItem);
 
 router.post("/:id/rate", verifyToken, rateItem);
 
-router.post("/:id/upload-image", verifyToken, uploadImg.single("image"), uploadImage);
+router.post(
+  "/:id/upload-image",
+  verifyToken,
+  uploadImg.single("image"),
+  uploadImage
+);
 
-router.post("/:id/upload-video", verifyToken, uploadVid.single("video"), uploadVideo);
+router.post(
+  "/:id/upload-video",
+  verifyToken,
+  uploadVid.single("video"),
+  uploadVideo
+);
 
 export default router;
