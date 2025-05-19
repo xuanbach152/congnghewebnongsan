@@ -449,7 +449,7 @@ const ProfilePage = () => {
                 {errors.submit && <span className="error_message">{errors.submit}</span>}
               </form>
 
-              {/* <div className="avatar_section">
+              <div className="avatar_section">
                 <img src={previewAvatar || 'default-avatar.png'} alt="Avatar" className="profile_avatar" />
                 <label className="avatar_upload">
                   Chọn ảnh
@@ -462,7 +462,7 @@ const ProfilePage = () => {
                   />
                 </label>
                 {errors.avatar && <span className="error_message">{errors.avatar}</span>}
-              </div> */}
+              </div>
             </div>
           </>
         )}

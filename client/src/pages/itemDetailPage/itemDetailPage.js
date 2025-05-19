@@ -1,6 +1,6 @@
 import { memo, useEffect, useState, useCallback } from 'react'
 import './itemDetailPage.scss'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import {
   FaCartPlus,
   FaStar,
@@ -13,6 +13,7 @@ import axiosInstance from 'utils/api'
 import { itemTypes } from 'utils/enums'
 import { toast } from 'react-toastify'
 import axios from 'axios'
+import routers from 'utils/routers'
 
 const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
   const navigate = useNavigate()
@@ -59,9 +60,6 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
         params: { page: commentPage, limit: 3 },
       })
 
-      console.log('API response:', response.data) 
-
-      
       const fetchedComments = response.data.data.comments || []
 
       // Cập nhật thông tin phân trang
@@ -127,7 +125,7 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
       formData.append('itemId', itemId)
       formData.append('content', newComment)
 
-      
+
       if (commentImage) {
         formData.append('image', commentImage)
       }
@@ -139,7 +137,7 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
         },
       })
 
-    
+
       console.log('Bình luận thành công:', response.data)
 
       // Reset form
@@ -158,7 +156,7 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
     }
   }
   const handleNavigateToItem = (id) => {
-    
+
     navigate(`/item/${id}`)
   }
   const handleQuantityChange = (e) => {
@@ -227,8 +225,6 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
     fetchRelatedItems()
   }, [itemId, commentPage, fetchComments, fetchRelatedItems])
 
-  console.log(comments);
-
   return (
     <div className="item-information-management">
       <div className="container">
@@ -249,6 +245,13 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
                     )}
 
                     <div className="item-content">
+                      <div className='item-in-shop'>
+                        <strong>Cửa hàng: </strong>
+                        <Link key={item.shopId._id} to={routers.getShopDetailPath(item.shopId._id)}>
+                          <img src={item.shopId.imgUrl} alt={item.shopId.name} />
+                          {item.shopId.name}
+                        </Link>
+                      </div>
                       <div>
                         <strong>Tên sản phẩm: </strong> {item.name}
                       </div>
@@ -340,94 +343,94 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
 
                     {/* Danh sách bình luận */}
                     <div className="comments-list">
-  {commentLoading ? (
-    <div className="comment-loading">Đang tải bình luận...</div>
-  ) : commentError ? (
-    <div className="comment-error">{commentError}</div>
-  ) : (
-    <>
-      <div className="comment-scrollable">
-        {comments.length === 0 ? (
-          <div className="no-comments">
-            Chưa có bình luận nào cho sản phẩm này.
-          </div>
-        ) : (
-          comments.map((comment) => (
-            <div key={comment._id} className="comment-item">
-              <div className="comment-header">
-                <div className="user-info">
-                  {comment.userId?.imgUrl ? (
-                    <img
-                      src={comment.userId.imgUrl}
-                      alt="User"
-                      className="user-avatar"
-                    />
-                  ) : (
-                    <FaUserCircle className="default-avatar" />
-                  )}
-                  <div>
-                    <div className="username">
-                      {comment.userId?.userName ||
-                        (comment.userId?._id
-                          ? `Người dùng #${comment.userId._id.substring(0, 4)}`
-                          : 'Khách')}
+                      {commentLoading ? (
+                        <div className="comment-loading">Đang tải bình luận...</div>
+                      ) : commentError ? (
+                        <div className="comment-error">{commentError}</div>
+                      ) : (
+                        <>
+                          <div className="comment-scrollable">
+                            {comments.length === 0 ? (
+                              <div className="no-comments">
+                                Chưa có bình luận nào cho sản phẩm này.
+                              </div>
+                            ) : (
+                              comments.map((comment) => (
+                                <div key={comment._id} className="comment-item">
+                                  <div className="comment-header">
+                                    <div className="user-info">
+                                      {comment.userId?.imgUrl ? (
+                                        <img
+                                          src={comment.userId.imgUrl}
+                                          alt="User"
+                                          className="user-avatar"
+                                        />
+                                      ) : (
+                                        <FaUserCircle className="default-avatar" />
+                                      )}
+                                      <div>
+                                        <div className="username">
+                                          {comment.userId?.userName ||
+                                            (comment.userId?._id
+                                              ? `Người dùng #${comment.userId._id.substring(0, 4)}`
+                                              : 'Khách')}
+                                        </div>
+                                        <div className="comment-date">
+                                          {formatCommentDate(comment.createdAt)}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="comment-content">{comment.content}</div>
+
+                                  {comment.imgUrl && (
+                                    <div className="comment-images">
+                                      <img
+                                        src={comment.imgUrl}
+                                        alt="Hình ảnh bình luận"
+                                        className="comment-image"
+                                      />
+                                    </div>
+                                  )}
+
+                                  {comment.reply && (
+                                    <div className="shop-reply">
+                                      <div className="reply-header">
+                                        <FaReply /> Phản hồi từ shop
+                                      </div>
+                                      <div className="reply-content">{comment.reply.content}</div>
+                                    </div>
+                                  )}
+                                </div>
+                              ))
+                            )}
+                          </div>
+
+                          {(commentTotalPages > 1 || comments.length > 0) && (
+                            <div className="pagination">
+                              <button
+                                className="page-btn"
+                                onClick={handlePrevPage}
+                                disabled={commentPage === 1}
+                              >
+                                Trước
+                              </button>
+                              <span className="page-info">
+                                Trang {commentPage} / {commentTotalPages}
+                              </span>
+                              <button
+                                className="page-btn"
+                                onClick={handleNextPage}
+                                disabled={commentPage === commentTotalPages}
+                              >
+                                Sau
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      )}
                     </div>
-                    <div className="comment-date">
-                      {formatCommentDate(comment.createdAt)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="comment-content">{comment.content}</div>
-
-              {comment.imgUrl && (
-                <div className="comment-images">
-                  <img
-                    src={comment.imgUrl}
-                    alt="Hình ảnh bình luận"
-                    className="comment-image"
-                  />
-                </div>
-              )}
-
-              {comment.reply && (
-                <div className="shop-reply">
-                  <div className="reply-header">
-                    <FaReply /> Phản hồi từ shop
-                  </div>
-                  <div className="reply-content">{comment.reply.content}</div>
-                </div>
-              )}
-            </div>
-          ))
-        )}
-      </div>
-
-      {(commentTotalPages > 1 || comments.length > 0) && (
-        <div className="pagination">
-          <button
-            className="page-btn"
-            onClick={handlePrevPage}
-            disabled={commentPage === 1}
-          >
-            Trước
-          </button>
-          <span className="page-info">
-            Trang {commentPage} / {commentTotalPages}
-          </span>
-          <button
-            className="page-btn"
-            onClick={handleNextPage}
-            disabled={commentPage === commentTotalPages}
-          >
-            Sau
-          </button>
-        </div>
-      )}
-    </>
-  )}
-</div>
 
 
                     {/* Form thêm bình luận mới */}

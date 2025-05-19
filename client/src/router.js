@@ -14,11 +14,17 @@ import ShopDetailPage from 'pages/shopDetailPage/shopDetailPage'
 import MyShopPage from 'pages/myShopPage/myShopPage'
 import ShopCensorshipPage from 'pages/shopCensorshipPage/shopCensorshipPage'
 
-const renderRouter = ({ searchQuery, setDistinctItemQuantity, setTotalPaymentAmount }) => {
+const renderRouter = ({
+  searchQuery,
+  setDistinctItemQuantity,
+  setTotalPaymentAmount,
+  openChat,
+  setShopChat,
+}) => {
   const allRouters = [
     {
       path: routers.HOME,
-      component: <HomePage searchQuery={searchQuery} />, 
+      component: <HomePage searchQuery={searchQuery} />,
     },
     {
       path: routers.PROFILE,
@@ -26,7 +32,12 @@ const renderRouter = ({ searchQuery, setDistinctItemQuantity, setTotalPaymentAmo
     },
     {
       path: routers.CART,
-      component: <CartPage setDistinctItemQuantity={setDistinctItemQuantity} setTotalPaymentAmount={setTotalPaymentAmount}/>,
+      component: (
+        <CartPage
+          setDistinctItemQuantity={setDistinctItemQuantity}
+          setTotalPaymentAmount={setTotalPaymentAmount}
+        />
+      ),
     },
     {
       path: routers.CHECKOUT,
@@ -54,11 +65,16 @@ const renderRouter = ({ searchQuery, setDistinctItemQuantity, setTotalPaymentAmo
     },
     {
       path: routers.SHOP_DETAIL,
-      component: <ShopDetailPage />,
+      component: <ShopDetailPage openChat={openChat} setShopChat={setShopChat}/>,
     },
     {
       path: routers.ITEM_DETAIL,
-      component: <ItemDetailPage setDistinctItemQuantity={setDistinctItemQuantity} setTotalPaymentAmount={setTotalPaymentAmount}/>,
+      component: (
+        <ItemDetailPage
+          setDistinctItemQuantity={setDistinctItemQuantity}
+          setTotalPaymentAmount={setTotalPaymentAmount}
+        />
+      ),
     },
     {
       path: routers.MY_SHOP,

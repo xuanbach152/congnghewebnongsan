@@ -52,11 +52,41 @@
       .shop-detail {
         display: flex;
         gap: 24px;
+
+        button {
+          width: fit-content;
+          padding: 10px 16px;
+          background-color: rgb(8, 15, 157);
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          font-size: 15px;
+          font-weight: 500;
+          cursor: pointer;
+          transition:
+            background-color 0.3s ease,
+            transform 0.2s ease;
+
+          &:hover {
+            background-color: darken(#4f05be, 10%);
+            transform: scale(1.02);
+          }
+
+          &:active {
+            transform: scale(0.98);
+          }
+
+          svg {
+            margin-left: 5px;
+            font-size: 16px;
+            margin-bottom: 2px;
+          }
+        }
       }
 
       .shop-image img {
-        width: 250px;
-        height: 250px;
+        width: 270px;
+        height: 270px;
         object-fit: cover;
         border-radius: 8px;
         box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);

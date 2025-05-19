@@ -9,185 +9,197 @@ import {
   AiOutlineInstagram,
   AiOutlineGoogle,
   AiOutlineBell,
-} from 'react-icons/ai';
-import { Link } from 'react-router-dom';
-import routers from 'utils/routers';
-import axiosInstance from 'utils/api';
-import { itemTypes, provinces } from 'utils/enums';
-import { toast } from 'react-toastify';
-import { FaCaretDown } from 'react-icons/fa';
+} from 'react-icons/ai'
+import { Link } from 'react-router-dom'
+import routers from 'utils/routers'
+import axiosInstance from 'utils/api'
+import { itemTypes, provinces } from 'utils/enums'
+import { toast } from 'react-toastify'
+import { FaCaretDown } from 'react-icons/fa'
 
-const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }) => {
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [cartLoading, setCartLoading] = useState(false);
-  const [filterLocation, setFilterLocation] = useState('all');
-  const [filterCategory, setFilterCategory] = useState('all');
-  const [filterPrice, setFilterPrice] = useState('all');
-  const [filterPromotion, setFilterPromotion] = useState(false);
-  const [filterTrend, setFilterTrend] = useState(false);
-  const [user, setUser] = useState(null);
-  const [itemQuantity, setItemQuantity] = useState(0);
-  const [paymentAmount, setPaymentAmount] = useState(0);
-  const [error, setError] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
+const MainHeader = ({
+  setSearchQuery,
+  distinctItemQuantity,
+  totalPaymentAmount,
+}) => {
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [isLogin, setIsLogin] = useState(true)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isProfileOpen, setIsProfileOpen] = useState(false)
+  const [selectedItems, setSelectedItems] = useState([])
+  const [cartLoading, setCartLoading] = useState(false)
+  const [filterLocation, setFilterLocation] = useState('all')
+  const [filterCategory, setFilterCategory] = useState('all')
+  const [filterPrice, setFilterPrice] = useState('all')
+  const [filterPromotion, setFilterPromotion] = useState(false)
+  const [filterTrend, setFilterTrend] = useState(false)
+  const [user, setUser] = useState(null)
+  const [itemQuantity, setItemQuantity] = useState(0)
+  const [paymentAmount, setPaymentAmount] = useState(0)
+  const [error, setError] = useState('')
+  const [searchInput, setSearchInput] = useState('')
 
   useEffect(() => {
-    setItemQuantity(distinctItemQuantity);
-  }, [distinctItemQuantity]);
+    setItemQuantity(distinctItemQuantity)
+  }, [distinctItemQuantity])
 
   useEffect(() => {
-    setPaymentAmount(totalPaymentAmount);
-  }, [totalPaymentAmount]);
+    setPaymentAmount(totalPaymentAmount)
+  }, [totalPaymentAmount])
 
   const login = async (userName, password) => {
     try {
       const response = await axiosInstance.post('/auth/login', {
         userName,
         password,
-      });
-      return response.data;
+      })
+      return response.data
     } catch (error) {
-      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng nhập' };
+      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng nhập' }
     }
-  };
+  }
 
   const register = async (userName, password, phone) => {
     try {
-      const response = await axiosInstance.post('/auth/register', { userName, password, phone });
-      const { user, cart } = response.data;
-      return { user, cart };
+      const response = await axiosInstance.post('/auth/register', {
+        userName,
+        password,
+        phone,
+      })
+      const { user, cart } = response.data
+      return { user, cart }
     } catch (error) {
-      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' };
+      throw error.response?.data || { message: 'Có lỗi xảy ra khi đăng ký' }
     }
-  };
+  }
 
   const logout = async () => {
     try {
-      await axiosInstance.post('/auth/logout');
-      localStorage.removeItem('accessToken');
-      setUser(null);
-      setIsLoggedIn(false);
+      await axiosInstance.post('/auth/logout')
+      localStorage.removeItem('accessToken')
+      setUser(null)
+      setIsLoggedIn(false)
     } catch (error) {
-      console.error('Logout error:', error);
-      const errorMsg = error.response?.data?.message || 'Có lỗi xảy ra khi đăng xuất!';
-      toast.error(errorMsg);
+      console.error('Logout error:', error)
+      const errorMsg =
+        error.response?.data?.message || 'Có lỗi xảy ra khi đăng xuất!'
+      toast.error(errorMsg)
     }
-  };
+  }
 
   const handleAuthSubmit = async (e) => {
-    e.preventDefault();
-    const userName = e.target.userName.value;
-    const password = e.target.password.value;
+    e.preventDefault()
+    const userName = e.target.userName.value
+    const password = e.target.password.value
     try {
       if (isLogin) {
         if (!userName || !password) {
-          setError('Vui lòng điền đầy đủ tên đăng nhập và mật khẩu');
-          return;
+          setError('Vui lòng điền đầy đủ tên đăng nhập và mật khẩu')
+          return
         }
-        const result = await login(userName, password);
-        localStorage.setItem('accessToken', result.accessToken);
-        localStorage.setItem('role', result.role);
-        setUser(result.user);
-        setIsLoggedIn(true);
-        setIsAdmin(result.role === 'ADMIN');
-        await fetchCartData();
-        setIsAuthModalOpen(false);
+        const result = await login(userName, password)
+        localStorage.setItem('accessToken', result.accessToken)
+        localStorage.setItem('role', result.role)
+        localStorage.setItem('userId', result._id)
+        setUser(result)
+        setIsLoggedIn(true)
+        await fetchCartData()
+        setIsAuthModalOpen(false)
         window.location.reload();
       } else {
-        const confirmPassword = e.target.confirmPassword.value;
-        const phone = e.target.phone.value;
+        const confirmPassword = e.target.confirmPassword.value
+        const phone = e.target.phone.value
 
         if (!userName || !password || !confirmPassword || !phone) {
-          setError('Vui lòng điền đầy đủ các thông tin');
-          return;
+          setError('Vui lòng điền đầy đủ các thông tin')
+          return
         }
         if (password !== confirmPassword) {
-          setError('Mật khẩu không khớp!');
-          return;
+          setError('Mật khẩu không khớp!')
+          return
         }
-        await register(userName, password, phone);
-        toast.success('Đăng ký thành công! Vui lòng đăng nhập.');
-        setIsLogin(true);
+        await register(userName, password, phone)
+        toast.success('Đăng ký thành công! Vui lòng đăng nhập.')
+        setIsLogin(true)
       }
     } catch (error) {
-      console.error('Auth error details: ', error);
-      setError('Tài khoản hoặc mật khẩu không đúng.');
+      console.error('Auth error details: ', error)
+      setError('Tài khoản hoặc mật khẩu không đúng.')
     }
-  };
+  }
 
   const fetchCartData = async () => {
     try {
-      setCartLoading(true);
-      const response = await axiosInstance.get('/cart/getcart');
-      setItemQuantity(response.data.data.distinctItemQuantity);
-      setPaymentAmount(response.data.data.totalPaymentAmount);
-      setSelectedItems(response.data.data.shopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id)));
+      setCartLoading(true)
+      const response = await axiosInstance.get('/cart/getcart')
+      setItemQuantity(response.data.data.distinctItemQuantity)
+      setPaymentAmount(response.data.data.totalPaymentAmount)
+      setSelectedItems(
+        response.data.data.shopGroup.flatMap((group) =>
+          group.cartItems.map((item) => item._id || item.itemId._id)
+        )
+      )
     } catch (err) {
       if (err.response?.data?.message === 'Cart not found') {
-        setSelectedItems([]);
+        setSelectedItems([])
       }
     } finally {
-      setCartLoading(false);
+      setCartLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    const token = localStorage.getItem('accessToken')
     if (token) {
       try {
-        const decodedToken = jwtDecode(token);
-        setUser(decodedToken);
-        setIsLoggedIn(true);
-        fetchCartData();
+        const decodedToken = jwtDecode(token)
+        setUser(decodedToken)
+        setIsLoggedIn(true)
+        fetchCartData()
       } catch (error) {
-        console.error('Lỗi khi giải mã token:', error.message);
+        console.error('Lỗi khi giải mã token:', error.message)
       }
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!e.target.closest('.header_top_right li')) {
-        setIsDropdownOpen(false);
+        setIsDropdownOpen(false)
       }
-    };
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+    }
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [])
 
   const toggleAuthModal = () => {
-    setIsAuthModalOpen(!isAuthModalOpen);
+    setIsAuthModalOpen(!isAuthModalOpen)
     if (isAuthModalOpen) {
-      setError('');
+      setError('')
     }
-  };
+  }
 
   const switchAuthMode = () => {
-    setIsLogin(!isLogin);
-    setError('');
-  };
+    setIsLogin(!isLogin)
+    setError('')
+  }
 
   const handleLogout = async () => {
-    await logout();
-    setIsLoggedIn(false);
-    setIsDropdownOpen(false);
-    setIsProfileOpen(false);
-    setItemQuantity(0);
-    setPaymentAmount(0);
+    await logout()
+    setIsLoggedIn(false)
+    setIsDropdownOpen(false)
+    setIsProfileOpen(false)
+    setItemQuantity(0)
+    setPaymentAmount(0)
     window.location.href = '/'
-    toast.success('Đăng xuất thành công');
-  };
+    toast.success('Đăng xuất thành công')
+  }
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    setSearchQuery(searchInput);
-  };
+    e.preventDefault()
+    setSearchQuery(searchInput)
+  }
 
   return (
     <>
@@ -222,7 +234,9 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
                   }
                 >
                   <AiOutlineUser />
-                  <span>{isLoggedIn && user?.userName ? user.userName : 'Tài khoản'}</span>
+                  <span>
+                    {isLoggedIn && user?.userName ? user.userName : 'Tài khoản'}
+                  </span>
                   {isLoggedIn && <FaCaretDown className="dropdown-arrow" />}
                   {isLoggedIn && isDropdownOpen && (
                     <div className="user_dropdown">
@@ -230,9 +244,23 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
                         <li onClick={() => setIsProfileOpen(!isProfileOpen)}>
                           <Link to={routers.PROFILE}>Thông tin cá nhân</Link>
                         </li>
-                        <li><Link to={routers.SHOP_MANAGEMENT}>Quản lý cửa hàng</Link></li>
-                        <li><Link to={routers.ORDER_HISTORY}>Lịch sử mua hàng</Link></li>
-                        {isAdmin && <li><Link to={routers.SHOP_CENSORSHIP}>Kiểm duyệt cửa hàng</Link></li>}
+                        <li>
+                          <Link to={routers.SHOP_MANAGEMENT}>
+                            Quản lý cửa hàng
+                          </Link>
+                        </li>
+                        <li>
+                          <Link to={routers.ORDER_HISTORY}>
+                            Lịch sử mua hàng
+                          </Link>
+                        </li>
+                        {user.role === 'ADMIN' && (
+                          <li>
+                            <Link to={routers.SHOP_CENSORSHIP}>
+                              Kiểm duyệt cửa hàng
+                            </Link>
+                          </li>
+                        )}
                         <li onClick={handleLogout}>Đăng xuất</li>
                       </ul>
                     </div>
@@ -250,7 +278,13 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
         <div className="row">
           <div className="col-xl-3">
             <div className="header_logo">
-              <Link to="/" onClick={() => { setSearchQuery(''); setSearchInput('') }}>
+              <Link
+                to="/"
+                onClick={() => {
+                  setSearchQuery('')
+                  setSearchInput('')
+                }}
+              >
                 <h1>Nông sản Việt</h1>
               </Link>
             </div>
@@ -275,7 +309,11 @@ const MainHeader = ({ setSearchQuery, distinctItemQuantity, totalPaymentAmount }
           <div className="col-xl-1">
             <div className="header_cart">
               <div className="header_cart_price">
-                {cartLoading ? (<span>Đang tải...</span>) : (<span>{paymentAmount}</span>)}
+                {cartLoading ? (
+                  <span>Đang tải...</span>
+                ) : (
+                  <span>{paymentAmount}</span>
+                )}
               </div>
               <ul>
                 <li>

@@ -28,6 +28,7 @@ const updateUser = async (userId, userData) => {
     "imgUrl",
     "latitude",
     "longitude",
+    "role",
   ];
   const filteredData = {};
   Object.keys(userData).forEach((key) => {

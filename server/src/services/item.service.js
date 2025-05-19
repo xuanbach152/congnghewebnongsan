@@ -52,7 +52,7 @@ const updateItem = async (itemId, itemData) => {
 
 const getItemById = async (itemId) => {
   try {
-    const item = await ItemModel.findById(itemId);
+    const item = await ItemModel.findById(itemId).populate("shopId", "name imgUrl");
     throwBadRequest(!item, Message.ItemNotFound);
     return item;
   } catch (error) {

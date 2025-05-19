@@ -8,8 +8,9 @@ import Pagination from 'layouts/pagination/pagination'
 import routers from 'utils/routers'
 import { formatter } from 'utils/formatter'
 import { itemTypes } from 'utils/enums'
+import { FaPaperPlane } from 'react-icons/fa'
 
-const ShopDetailPage = () => {
+const ShopDetailPage = ({ openChat, setShopChat }) => {
   const { shopId } = useParams()
   const [shop, setShop] = useState(null)
   const [items, setItems] = useState([])
@@ -27,6 +28,8 @@ const ShopDetailPage = () => {
         console.error('Error fetching shop data:', error)
       })
   }, [shopId])
+
+  console.log(shop);
 
   useEffect(() => {
     const fetchItems = async () => {
@@ -71,6 +74,9 @@ const ShopDetailPage = () => {
                   <div>
                     <strong>Tên cửa hàng: </strong> {shop.name}
                   </div>
+                  <div>
+                    <strong>Chủ cửa hàng: </strong> {shop.userId.userName}
+                  </div>
                   <div className="shop-address">
                     <strong>Địa chỉ: </strong>
                     {shop.address}
@@ -91,6 +97,14 @@ const ShopDetailPage = () => {
                     <strong>Mô tả: </strong>
                     {shop.description || 'Không có mô tả'}
                   </div>
+                  <button
+                    onClick={() => {
+                      openChat()
+                      setShopChat(shop)
+                    }}
+                  >
+                    Nhắn tin <FaPaperPlane />
+                  </button>
                 </div>
               </div>
             </>
