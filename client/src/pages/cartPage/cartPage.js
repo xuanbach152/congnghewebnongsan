@@ -285,7 +285,7 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
             onClick={handleCheckout}
             disabled={selectedItems.length === 0}
           >
-            Thanh toán
+            Đặt hàng
           </button>
         </div>
       </div>

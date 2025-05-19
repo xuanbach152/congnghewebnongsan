@@ -200,7 +200,7 @@ const CheckoutPage = () => {
           <strong>{calculateTotal().toLocaleString()} VNĐ</strong>
         </div>
         <button onClick={handleCheckout} disabled={loading || !locationValue.trim()}>
-          {loading ? 'Đang xử lý...' : 'Đặt hàng'}
+          {loading ? 'Đang xử lý...' : 'Thanh toán'}
         </button>
       </div>
     </div>
