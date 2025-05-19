@@ -22,7 +22,7 @@ router.post("/", verifyToken, uploadImg.single("image"), createShop);
 router.get("/", getShops);
 router.get("/search", searchShops);
 router.get("/user", verifyToken, getShopsByUserId);
-router.get("/accepted", verifyToken, getAllShopAccepted);
+router.get("/accepted", getAllShopAccepted);
 router.get("/pending", verifyToken, getAllShopPending);
 router.get("/:id", getShopById);
 router.patch("/censorship/:shopId", verifyToken, censorshipCreateShop);

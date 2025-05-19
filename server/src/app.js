@@ -13,6 +13,7 @@ import shopRoutes from "./routes/shop.route.js";
 import commentRoutes from "./routes/comment.route.js";
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
+import chatBoxRoutes from "./routes/chatBox.route.js";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -50,6 +51,7 @@ app.use("/shop", shopRoutes);
 app.use("/comment", commentRoutes);
 app.use("/auth", authRoutes);
 app.use("/message", messageRoutes);
+app.use("/chatBox", chatBoxRoutes);
 app.get("/", (req, res) => {
   res.send("Chào mừng đến với Website Nông Sản Việt Nam");
 });

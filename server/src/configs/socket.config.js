@@ -1,37 +1,45 @@
 import { Server } from "socket.io";
-import http from "http";
-import messageModel from "../models/message.model.js";
+import messageService from "../services/message.service.js";
 
 export const setupSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "http://localhost:3000",
+      origin: "http://localhost:4000",
       methods: ["GET", "POST"],
     },
   });
 
   io.on("connection", (socket) => {
-    console.log("A user connected:", socket.id);
 
-    // Lắng nghe sự kiện join room
-    socket.on("joinRoom", (userId) => {
-      socket.join(userId); // Tham gia vào room với ID là userId
-      console.log(`User ${userId} joined room`);
+    socket.on("join", async ({ chatBoxId }) => {
+      await socket.join(chatBoxId);
     });
 
-    socket.on("sendMessage", async (message) => {
-      console.log("Message received:", message);
-      const { senderId, receiverId, content } = message;
-      const newMessage = await messageModel.create({
-        senderId,
-        receiverId,
-        content,
-      });
-      io.to(receiverId).emit("receiveMessage", newMessage);
+    socket.on("message", async ({ chatBoxId, userId, content }) => {
+      try {
+        const createMessageData = {
+          chatBoxId,
+          content,
+        };
+        const newMessage = await messageService.createMessage(
+          createMessageData,
+          userId
+        );
+
+        io.to(chatBoxId).emit("message", {
+          userId: newMessage.userId,
+          chatBoxId: newMessage.chatBoxId,
+          content: newMessage.content,
+          createdAt: newMessage.createdAt,
+        });
+      } catch (error) {
+        console.error("Error creating message:", error.message);
+        socket.emit("error", "Đã xảy ra lỗi khi gửi tin nhắn");
+      }
     });
 
     socket.on("disconnect", () => {
-      console.log("A user disconnected:", socket.id);
+      console.log("User disconnected:", socket.id);
     });
   });
 

@@ -7,7 +7,6 @@ import { uploadToCloudinary } from "../utils/file.util.js";
 // Create a new Shop
 export const createShop = async (req, res) => {
   try {
-    console.log(req.body);
     const { name, address, description } = req.body;
     const userId = req.user.id;
     const image = req.file;

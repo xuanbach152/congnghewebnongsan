@@ -6,14 +6,14 @@ const messageSchema = new Schema({
         required: true,
         ref: "User",
     },
-    receiverId: {
-        type: Schema.ObjectId,
-        required: true,
-        ref: "User",
-    },
     content: {
         type: String,
         required: true,
+    },
+    chatBoxId: {
+        type: Schema.ObjectId,
+        required: true,
+        ref: "ChatBox",
     },
     timestamp: {
         type: Date,

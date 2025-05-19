@@ -57,7 +57,7 @@ const updateShop = async (shopId, shopData) => {
 };
 
 const getShopById = async (ShopId) => {
-  const Shop = await ShopModel.findById(ShopId);
+  const Shop = await ShopModel.findById(ShopId).populate("userId", "userName");
   throwBadRequest(!Shop, Message.ShopNotFound);
   return Shop;
 };
