@@ -56,9 +56,12 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
     try {
       setCommentLoading(true)
 
-      const response = await axios.get(`http://localhost:3000/comment/item/${itemId}`, {
-        params: { page: commentPage, limit: 3 },
-      })
+      const response = await axios.get(
+        `http://localhost:3000/comment/item/${itemId}`,
+        {
+          params: { page: commentPage, limit: 3 },
+        }
+      )
 
       const fetchedComments = response.data.data.comments || []
 
@@ -125,7 +128,6 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
       formData.append('itemId', itemId)
       formData.append('content', newComment)
 
-
       if (commentImage) {
         formData.append('image', commentImage)
       }
@@ -136,7 +138,6 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
           'Content-Type': 'multipart/form-data',
         },
       })
-
 
       console.log('Bình luận thành công:', response.data)
 
@@ -156,7 +157,6 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
     }
   }
   const handleNavigateToItem = (id) => {
-
     navigate(`/item/${id}`)
   }
   const handleQuantityChange = (e) => {
@@ -245,10 +245,16 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
                     )}
 
                     <div className="item-content">
-                      <div className='item-in-shop'>
+                      <div className="item-in-shop">
                         <strong>Cửa hàng: </strong>
-                        <Link key={item.shopId._id} to={routers.getShopDetailPath(item.shopId._id)}>
-                          <img src={item.shopId.imgUrl} alt={item.shopId.name} />
+                        <Link
+                          key={item.shopId._id}
+                          to={routers.getShopDetailPath(item.shopId._id)}
+                        >
+                          <img
+                            src={item.shopId.imgUrl}
+                            alt={item.shopId.name}
+                          />
                           {item.shopId.name}
                         </Link>
                       </div>
@@ -344,7 +350,9 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
                     {/* Danh sách bình luận */}
                     <div className="comments-list">
                       {commentLoading ? (
-                        <div className="comment-loading">Đang tải bình luận...</div>
+                        <div className="comment-loading">
+                          Đang tải bình luận...
+                        </div>
                       ) : commentError ? (
                         <div className="comment-error">{commentError}</div>
                       ) : (
@@ -382,7 +390,9 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
                                     </div>
                                   </div>
 
-                                  <div className="comment-content">{comment.content}</div>
+                                  <div className="comment-content">
+                                    {comment.content}
+                                  </div>
 
                                   {comment.imgUrl && (
                                     <div className="comment-images">
@@ -399,7 +409,9 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
                                       <div className="reply-header">
                                         <FaReply /> Phản hồi từ shop
                                       </div>
-                                      <div className="reply-content">{comment.reply.content}</div>
+                                      <div className="reply-content">
+                                        {comment.reply.content}
+                                      </div>
                                     </div>
                                   )}
                                 </div>
@@ -431,7 +443,6 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
                         </>
                       )}
                     </div>
-
 
                     {/* Form thêm bình luận mới */}
                     <div className="comment-form">
