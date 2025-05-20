@@ -245,6 +245,7 @@ const CheckoutPage = () => {
       }
 
       toast.success('Đặt hàng thành công! Chuyển hướng đến Lịch sử đơn hàng...');
+      window.location.reload();
       navigate('/order/history');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Không thể đặt hàng');
@@ -312,7 +313,7 @@ const CheckoutPage = () => {
         {loading ? (
           <div className="loading">Đang tải...</div>
         ) : shopGroups.length === 0 ? (
-          <div className="empty-message">Không có sản phẩm hợp lệ</div>
+          <div className="empty-message"></div>
         ) : (
           shopGroups.map(group => (
             <ShopGroup
