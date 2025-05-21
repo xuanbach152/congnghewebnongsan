@@ -8,7 +8,7 @@
   background: #fff;
   border-radius: 4px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  border-top: 1px solid #eee; 
+  border-top: 1px solid #eee;
 }
 
 .sidebar {
@@ -79,7 +79,6 @@
   }
 }
 
-
 .profile_content {
   flex: 1;
   padding: 20px;
@@ -125,10 +124,10 @@
       flex-shrink: 0; // Ngăn label co lại
     }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="date"],
-    input[type="password"],
+    input[type='text'],
+    input[type='email'],
+    input[type='date'],
+    input[type='password'],
     select,
     textarea {
       flex: 1;
@@ -226,7 +225,7 @@
 
 .edit_button {
   padding: 10px 20px;
-  background-color: #287edb; 
+  background-color: #287edb;
   color: white;
   border: none;
   border-radius: 5px;
@@ -235,7 +234,7 @@
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: #0056b3; 
+    background-color: #0056b3;
   }
 
   &:disabled {
@@ -261,4 +260,66 @@
   color: #666;
   font-size: 14px;
   margin-bottom: 10px;
+}
+.avatar_section {
+  width: 250px;
+  text-align: center;
+  padding: 15px;
+
+  h3 {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 12px;
+  }
+
+  .upload-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 180px;
+    height: 180px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    margin: 0 auto 15px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    background: #f9f9f9;
+
+    &:hover {
+      border-color: map.get($theme-colors, 'main');
+      background: #f0f0f0;
+    }
+
+    .upload-preview {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .upload-placeholder {
+      font-size: 40px;
+      color: #ccc;
+      font-weight: 300;
+    }
+  }
+
+  .upload-input {
+    display: none;
+  }
+  .upload-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: 500;
+    color: map.get($theme-colors, 'main');
+  }
 }
