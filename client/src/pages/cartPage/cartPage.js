@@ -7,37 +7,47 @@ import { toast } from 'react-toastify';
 import { FaShoppingCart } from 'react-icons/fa'
 
 const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
-  const [cart, setCart] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [selectedItems, setSelectedItems] = useState([])
-  const navigate = useNavigate()
+  const [cart, setCart] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const navigate = useNavigate();
 
   const fetchCart = async () => {
     try {
-      setLoading(true)
-      const response = await axiosInstance.get('/cart/getcart')
-      const cartData = response.data.data
-      setDistinctItemQuantity(response.data.data.distinctItemQuantity || 0)
-      setTotalPaymentAmount(response.data.data.totalPaymentAmount || 0)
+      setLoading(true);
+      const response = await axiosInstance.get('/cart/getcart');
+      const cartData = response.data.data;
+      setDistinctItemQuantity(cartData.distinctItemQuantity || 0);
+      setTotalPaymentAmount(cartData.totalPaymentAmount || 0);
 
       // Lấy thông tin shop cho từng shopId trong shopGroup
       const updatedShopGroup = await Promise.all(
         cartData.shopGroup.map(async (group) => {
-          const shopResponse = await axiosInstance.get(`/shop/${group.shopId}`)
-          return {
-            ...group,
-            shopName: shopResponse.data.data.name,
+          try {
+            const shopResponse = await axiosInstance.get(`/shop/${group.shopId}`);
+            return {
+              ...group,
+              shopName: shopResponse.data.data.name,
+            };
+          } catch (err) {
+            console.error(`Failed to fetch shop ${group.shopId}:`, err);
+            return {
+              ...group,
+              shopName: `Shop ${group.shopId}`,
+            };
           }
         })
-      )
+      );
 
       // Cập nhật cart với thông tin shop
       setCart({
         ...cartData,
         shopGroup: updatedShopGroup,
       });
-      setSelectedItems(updatedShopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id)));
+      const initialSelectedItems = updatedShopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id));
+      setSelectedItems(initialSelectedItems);
+      console.log('Initial selectedItems:', initialSelectedItems);
     } catch (err) {
       if (err.response?.data?.message === 'Cart not found') {
         setCart({ shopGroup: [], _id: null, totalPaymentAmount: 0 });
@@ -46,31 +56,27 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
         toast.error(err.response?.data?.message || 'Không thể tải giỏ hàng');
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const _updateCartItemQuantity = (itemId, newQuantity) => {
     setCart((prevCart) => {
-      const updatedShopGroup = prevCart.shopGroup
-        .map((group) => ({
-          ...group,
-          cartItems: group.cartItems
-            .map((item) =>
-              item._id === itemId || item.itemId._id === itemId
-                ? { ...item, quantity: newQuantity }
-                : item
-            )
-            .filter((item) => item.quantity > 0),
-        }))
-        .filter((group) => group.cartItems.length > 0)
-
-      return { ...prevCart, shopGroup: updatedShopGroup }
-    })
-  }
+      const updatedShopGroup = prevCart.shopGroup.map((group) => ({
+        ...group,
+        cartItems: group.cartItems.map((item) =>
+          item._id === itemId || item.itemId._id === itemId
+            ? { ...item, quantity: newQuantity }
+            : item
+        ).filter((item) => item.quantity > 0),
+      })).filter((group) => group.cartItems.length > 0);
+  
+      return { ...prevCart, shopGroup: updatedShopGroup };
+    });
+  };
 
   const updateCartItem = async (itemId, newQuantity) => {
-    if (newQuantity < 1) return
+    if (newQuantity < 1) return; 
     try {
       const response = await axiosInstance.put('/cart/update', {
         cartId: cart._id,
@@ -82,7 +88,7 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
     } catch (err) {
       toast.error(err.response?.data?.message || 'Cập nhật số lượng thất bại');
     }
-  }
+  };
 
   const removeCartItem = async (itemId) => {
     try {
@@ -93,10 +99,11 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
       setDistinctItemQuantity(response.data.data.distinctItemQuantity);
       setTotalPaymentAmount(response.data.data.totalPaymentAmount || 0);
       setSelectedItems(selectedItems.filter(id => id !== itemId));
+      window.location.reload()
     } catch (err) {
       toast.error(err.response?.data?.message || 'Xóa sản phẩm thất bại');
     }
-  }
+  };
 
   const clearCart = async () => {
     try {
@@ -106,54 +113,69 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
       setCart(response.data.data);
       setDistinctItemQuantity(0);
       setSelectedItems([]);
+      window.location.reload()
     } catch (err) {
-      error(err.response?.data?.message || 'Xóa giỏ hàng thất bại');
+      toast.error(err.response?.data?.message || 'Xóa giỏ hàng thất bại');
     }
-  }
+  };
 
   const toggleSelectItem = (itemId) => {
-    setSelectedItems((prev) =>
+    setSelectedItems(prev =>
       prev.includes(itemId)
-        ? prev.filter((id) => id !== itemId)
+        ? prev.filter(id => id !== itemId)
         : [...prev, itemId]
-    )
-  }
+    );
+  };
 
   const toggleSelectAll = () => {
-    if (
-      selectedItems.length ===
-      cart.shopGroup.flatMap((group) => group.cartItems).length
-    ) {
-      setSelectedItems([])
+    if (selectedItems.length === cart.shopGroup.flatMap(group => group.cartItems).length) {
+      setSelectedItems([]);
     } else {
-      setSelectedItems(
-        cart.shopGroup.flatMap((group) =>
-          group.cartItems.map((item) => item._id || item.itemId._id)
-        )
-      )
+      setSelectedItems(cart.shopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id)));
     }
-  }
+  };
 
   const calculateSelectedTotal = () => {
-    if (!cart?.shopGroup) return 0
+    if (!cart?.shopGroup) return 0;
     return cart.shopGroup
-      .flatMap((group) => group.cartItems)
-      .filter((item) => selectedItems.includes(item._id || item.itemId._id))
-      .reduce((total, item) => total + item.price * item.quantity, 0)
-  }
+      .flatMap(group => group.cartItems)
+      .filter(item => selectedItems.includes(item._id || item.itemId._id))
+      .reduce((total, item) => total + item.price * item.quantity, 0);
+  };
 
   const handleCheckout = () => {
     const itemsToCheckout = cart.shopGroup
-      .flatMap((group) => group.cartItems)
-      .filter((item) => selectedItems.includes(item._id || item.itemId._id))
-    navigate('/checkout', {
-      state: { selectedItems: itemsToCheckout, cartId: cart._id },
-    })
-  }
+      .map(group => {
+        const selectedItemsInGroup = group.cartItems
+          .filter(item => selectedItems.includes(item._id || item.itemId._id))
+          .map(item => {
+            return {
+              _id: item._id || item.itemId._id,
+              itemId: {
+                _id: item.itemId._id,
+                name: item.name || item.itemId.name || 'Unknown Item', 
+                imgUrl: item.itemId.imgUrl || '',
+                shopId: group.shopId, 
+              },
+              price: item.price || 0,
+              quantity: item.quantity || 1,
+            };
+          })
+          .filter(item => item !== null);
+        return selectedItemsInGroup;
+      })
+      .flat();
+
+    if (itemsToCheckout.length === 0) {
+      toast.error('Không có sản phẩm hợp lệ để thanh toán. Vui lòng kiểm tra lại giỏ hàng.');
+      return;
+    }
+    navigate('/checkout', { state: { selectedItems: itemsToCheckout, cartId: cart._id } });
+  };
 
   const handleShopClick = (shopId) => {
-    navigate(`/shop/${shopId}`)
-  }
+    navigate(`/shop/${shopId}`);
+  };
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');
@@ -162,10 +184,9 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
       navigate('/');
       return;
     }
-    fetchCart()
-  }, [])
+    fetchCart();
+  }, []);
 
-  if (loading) return <div className="loading">Đang tải...</div>;
   if (error) return <div className="error">{error}</div>;
   if (!cart || !cart.shopGroup?.length) {
     return (
@@ -184,11 +205,7 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
       <div className="cart-header">
         <input
           type="checkbox"
-          checked={
-            selectedItems.length ===
-              cart.shopGroup.flatMap((group) => group.cartItems).length &&
-            cart.shopGroup.length > 0
-          }
+          checked={selectedItems.length === cart.shopGroup.flatMap(group => group.cartItems).length && cart.shopGroup.length > 0}
           onChange={toggleSelectAll}
         />
         <span>Sản phẩm</span>
@@ -200,10 +217,7 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
       <div className="cart-items">
         {cart.shopGroup.map((shopGroup) => (
           <div key={shopGroup._id} className="shop-section">
-            <h3
-              onClick={() => handleShopClick(shopGroup.shopId)}
-              style={{ cursor: 'pointer', color: '#0dac02' }}
-            >
+            <h3 onClick={() => handleShopClick(shopGroup.shopId)} style={{ cursor: 'pointer', color: '#0dac02' }}>
               {shopGroup.shopName || `Shop ${shopGroup.shopId}`}
             </h3>
             {shopGroup.cartItems.map((item) => (
@@ -221,23 +235,17 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
                   />
                   <span className="item-name">{item.name}</span>
                 </div>
-                <span className="item-price">
-                  {item.price.toLocaleString()} VNĐ
-                </span>
+                <span className="item-price">{item.price.toLocaleString()} VNĐ</span>
                 <div className="quantity-control">
                   <button
-                    onClick={() =>
-                      updateCartItem(item.itemId._id, item.quantity - 1)
-                    }
+                    onClick={() => updateCartItem(item.itemId._id, item.quantity - 1)}
                     disabled={item.quantity <= 1}
                   >
                     -
                   </button>
                   <span>{item.quantity}</span>
                   <button
-                    onClick={() =>
-                      updateCartItem(item.itemId._id, item.quantity + 1)
-                    }
+                    onClick={() => updateCartItem(item.itemId._id, item.quantity + 1)}
                   >
                     +
                   </button>
@@ -260,17 +268,10 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
         <div className="footer-left">
           <input
             type="checkbox"
-            checked={
-              selectedItems.length ===
-                cart.shopGroup.flatMap((group) => group.cartItems).length &&
-              cart.shopGroup.length > 0
-            }
+            checked={selectedItems.length === cart.shopGroup.flatMap(group => group.cartItems).length && cart.shopGroup.length > 0}
             onChange={toggleSelectAll}
           />
-          <span>
-            Chọn tất cả (
-            {cart.shopGroup.flatMap((group) => group.cartItems).length})
-          </span>
+          <span>Chọn tất cả ({cart.shopGroup.flatMap(group => group.cartItems).length})</span>
           <button className="clear-cart" onClick={clearCart}>
             Xóa tất cả
           </button>
@@ -280,17 +281,13 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
             Tổng thanh toán ({selectedItems.length} sản phẩm):{' '}
             <strong>{calculateSelectedTotal().toLocaleString()} VNĐ</strong>
           </span>
-          <button
-            className="checkout-button"
-            onClick={handleCheckout}
-            disabled={selectedItems.length === 0}
-          >
+          <button className="checkout-button" onClick={handleCheckout} disabled={selectedItems.length === 0}>
             Thanh toán
           </button>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default memo(CartPage)
+export default memo(CartPage);

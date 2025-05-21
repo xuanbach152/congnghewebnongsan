@@ -80,9 +80,7 @@
     .suggestion-item {
       padding: 10px 15px;
       cursor: pointer;
-      transition:
-        background-color 0.3s ease,
-        transform 0.2s ease;
+      transition: background-color 0.3s ease, transform 0.2s ease;
       font-size: 14px;
       color: #333;
       border-bottom: 1px solid #f0f0f0;
@@ -103,43 +101,102 @@
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
 
-    .checkout-item {
+    .checkout-header {
       display: grid;
-      grid-template-columns: 3fr 1fr 1fr;
-      align-items: center;
+      grid-template-columns: 60px 3fr 1fr 1fr;
+      padding: 10px 15px;
+      background-color: #f5f5f5;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
+
+      span:nth-child(1) {
+        text-align: left;
+      }
+
+      span:last-child {
+        text-align: right;
+      }
+    }
+
+    .shop-section {
       padding: 15px;
       border-bottom: 1px solid #eee;
-      background-color: #fff;
 
-      .item-image {
-        width: 60px;
-        height: 60px;
-        object-fit: cover;
-        border-radius: 4px;
-        margin-right: 10px;
+      h3 {
+        font-size: 16px;
+        color: #0dac02;
+        margin-bottom: 10px;
+        cursor: pointer;
+        &:hover {
+          text-decoration: underline;
+        }
       }
 
-      .item-name {
+      .checkout-item {
+        display: grid;
+        grid-template-columns: 60px 3fr 1fr 1fr;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f5f5f5;
+
+        .item-image {
+          width: 60px;
+          height: 60px;
+          object-fit: cover;
+          border-radius: 4px;
+        }
+
+        .item-name {
+          font-size: 14px;
+          color: #333;
+          max-width: 300px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .item-quantity {
+          text-align: center;
+          font-size: 14px;
+          color: #666;
+        }
+
+        .item-price {
+          text-align: right;
+          font-size: 14px;
+          color: #0dac02;
+          font-weight: bold;
+        }
+      }
+
+      .shop-subtotal {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        padding: 10px 0;
         font-size: 14px;
         color: #333;
-        max-width: 300px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
 
-      .item-quantity {
-        text-align: center;
-        font-size: 14px;
-        color: #666;
+        span {
+          &:first-child {
+            text-align: left;
+          }
+          &:nth-child(2) {
+            text-align: center;
+          }
+          &:last-child {
+            text-align: right;
+            color: #0dac02;
+            font-weight: bold;
+          }
+        }
       }
+    }
 
-      .item-price {
-        text-align: right;
-        font-size: 14px;
-        color: #0dac02;
-        font-weight: bold;
-      }
+    .shop-section:last-child {
+      border-bottom: none;
     }
   }
 
@@ -155,10 +212,13 @@
     bottom: 0;
 
     .total-line {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
       font-size: 14px;
       color: #333;
 
-      strong {
+      div:last-child strong {
         font-size: 16px;
         color: #0dac02;
       }
@@ -193,56 +253,3 @@
     padding: 20px;
   }
 }
-
-// @media (max-width: 768px) {
-//   .checkout-page {
-//     padding: 10px;
-//   }
-
-//   .checkout-page h2 {
-//     font-size: 20px;
-//     margin-bottom: 15px;
-//   }
-
-//   .checkout-item {
-//     grid-template-columns: 1fr 100px;
-//     grid-template-areas:
-//       'info info'
-//       'quantity price';
-//     gap: 10px;
-//     padding: 10px;
-
-//     .item-image {
-//       width: 50px;
-//       height: 50px;
-//     }
-
-//     .item-name {
-//       font-size: 12px;
-//       max-width: 100%;
-//     }
-
-//     .item-quantity {
-//       grid-area: quantity;
-//       font-size: 12px;
-//       text-align: left;
-//     }
-
-//     .item-price {
-//       grid-area: price;
-//       font-size: 12px;
-//       text-align: left;
-//     }
-//   }
-
-//   .checkout-footer {
-//     flex-direction: column;
-//     gap: 10px;
-//     padding: 10px;
-
-//     button {
-//       width: 100%;
-//       padding: 8px;
-//     }
-//   }
-//  }
