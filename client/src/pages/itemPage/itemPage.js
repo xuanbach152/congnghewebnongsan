@@ -16,7 +16,7 @@ const ItemPage = () => {
     const fetchItems = async () => {
       try {
         const response = await axiosInstance.get(
-          `http://localhost:3000/item?page=${currentPage}`
+          `/item?page=${currentPage}`
         )
         const { items, totalPages } = response.data.data
         setTotalPages(totalPages)

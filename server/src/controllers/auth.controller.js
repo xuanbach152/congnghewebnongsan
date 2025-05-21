@@ -20,7 +20,7 @@ export const register = async (req, res) => {
   try {
     const { userName, password, address, phone, email, gender } = req.body;
 
-    if (!userName || !password || !address || !phone || !email || !gender) {
+    if (!userName || !password || !phone) {
       return res.status(httpStatus.BAD_REQUEST).json({
         message:
           "Vui lòng cung cấp đầy đủ thông tin (userName, password, address, phone, email, gender)",
@@ -35,11 +35,11 @@ export const register = async (req, res) => {
     }
 
     const hashedPassword = await hashPassword(password);
-    const coordinates = await distanceService.geocodeAddress(address);
-    if (coordinates) {
-      req.body.latitude = coordinates.latitude;
-      req.body.longitude = coordinates.longitude;
-    }
+    // const coordinates = await distanceService.geocodeAddress(address);
+    // if (coordinates) {
+    //   req.body.latitude = coordinates.latitude;
+    //   req.body.longitude = coordinates.longitude;
+    // }
     const newUser = await userService.createUser({
       ...req.body,
       password: hashedPassword,
