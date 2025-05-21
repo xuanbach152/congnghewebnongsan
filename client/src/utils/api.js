@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'https://congnghewebnongsan-2.onrender.com',
   withCredentials: true,
 })
 
@@ -31,7 +31,7 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true
       try {
         const res = await axios.post(
-          'http://localhost:3000/auth/refresh-token',
+          'https://congnghewebnongsan-2.onrender.com/auth/refresh-token',
           {},
           { withCredentials: true }
         )
