@@ -17,7 +17,7 @@ const ShopCensorshipPage = () => {
     setLoading(true)
     try {
       const response = await axiosInstance.get(
-        `http://localhost:3000/shop?page=${page}`
+        `/shop?page=${page}`
       )
       const { shops, totalPages } = response.data.data
       setTotalPages(totalPages)
@@ -42,7 +42,7 @@ const ShopCensorshipPage = () => {
 
   const handlCensorshipShop = async (shopId, status) => {
     await axiosInstance.patch(
-      `http://localhost:3000/shop/censorship/${shopId}`,
+      `/shop/censorship/${shopId}`,
       { status }
     )
     fetchShops(currentPage);

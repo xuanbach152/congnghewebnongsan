@@ -133,7 +133,7 @@ const getOrderById = async (orderId) => {
 const getOrders = async (
   page,
   limit,
-  sortField = "createdAt",
+  sortField = "orderDate",
   sortType = "desc",
 ) => {
   try {
@@ -199,7 +199,7 @@ const updateOrder = async (orderId, updateData) => {
 };
 const getOrdersByUser = async (userId, page,
   limit,
-  sortField = "createdAt",
+  sortField = "orderDate",
   sortType = "desc") => {
   try {
     const skip = (page - 1) * limit;

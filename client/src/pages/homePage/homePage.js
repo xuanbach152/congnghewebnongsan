@@ -23,7 +23,7 @@ const HomePage = ({ searchQuery }) => {
     const fetchShops = async () => {
       setShopLoading(true)
       try {
-        const url = (searchQuery === '' ? `http://localhost:3000/shop/accepted?page=${shopCurrentPage}` : `http://localhost:3000/shop/search?searchText=${searchQuery}`)
+        const url = (searchQuery === '' ? `/shop/accepted?page=${shopCurrentPage}` : `/shop/search?searchText=${searchQuery}`)
         const response = await axiosInstance.get(
           url
         )
@@ -52,7 +52,7 @@ const HomePage = ({ searchQuery }) => {
     const fetchItems = async () => {
       setItemLoading(true)
       try {
-        const url = (searchQuery === '' ? `http://localhost:3000/item?page=${itemCurrentPage}` : `http://localhost:3000/item/search?searchText=${searchQuery}`)
+        const url = (searchQuery === '' ? `/item?page=${itemCurrentPage}` : `/item/search?searchText=${searchQuery}`)
         const response = await axiosInstance.get(
           url
         )
