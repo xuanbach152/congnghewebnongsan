@@ -5,7 +5,7 @@ import axiosInstance from 'utils/api'
 import { FaComments } from 'react-icons/fa'
 import { useTokenVerification } from 'utils/tokenVerification'
 
-const socket = io('https://congnghewebnongsan-2.onrender.com')
+const socket = io('https://congnghewebnongsan.onrender.com')
 
 export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
   const userId = localStorage.getItem('userId')

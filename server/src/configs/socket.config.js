@@ -9,6 +9,9 @@ export const setupSocket = (server) => {
     },
     credentials: true,
   });
+  
+  // Log cấu hình CORS
+  console.log("Socket.io CORS config:", io.opts.cors);
 
   io.on("connection", (socket) => {
 
