@@ -5,7 +5,7 @@ import axiosInstance from 'utils/api'
 import { FaComments } from 'react-icons/fa'
 import { useTokenVerification } from 'utils/tokenVerification'
 
-const socket = io('')
+const socket = io('https://congnghewebnongsan-2.onrender.com')
 
 export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
   const userId = localStorage.getItem('userId')
@@ -97,10 +97,7 @@ export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
   }
 
   const handleChat = async (partnerId) => {
-    const response = await axiosInstance.post(
-      'https://congnghewebnongsan-2.onrender.com/chatBox/create',
-      { partnerId }
-    )
+    const response = await axiosInstance.post('/chatBox/create', { partnerId })
     const newChatBox = response.data.data
     const partner = newChatBox.users.find((user) => user._id !== userId)
     const formattedChatBox = {
