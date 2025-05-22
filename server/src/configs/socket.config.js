@@ -7,6 +7,7 @@ export const setupSocket = (server) => {
       origin: "https://congnghewebnongsan.vercel.app",
       methods: ["GET", "POST"],
     },
+    credentials: true,
   });
 
   io.on("connection", (socket) => {
