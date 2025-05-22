@@ -282,7 +282,7 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
             <strong>{calculateSelectedTotal().toLocaleString()} VNĐ</strong>
           </span>
           <button className="checkout-button" onClick={handleCheckout} disabled={selectedItems.length === 0}>
-            Thanh toán
+            Đặt hàng
           </button>
         </div>
       </div>

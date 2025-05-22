@@ -5,7 +5,7 @@ import axiosInstance from 'utils/api'
 import { FaComments } from 'react-icons/fa'
 import { useTokenVerification } from 'utils/tokenVerification'
 
-const socket = io('http://localhost:3000')
+const socket = io('')
 
 export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
   const userId = localStorage.getItem('userId')
@@ -17,21 +17,19 @@ export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
   const [isOpen, setIsOpen] = useState(false)
   const lastMessageRef = useRef(null)
 
-  const isVerified = useTokenVerification();
+  const isVerified = useTokenVerification()
 
   useEffect(() => {
-    if(!isVerified) return ;
+    if (!isVerified) return
     if (userId && partnerId) {
       handleChat(partnerId)
     }
   }, [userId, partnerId, isVerified])
 
   useEffect(() => {
-    if(!isVerified) return ;
+    if (!isVerified) return
     const fetchChatBoxes = async () => {
-      const response = await axiosInstance.get(
-        'http://localhost:3000/chatBox/user'
-      )
+      const response = await axiosInstance.get('/chatBox/user')
       const chatBoxesData = response.data.data.map((item) => {
         const partner = item.users.find((user) => user._id !== userId)
         return {
@@ -44,11 +42,11 @@ export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
     }
     fetchChatBoxes()
   }, [isVerified, userId])
-  
-  console.log(chatBoxes);
+
+  console.log(chatBoxes)
 
   useEffect(() => {
-    if(!isVerified) return ;
+    if (!isVerified) return
     if (!selectedChat) return
 
     socket.emit('join', { chatBoxId: selectedChat.id })
@@ -73,7 +71,7 @@ export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
   }, [isVerified, selectedChat, userId])
 
   useEffect(() => {
-    if(!isVerified) return ;
+    if (!isVerified) return
     if (!selectedChat) return
     const updated = chatBoxes.find((chatBox) => chatBox.id === selectedChat.id)
     if (updated) {
@@ -82,7 +80,7 @@ export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
   }, [chatBoxes, isVerified, selectedChat])
 
   useEffect(() => {
-    if(!isVerified) return ;
+    if (!isVerified) return
     if (lastMessageRef.current) {
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth' })
     }

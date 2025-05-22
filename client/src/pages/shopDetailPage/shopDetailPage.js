@@ -19,24 +19,19 @@ const ShopDetailPage = ({ openChat, setShopChat }) => {
   const [itemLoading, setItemLoading] = useState(false)
 
   useEffect(() => {
-    axios
-      .get(`http://localhost:3000/shop/${shopId}`)
-      .then((response) => {
-        setShop(response.data.data)
-      })
-      .catch((error) => {
-        console.error('Error fetching shop data:', error)
-      })
+    const fetchShop = async () => {
+      const response = await axiosInstance.get(`/shop/${shopId}`)
+      setShop(response.data.data)
+    }
+    fetchShop()
   }, [shopId])
-
-  console.log(shop);
 
   useEffect(() => {
     const fetchItems = async () => {
       setItemLoading(true)
       try {
         const response = await axiosInstance.get(
-          `http://localhost:3000/item/shop/${shopId}/?page=${itemCurrentPage}`
+          `/item/shop/${shopId}/?page=${itemCurrentPage}`
         )
         const { items, totalPages } = response.data.data
         setItemTotalPages(totalPages)

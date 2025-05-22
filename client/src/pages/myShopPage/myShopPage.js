@@ -18,7 +18,8 @@ const MyShopPage = () => {
   const { shopId, tab } = useParams()
   const [shop, setShop] = useState(null)
   const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [shoploading, setShopLoading] = useState(true)
+  const [itemLoading, setItemLoading] = useState(true)
   const [activeTab, setActiveTab] = useState(tab)
   const [startDate, setStartDate] = useState(getToday())
   const [endDate, setEndDate] = useState(getToday())
@@ -27,7 +28,7 @@ const MyShopPage = () => {
   const [orderStatistics, setOrderStatistics] = useState([])
   const [totalRevenue, setTotalRevenue] = useState(0)
   const [totalOrders, setTotalOrders] = useState(0)
-  const isVerified = useTokenVerification();
+  const isVerified = useTokenVerification()
 
   const navigate = useNavigate()
 
@@ -36,65 +37,55 @@ const MyShopPage = () => {
     { id: 'itemList', label: 'Danh mục sản phẩm' },
     { id: 'revenue', label: 'Thống kê doanh thu' },
   ]
-
+  console.log(shoploading)
   useEffect(() => {
-    if (!isVerified) return;
-    axios
-      .get(`http://localhost:3000/shop/${shopId}`)
-      .then((response) => {
-        setShop(response.data.data)
-      })
-      .catch((error) => {
-        console.error('Error fetching shop data:', error)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
+    if (!isVerified) return
+    const fetchShop = async () => {
+      const response = await axiosInstance.get(`/shop/${shopId}`)
+      setShop(response.data.data)
+      setShopLoading(false)
+    }
+    fetchShop()
   }, [isVerified, shopId])
 
   useEffect(() => {
     if (!isVerified) return
-    axios
-      .get(`http://localhost:3000/item/shop/${shopId}`)
-      .then((response) => {
-        const { items } = response.data.data
-        setItems(items)
-      })
-      .catch((error) => {
-        console.error('Error fetching items data:', error)
-      })
-      .finally(() => {
-        setLoading(false)
-      })
+    const fetchItem = async () => {
+      const response = await axiosInstance.get(`/item/shop/${shopId}`)
+      const { items } = response.data.data
+      setItems(items)
+      setItemLoading(false)
+    }
+    fetchItem()
   }, [isVerified, shopId])
 
   useEffect(() => {
     if (!isVerified) return
     const fetchItemStatistic = async () => {
       const response = await axiosInstance.get(
-        `http://localhost:3000/shop/item-statistics/${shopId}?startDate=${startDate}&endDate=${endDate}`
+        `/shop/item-statistics/${shopId}?startDate=${startDate}&endDate=${endDate}`
       )
       const data = response.data.data
       setItemStatistics(data.products)
     }
-    fetchItemStatistic();
+    fetchItemStatistic()
   }, [shopId, startDate, endDate, isVerified])
 
   useEffect(() => {
     if (!isVerified) return
     const fetchOrderStatistic = async () => {
       const response = await axiosInstance.get(
-        `http://localhost:3000/shop/order-statistics/${shopId}?startDate=${startDate}&endDate=${endDate}`
+        `/shop/order-statistics/${shopId}?startDate=${startDate}&endDate=${endDate}`
       )
       const data = response.data.data
       setOrderStatistics(data.orders)
       setTotalOrders(data.totalOrders)
       setTotalRevenue(data.totalRevenue)
     }
-    fetchOrderStatistic();
+    fetchOrderStatistic()
   }, [shopId, startDate, endDate, isVerified])
 
-  if (loading) {
+  if (shoploading || itemLoading) {
     return <div className="loading">Đang tải thông tin cửa hàng...</div>
   }
 
@@ -219,7 +210,7 @@ const MyShopPage = () => {
                             <FaTrash
                               className="icon delete-icon"
                               title="Xóa"
-                            // onClick={() => handleDelete(item._id)}
+                              // onClick={() => handleDelete(item._id)}
                             />
                           </div>
                         </td>
@@ -253,16 +244,22 @@ const MyShopPage = () => {
                 <div className="select-container">
                   <select
                     value={isStatisticByOrder}
-                    onChange={(e) => setIsStatisticByOrder(e.target.value === "true")}
+                    onChange={(e) =>
+                      setIsStatisticByOrder(e.target.value === 'true')
+                    }
                   >
                     <option value="true"> Theo đơn hàng </option>
                     <option value="false"> Theo sản phẩm </option>
                   </select>
                 </div>
               </div>
-              <div className='revenue-info'>
+              <div className="revenue-info">
                 <div>
-                  <p>Số đơn hàng: {totalOrders}</p>
+                  <p>
+                    {isStatisticByOrder
+                      ? `Số đơn hàng: ${totalOrders}`
+                      : `Số sản phẩm: ${itemStatistics.length}`}
+                  </p>
                 </div>
                 <div>
                   <p>Tổng doanh thu: {totalRevenue}</p>
@@ -287,35 +284,35 @@ const MyShopPage = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {!isStatisticByOrder ? (
-                      itemStatistics.map((item) => (
-                        <tr key={item.itemId} className="item-row">
-                          <td>
-                            <img
-                              src={item.imgUrl}
-                              alt={item.name}
-                              className="item-img"
-                            />
-                          </td>
-                          <td>{item.name}</td>
-                          <td>{item.price}</td>
-                          <td>{itemTypes[item.type]}</td>
-                          <td>{item.quantitySold}</td>
-                          <td>{item.revenue}</td>
-                        </tr>
-                      ))
-                    ) : (
-                      orderStatistics.map((order) => (
-                        <tr key={order._id} className="item-row">
-                          <td>{order.orderCode}</td>
-                          <td>{formatDateTimeVN(order.orderDate)}</td>
-                          <td>{order.userId.userName}</td>
-                          <td>{order.userId.address}</td>
-                          <td>{order.totalPaymentAmount}</td>
-                          <td>{paymentMethodTypeEnum[order.paymentMethod]}</td>
-                        </tr>
-                      ))
-                    )}
+                    {!isStatisticByOrder
+                      ? itemStatistics.map((item) => (
+                          <tr key={item.itemId} className="item-row">
+                            <td>
+                              <img
+                                src={item.imgUrl}
+                                alt={item.name}
+                                className="item-img"
+                              />
+                            </td>
+                            <td>{item.name}</td>
+                            <td>{item.price}</td>
+                            <td>{itemTypes[item.type]}</td>
+                            <td>{item.quantitySold}</td>
+                            <td>{item.revenue}</td>
+                          </tr>
+                        ))
+                      : orderStatistics.map((order) => (
+                          <tr key={order._id} className="item-row">
+                            <td>{order.orderCode}</td>
+                            <td>{formatDateTimeVN(order.orderDate)}</td>
+                            <td>{order.userId.userName}</td>
+                            <td>{order.userId.address}</td>
+                            <td>{order.totalPaymentAmount}</td>
+                            <td>
+                              {paymentMethodTypeEnum[order.paymentMethod]}
+                            </td>
+                          </tr>
+                        ))}
                   </tbody>
                 </table>
               </div>

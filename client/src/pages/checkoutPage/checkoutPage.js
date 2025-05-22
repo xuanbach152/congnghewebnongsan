@@ -245,8 +245,7 @@ const CheckoutPage = () => {
       }
 
       toast.success('Đặt hàng thành công! Chuyển hướng đến Lịch sử đơn hàng...');
-      window.location.reload();
-      navigate('/order/history');
+      window.location.href = '/order/history';
     } catch (err) {
       toast.error(err.response?.data?.message || 'Không thể đặt hàng');
       console.error('Error in handleCheckout:', err.response?.data || err.message);

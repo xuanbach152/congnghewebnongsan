@@ -174,7 +174,7 @@ const getCartUser = async (userId) => {
   try {
     const cart = await CartModel.findOne({ userId }).populate({
       path: "shopGroup.cartItems.itemId",
-      select: "imgUrl",
+      select: "imgUrl name price",
     });
 
     if (!cart) {

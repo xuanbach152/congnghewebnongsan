@@ -29,7 +29,7 @@ const ShopUpsertPage = () => {
     if (!shopId) return;
     const fetchShop = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:3000/shop/${shopId}`);
+        const { data } = await axiosInstance.get(`/shop/${shopId}`);
         const shopData = data.data;
         setShop(shopData);
         setFormData({
@@ -79,7 +79,7 @@ const ShopUpsertPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const url = mode === 'create' ? 'http://localhost:3000/shop' : `http://localhost:3000/shop/${shopId}`;
+    const url = mode === 'create' ? '/shop' : `/shop/${shopId}`;
     const method = mode === 'create' ? 'post' : 'patch';
     try {
       await axiosInstance[method](url, formData, {

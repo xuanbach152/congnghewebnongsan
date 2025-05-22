@@ -92,6 +92,8 @@ const MainHeader = ({
     e.preventDefault()
     const userName = e.target.userName.value
     const password = e.target.password.value
+    const confirmPassword = e.target.confirmPassword.value
+    const phone = e.target.phone.value
     try {
       if (isLogin) {
         if (!userName || !password) {
@@ -108,16 +110,34 @@ const MainHeader = ({
         setIsAuthModalOpen(false)
         window.location.reload();
       } else {
-        const confirmPassword = e.target.confirmPassword.value
-        const phone = e.target.phone.value
-
-        if (!userName || !password || !confirmPassword || !phone) {
-          setError('Vui lòng điền đầy đủ các thông tin')
-          return
+        const newErrors = {};
+        if (!userName || userName.length < 3) {
+          newErrors.userName = 'Tên đăng nhập phải có ít nhất 3 ký tự';
+        } else if (!userName.match(/^[a-zA-Z0-9_]+$/)) {
+          newErrors.userName = 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới';
+        }
+        if (!password) {
+          newErrors.password = 'Vui lòng nhập mật khẩu';
+        } else if (password.length < 8) {
+          newErrors.password = 'Mật khẩu phải dài ít nhất 8 ký tự';
+        } else if (
+          !password.match(/[A-Z]/) ||
+          !password.match(/[0-9]/) ||
+          !password.match(/[!@#$%^&*(),.?":{}|<>]/)
+        ) {
+          newErrors.password = 'Mật khẩu phải chứa ít nhất 1 chữ cái in hoa, 1 số và 1 ký tự đặc biệt';
         }
         if (password !== confirmPassword) {
-          setError('Mật khẩu không khớp!')
-          return
+          newErrors.confirmPassword = 'Xác nhận mật khẩu không khớp';
+        }
+        if (!phone) {
+          newErrors.phone = 'Vui lòng nhập số điện thoại';
+        } else if (!phone.match(/(03|05|07|08|09)+([0-9]{8})\b/)) {
+          newErrors.phone = 'Số điện thoại không hợp lệ (phải bắt đầu bằng 03, 05, 07, 08, 09 và có 10 chữ số)';
+        }
+        if (Object.keys(newErrors).length > 0) {
+          setError(newErrors);
+          return;
         }
         await register(userName, password, phone)
         toast.success('Đăng ký thành công! Vui lòng đăng nhập.')

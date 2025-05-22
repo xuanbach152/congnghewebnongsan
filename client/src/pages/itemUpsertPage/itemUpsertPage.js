@@ -27,7 +27,7 @@ const ItemUpsertPage = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/shop/${shopId}`)
+      .get(`/shop/${shopId}`)
       .then((response) => {
         setShop(response.data.data)
       })
@@ -43,7 +43,7 @@ const ItemUpsertPage = () => {
     if (!itemId) return;
     const fetchItem = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:3000/item/${itemId}`);
+        const { data } = await axios.get(`/item/${itemId}`);
         const itemData = data.data;
         setItem(itemData);
         setFormData({
@@ -97,7 +97,7 @@ const ItemUpsertPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     console.log(formData);
-    const url = mode === 'create' ? 'http://localhost:3000/item' : `http://localhost:3000/item/${itemId}`;
+    const url = mode === 'create' ? '/item' : `/item/${itemId}`;
     const method = mode === 'create' ? 'post' : 'patch';
     try {
       await axiosInstance[method](

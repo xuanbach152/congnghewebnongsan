@@ -56,8 +56,8 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
     try {
       setCommentLoading(true)
 
-      const response = await axios.get(
-        `http://localhost:3000/comment/item/${itemId}`,
+      const response = await axiosInstance.get(
+        `/comment/item/${itemId}`,
         {
           params: { page: commentPage, limit: 3 },
         }
@@ -157,6 +157,7 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
     }
   }
   const handleNavigateToItem = (id) => {
+    setQuantity(1)
     navigate(`/item/${id}`)
   }
   const handleQuantityChange = (e) => {
@@ -199,7 +200,7 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
 
   const handleAddToCart = async () => {
     try {
-      await axiosInstance.post(`http://localhost:3000/cart/add`, {
+      await axiosInstance.post(`/cart/add`, {
         itemId,
         quantity,
       })
@@ -214,7 +215,7 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
 
   useEffect(() => {
     axiosInstance
-      .get(`http://localhost:3000/item/${itemId}`)
+      .get(`/item/${itemId}`)
       .then((response) => {
         setItem(response.data.data)
       })

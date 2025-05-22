@@ -19,7 +19,7 @@ const ShopManagementPage = () => {
     setLoading(true)
     try {
       const response = await axiosInstance.get(
-        `http://localhost:3000/shop/user?page=${page}`
+        `/shop/user?page=${page}`
       )
       const { shops, totalPages } = response.data.data;
       setTotalPages(totalPages)
@@ -40,7 +40,7 @@ const ShopManagementPage = () => {
   }, [isVerified, currentPage]);
 
   const handleDeleteShop = async (shopId) => {
-    await axiosInstance.delete(`http://localhost:3000/shop/${shopId}`)
+    await axiosInstance.delete(`/shop/${shopId}`)
     await fetchShops();
   }
 
