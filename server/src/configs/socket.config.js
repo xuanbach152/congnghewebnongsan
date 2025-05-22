@@ -4,7 +4,7 @@ import messageService from "../services/message.service.js";
 export const setupSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "https://congnghewebnongsan.vercel.app/",
+      origin: "https://congnghewebnongsan.vercel.app",
       methods: ["GET", "POST"],
     },
   });
