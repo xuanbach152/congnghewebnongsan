@@ -142,6 +142,7 @@ const MainHeader = ({
         await register(userName, password, phone)
         toast.success('Đăng ký thành công! Vui lòng đăng nhập.')
         setIsLogin(true)
+        setError('')
       }
     } catch (error) {
       console.error('Auth error details: ', error)

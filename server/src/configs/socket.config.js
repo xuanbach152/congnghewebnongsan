@@ -31,7 +31,7 @@ export const setupSocket = (server) => {
         );
 
         io.to(chatBoxId).emit("message", {
-          userId: newMessage.userId,
+          senderId: newMessage.userId,
           chatBoxId: newMessage.chatBoxId,
           content: newMessage.content,
           createdAt: newMessage.createdAt,

@@ -43,20 +43,18 @@ export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
     fetchChatBoxes()
   }, [isVerified, userId])
 
-  console.log(chatBoxes)
-
   useEffect(() => {
     if (!isVerified) return
     if (!selectedChat) return
 
     socket.emit('join', { chatBoxId: selectedChat.id })
 
-    const handleMessage = ({ chatBoxId, content }) => {
+    const handleMessage = ({ chatBoxId, content, senderId }) => {
       if (chatBoxId === selectedChat.id) {
         setChatBoxes((prevChatBoxes) => {
           return prevChatBoxes.map((chatBox) => {
             if (chatBox.id === chatBoxId) {
-              const newMessage = { senderId: userId, content }
+              const newMessage = { senderId, content }
               const updatedMessages = [...chatBox.messages, newMessage]
               return { ...chatBox, messages: updatedMessages }
             }
