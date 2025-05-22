@@ -98,7 +98,7 @@ export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
 
   const handleChat = async (partnerId) => {
     const response = await axiosInstance.post(
-      '/chatBox/create',
+      'https://congnghewebnongsan-2.onrender.com/chatBox/create',
       { partnerId }
     )
     const newChatBox = response.data.data
