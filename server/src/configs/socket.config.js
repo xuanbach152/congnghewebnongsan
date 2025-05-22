@@ -4,7 +4,7 @@ import messageService from "../services/message.service.js";
 export const setupSocket = (server) => {
   const io = new Server(server, {
     cors: {
-      origin: "https://congnghewebnongsan.vercel.app",
+      origin: "http://localhost:4000",
       methods: ["GET", "POST"],
     },
     credentials: true,
@@ -29,9 +29,8 @@ export const setupSocket = (server) => {
           createMessageData,
           userId
         );
-
         io.to(chatBoxId).emit("message", {
-          senderId: newMessage.userId,
+          senderId: newMessage.senderId,
           chatBoxId: newMessage.chatBoxId,
           content: newMessage.content,
           createdAt: newMessage.createdAt,
