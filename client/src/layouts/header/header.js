@@ -92,8 +92,6 @@ const MainHeader = ({
     e.preventDefault()
     const userName = e.target.userName.value
     const password = e.target.password.value
-    const confirmPassword = e.target.confirmPassword.value
-    const phone = e.target.phone.value
     try {
       if (isLogin) {
         if (!userName || !password) {
@@ -110,6 +108,8 @@ const MainHeader = ({
         setIsAuthModalOpen(false)
         window.location.reload();
       } else {
+        const phone = e.target.phone.value
+        const confirmPassword = e.target.confirmPassword.value
         const newErrors = {};
         if (!userName || userName.length < 3) {
           newErrors.userName = 'Tên đăng nhập phải có ít nhất 3 ký tự';
