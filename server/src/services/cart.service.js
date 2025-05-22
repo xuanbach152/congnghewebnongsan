@@ -268,7 +268,7 @@ const calculateCartDeliveryFee = async (userId, deliveryAddress) => {
   try {
     const cart = await CartModel.findOne({ userId }).populate({
       path: "shopGroup.shopId",
-      select: "name address",
+      select: "name address longitude latitude",
     });
 
     if (!cart) {
@@ -284,7 +284,7 @@ const calculateCartDeliveryFee = async (userId, deliveryAddress) => {
     for (let i = 0; i < cartWithDelivery.shopGroup.length; i++) {
       const shop = cartWithDelivery.shopGroup[i];
 
-      const shopAddress = shop.shopId.address;
+      const shopAddress = { address: shop.shopId.address, longitude: shop.shopId.longitude, latitude: shop.shopId.latitude };
 
       try {
         const distance = await distanceService.calculateDistance(deliveryAddress, shopAddress);
