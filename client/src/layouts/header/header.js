@@ -136,7 +136,7 @@ const MainHeader = ({
           newErrors.phone = 'Số điện thoại không hợp lệ (phải bắt đầu bằng 03, 05, 07, 08, 09 và có 10 chữ số)';
         }
         if (Object.keys(newErrors).length > 0) {
-          setError(newErrors);
+          setError(Object.values(newErrors)[0]);
           return;
         }
         await register(userName, password, phone)
