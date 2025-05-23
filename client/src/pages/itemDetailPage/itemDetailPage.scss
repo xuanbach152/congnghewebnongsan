@@ -755,28 +755,29 @@
   .item-detail {
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 16px;
+    gap: 12px;
   }
   .item-image {
     width: 100%;
     display: flex;
     justify-content: center;
-    margin-bottom: 8px;
+    margin-bottom: 10px; // tăng khoảng cách với chữ
   }
   .item-image img {
-    width: 60vw;
-    max-width: 220px;
-    height: 60vw;
-    max-height: 220px;
+    width: 90vw;
+    max-width: 180px;
+    height: auto;
+    max-height: 180px;
     display: block;
     margin: 0 auto;
+    object-fit: cover;
   }
   .item-content {
     width: 100%;
-    font-size: 13px;
+    font-size: 12px;
     gap: 8px;
     background: none;
-    padding: 0;
+    padding: 10px 0 0 0; // thêm padding-top để tránh dính sát ảnh
   }
   .related-products {
     margin-top: 10px;
