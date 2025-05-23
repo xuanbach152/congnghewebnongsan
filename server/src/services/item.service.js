@@ -213,9 +213,18 @@ const filterItems = async (
   sortField = "createdAt",
   sortType = "desc"
 ) => {
+  console.log("option", option);
   try {
     const skip = (page - 1) * limit;
     let filterQuery = {};
+
+    if (option.searchText) {
+      const regex = new RegExp(option.searchText, "i");
+      filterQuery.$or = [
+        { name: { $regex: regex } },
+      ];
+    }
+
     if (option.type) {
       filterQuery.type = option.type;
     }

@@ -21,6 +21,9 @@ const MainHeader = ({
   setSearchQuery,
   distinctItemQuantity,
   totalPaymentAmount,
+  setType,
+  setMinPrice,
+  setMaxPrice,
 }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [isLogin, setIsLogin] = useState(true)
@@ -106,38 +109,41 @@ const MainHeader = ({
         setIsLoggedIn(true)
         await fetchCartData()
         setIsAuthModalOpen(false)
-        window.location.reload();
+        window.location.reload()
       } else {
         const phone = e.target.phone.value
         const confirmPassword = e.target.confirmPassword.value
-        const newErrors = {};
+        const newErrors = {}
         if (!userName || userName.length < 3) {
-          newErrors.userName = 'Tên đăng nhập phải có ít nhất 3 ký tự';
+          newErrors.userName = 'Tên đăng nhập phải có ít nhất 3 ký tự'
         } else if (!userName.match(/^[a-zA-Z0-9_]+$/)) {
-          newErrors.userName = 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới';
+          newErrors.userName =
+            'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới'
         }
         if (!password) {
-          newErrors.password = 'Vui lòng nhập mật khẩu';
+          newErrors.password = 'Vui lòng nhập mật khẩu'
         } else if (password.length < 8) {
-          newErrors.password = 'Mật khẩu phải dài ít nhất 8 ký tự';
+          newErrors.password = 'Mật khẩu phải dài ít nhất 8 ký tự'
         } else if (
           !password.match(/[A-Z]/) ||
           !password.match(/[0-9]/) ||
           !password.match(/[!@#$%^&*(),.?":{}|<>]/)
         ) {
-          newErrors.password = 'Mật khẩu phải chứa ít nhất 1 chữ cái in hoa, 1 số và 1 ký tự đặc biệt';
+          newErrors.password =
+            'Mật khẩu phải chứa ít nhất 1 chữ cái in hoa, 1 số và 1 ký tự đặc biệt'
         }
         if (password !== confirmPassword) {
-          newErrors.confirmPassword = 'Xác nhận mật khẩu không khớp';
+          newErrors.confirmPassword = 'Xác nhận mật khẩu không khớp'
         }
         if (!phone) {
-          newErrors.phone = 'Vui lòng nhập số điện thoại';
+          newErrors.phone = 'Vui lòng nhập số điện thoại'
         } else if (!phone.match(/(03|05|07|08|09)+([0-9]{8})\b/)) {
-          newErrors.phone = 'Số điện thoại không hợp lệ (phải bắt đầu bằng 03, 05, 07, 08, 09 và có 10 chữ số)';
+          newErrors.phone =
+            'Số điện thoại không hợp lệ (phải bắt đầu bằng 03, 05, 07, 08, 09 và có 10 chữ số)'
         }
         if (Object.keys(newErrors).length > 0) {
-          setError(Object.values(newErrors)[0]);
-          return;
+          setError(Object.values(newErrors)[0])
+          return
         }
         await register(userName, password, phone)
         toast.success('Đăng ký thành công! Vui lòng đăng nhập.')
@@ -304,6 +310,11 @@ const MainHeader = ({
                 onClick={() => {
                   setSearchQuery('')
                   setSearchInput('')
+                  setType(null)
+                  setMinPrice(null)
+                  setMaxPrice(null)
+                  setFilterCategory('all')
+                  setFilterPrice('all')
                 }}
               >
                 <h1>Nông sản Việt</h1>
@@ -351,24 +362,16 @@ const MainHeader = ({
         <div className="row">
           <div className="filter_section">
             {/* Filters */}
-            <div className="filter_group">
-              <select
-                value={filterLocation}
-                onChange={(e) => setFilterLocation(e.target.value)}
-              >
-                <option value="all">Tất cả khu vực</option>
-                {Object.entries(provinces).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
 
             <div className="filter_group">
               <select
                 value={filterCategory}
-                onChange={(e) => setFilterCategory(e.target.value)}
+                onChange={(e) => {
+                  setFilterCategory(e.target.value)
+                  if (e.target.value === 'all') {
+                    setType(null)
+                  } else setType(e.target.value)
+                }}
               >
                 <option value="all">Tất cả danh mục</option>
                 {Object.entries(itemTypes).map(([value, label]) => (
@@ -382,7 +385,27 @@ const MainHeader = ({
             <div className="filter_group">
               <select
                 value={filterPrice}
-                onChange={(e) => setFilterPrice(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value
+                  setFilterPrice(value)
+                  // Thiết lập min/max price theo từng option
+                  if (value === 'all') {
+                    setMinPrice(null)
+                    setMaxPrice(null)
+                  } else if (value === 'under50k') {
+                    setMinPrice(0)
+                    setMaxPrice(49999)
+                  } else if (value === '50k-100k') {
+                    setMinPrice(50000)
+                    setMaxPrice(100000)
+                  } else if (value === '100k-200k') {
+                    setMinPrice(100000)
+                    setMaxPrice(200000)
+                  } else if (value === 'above200k') {
+                    setMinPrice(200000)
+                    setMaxPrice(null)
+                  }
+                }}
               >
                 <option value="all">Tất cả giá</option>
                 <option value="under50k">Dưới 50k</option>
@@ -390,28 +413,6 @@ const MainHeader = ({
                 <option value="100k-200k">100k - 200k</option>
                 <option value="above200k">Trên 200k</option>
               </select>
-            </div>
-
-            <div className="filter_group">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={filterPromotion}
-                  onChange={(e) => setFilterPromotion(e.target.checked)}
-                />
-                Có khuyến mãi
-              </label>
-            </div>
-
-            <div className="filter_group">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={filterTrend}
-                  onChange={(e) => setFilterTrend(e.target.checked)}
-                />
-                Thịnh hành
-              </label>
             </div>
           </div>
         </div>

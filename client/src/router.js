@@ -20,11 +20,21 @@ const renderRouter = ({
   setTotalPaymentAmount,
   openChat,
   setShopChat,
+  type,
+  minPrice,
+  maxPrice,
 }) => {
   const allRouters = [
     {
       path: routers.HOME,
-      component: <HomePage searchQuery={searchQuery} />,
+      component: (
+        <HomePage
+          searchQuery={searchQuery}
+          type={type}
+          minPrice={minPrice}
+          maxPrice={maxPrice}
+        />
+      ),
     },
     {
       path: routers.PROFILE,
@@ -65,7 +75,9 @@ const renderRouter = ({
     },
     {
       path: routers.SHOP_DETAIL,
-      component: <ShopDetailPage openChat={openChat} setShopChat={setShopChat}/>,
+      component: (
+        <ShopDetailPage openChat={openChat} setShopChat={setShopChat} />
+      ),
     },
     {
       path: routers.ITEM_DETAIL,

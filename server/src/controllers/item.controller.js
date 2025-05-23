@@ -278,6 +278,7 @@ export const filterItems = async (req, res) => {
       type,
       minPrice,
       maxPrice,
+      searchText,
       page = 1,
       limit = PaginationEnum.DEFAULT_LIMIT,
       sortField = "createdAt",
@@ -285,7 +286,7 @@ export const filterItems = async (req, res) => {
     } = req.query;
 
     const items = await ItemService.filterItems(
-      { type, minPrice, maxPrice },
+      { type, minPrice, maxPrice, searchText },
       page,
       limit,
       sortField,

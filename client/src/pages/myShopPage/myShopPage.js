@@ -86,7 +86,7 @@ const MyShopPage = () => {
   }, [shopId, startDate, endDate, isVerified])
 
   if (shoploading || itemLoading) {
-    return <div className="loading">Đang tải thông tin cửa hàng...</div>
+    return <div className="loading"></div>
   }
 
   return (

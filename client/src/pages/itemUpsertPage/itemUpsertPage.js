@@ -3,7 +3,6 @@ import './itemUpsertPage.scss'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import routers from 'utils/routers'
 import { FaAngleRight } from 'react-icons/fa'
-import axios from 'axios'
 import axiosInstance from 'utils/api'
 import { itemTypes } from 'utils/enums'
 
@@ -26,24 +25,25 @@ const ItemUpsertPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get(`/shop/${shopId}`)
-      .then((response) => {
-        setShop(response.data.data)
-      })
-      .catch((error) => {
-        console.error('Error fetching shop data:', error)
-      })
-      .finally(() => {
-        setLoadingShop(false)
-      })
+    const fetchShop = async () => {
+      try {
+        const { data } = await axiosInstance.get(`/shop/${shopId}`);
+        const shopData = data.data;
+        setShop(shopData);
+      } catch (error) {
+        console.error('Error fetching shop data:', error);
+      } finally {
+        setLoadingShop(false);
+      }
+    }
+    fetchShop();
   }, [shopId])
 
   useEffect(() => {
     if (!itemId) return;
     const fetchItem = async () => {
       try {
-        const { data } = await axios.get(`/item/${itemId}`);
+        const { data } = await axiosInstance.get(`/item/${itemId}`);
         const itemData = data.data;
         setItem(itemData);
         setFormData({

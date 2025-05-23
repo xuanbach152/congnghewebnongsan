@@ -17,6 +17,10 @@ function App() {
   const [totalPaymentAmount, setTotalPaymentAmount] = useState(0)
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [shopChat, setShopChat] = useState(null)
+  const [type, setType] = useState(null)
+  const [minPrice, setMinPrice] = useState(null)
+  const [maxPrice, setMaxPrice] = useState(null)
+  
   const openChat = () => setIsChatOpen(true)
 
   return (
@@ -24,6 +28,9 @@ function App() {
       setSearchQuery={setSearchQuery}
       distinctItemQuantity={distinctItemQuantity}
       totalPaymentAmount={totalPaymentAmount}
+      setType={setType}
+      setMinPrice={setMinPrice}
+      setMaxPrice={setMaxPrice}
     >
       <RouterCustom
         searchQuery={searchQuery}
@@ -31,6 +38,9 @@ function App() {
         setTotalPaymentAmount={setTotalPaymentAmount}
         openChat={openChat}
         setShopChat={setShopChat}
+        type={type}
+        minPrice={minPrice}
+        maxPrice={maxPrice}
       />
       <ToastContainer
         position="top-right"
