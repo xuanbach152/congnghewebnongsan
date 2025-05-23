@@ -2,15 +2,81 @@ html,
 body {
   height: 100%;
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
 }
 
 .master-layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .main-content {
-  flex: 1; /* đưa footer xuống cuối trang */
+  flex: 1;
   display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  margin: 0 auto;
+}
+
+@media (max-width: 1200px) {
+  .main-content {
+    padding: 0 15px;
+  }
+}
+
+@media (max-width: 992px) {
+  .main-content {
+    padding: 0 10px;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    padding: 0 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .main-content {
+    padding: 0 5px;
+  }
+
+  .master-layout > * {
+    margin-bottom: 15px;
+  }
+}
+
+img,
+video,
+iframe,
+embed,
+object {
+  max-width: 100%;
+  height: auto;
+}
+
+table {
+  width: 100%;
+  overflow-x: auto;
+  display: block;
+}
+
+@supports (-webkit-overflow-scrolling: touch) {
+  .main-content {
+    -webkit-overflow-scrolling: touch;
+  }
 }
