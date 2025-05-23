@@ -195,4 +195,166 @@
       }
     }
   }
+
+  @media (max-width: 992px) {
+    .shop-information-management .container {
+      padding: 0 10px;
+
+      .shop-information-title .title-text,
+      .item-list-title .title-text {
+        font-size: 20px;
+      }
+
+      .shop-information {
+        .shop-detail {
+          gap: 16px;
+
+          .shop-image img {
+            width: 180px;
+            height: 180px;
+          }
+
+          .shop-content {
+            font-size: 14px;
+          }
+
+          button {
+            font-size: 13px;
+            padding: 8px 12px;
+          }
+        }
+      }
+
+      .item-list .item-grid {
+        gap: 14px;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      }
+
+      .item-list .item .item-info .item-name {
+        font-size: 16px;
+      }
+
+      .item-list .item .item-info .item-price,
+      .item-list .item .item-info .item-type,
+      .item-list .item .item-info .item-rate,
+      .item-list .item .item-info .item-quantity {
+        font-size: 13px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .shop-information-management .container {
+      padding: 0 4px;
+
+      .shop-information-title .title-text,
+      .item-list-title .title-text {
+        font-size: 16px;
+      }
+
+      .shop-information {
+        .shop-detail {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+
+          .shop-image img {
+            width: 120px;
+            height: 120px;
+          }
+
+          .shop-content {
+            font-size: 13px;
+            gap: 7px;
+          }
+
+          button {
+            font-size: 12px;
+            padding: 7px 10px;
+          }
+        }
+      }
+
+      .item-list .item-grid {
+        gap: 8px;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+
+      .item-list .item .item-info .item-name {
+        font-size: 13px;
+      }
+
+      .item-list .item .item-info .item-price,
+      .item-list .item .item-info .item-type,
+      .item-list .item .item-info .item-rate,
+      .item-list .item .item-info .item-quantity {
+        font-size: 12px;
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .shop-information-management .container {
+      padding: 0 2px;
+
+      .shop-information-title .title-text,
+      .item-list-title .title-text {
+        font-size: 13px;
+      }
+
+      .shop-information {
+        .shop-detail {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 6px;
+
+          .shop-image img {
+            width: 70vw;
+            max-width: 90px;
+            height: 70vw;
+            max-height: 90px;
+          }
+
+          .shop-content {
+            font-size: 11px;
+            gap: 4px;
+          }
+
+          button {
+            font-size: 11px;
+            padding: 6px 8px;
+          }
+        }
+      }
+
+      .item-list .item-grid {
+        gap: 6px;
+        grid-template-columns: 1fr;
+      }
+
+      .item-list .item {
+        padding: 8px;
+
+        .item-info .item-name {
+          font-size: 12px;
+        }
+
+        .item-info .item-price,
+        .item-info .item-type,
+        .item-info .item-rate,
+        .item-info .item-quantity {
+          font-size: 11px;
+        }
+
+        .item-image {
+          height: 40vw;
+          max-height: 80px;
+        }
+      }
+
+      p {
+        font-size: 12px;
+      }
+    }
+  }
 }

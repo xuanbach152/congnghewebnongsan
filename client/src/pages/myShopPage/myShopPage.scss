@@ -347,4 +347,200 @@
       }
     }
   }
+
+  @media (max-width: 992px) {
+    .my-management .container {
+      padding: 0 10px;
+      .tab-content-container {
+        padding: 12px;
+      }
+      .my-shop {
+        padding: 8px 5px;
+        .shop-detail {
+          flex-direction: column;
+          gap: 12px;
+          align-items: flex-start;
+        }
+        .shop-image img {
+          width: 120px;
+          height: 120px;
+        }
+        .shop-content {
+          gap: 7px;
+        }
+        .shop-actions .btn {
+          font-size: 13px;
+          padding: 8px 12px;
+        }
+      }
+      .btn-create-item {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+      }
+      .btn-text {
+        font-size: 13px;
+      }
+      .items-table {
+        margin-top: 10px;
+        table {
+          th,
+          td {
+            font-size: 13px;
+            padding: 10px 8px;
+          }
+          .item-img {
+            width: 60px;
+            height: 60px;
+          }
+        }
+      }
+      .revenue-header,
+      .revenue-info {
+        gap: 0.5rem;
+        flex-direction: column;
+        align-items: flex-start;
+        label,
+        select,
+        input[type='date'] {
+          font-size: 13px;
+        }
+        div,
+        p {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .my-management .container {
+      padding: 0 4px;
+      .tab-content-container {
+        padding: 8px 2px;
+      }
+      .my-shop {
+        padding: 6px 2px;
+        .shop-detail {
+          gap: 8px;
+        }
+        .shop-image img {
+          width: 80px;
+          height: 80px;
+        }
+        .shop-actions .btn {
+          font-size: 12px;
+          padding: 7px 8px;
+        }
+      }
+      .btn-create-item {
+        width: 24px;
+        height: 24px;
+        font-size: 13px;
+      }
+      .btn-text {
+        font-size: 12px;
+      }
+      .items-table {
+        margin-top: 6px;
+        table {
+          th,
+          td {
+            font-size: 12px;
+            padding: 7px 4px;
+          }
+          .item-img {
+            width: 40px;
+            height: 40px;
+          }
+        }
+      }
+      .revenue-header,
+      .revenue-info {
+        gap: 0.3rem;
+        label,
+        select,
+        input[type='date'] {
+          font-size: 12px;
+        }
+        div,
+        p {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .my-management .container {
+      padding: 0 2px;
+      .tab-wrapper {
+        flex-direction: column;
+        height: auto;
+        .tab-item {
+          line-height: 36px;
+          font-size: 13px;
+          border-right: none !important;
+          border-bottom: 1px solid #ddd;
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+      }
+      .tab-content-container {
+        padding: 4px 0;
+      }
+      .my-shop {
+        padding: 4px 0;
+        .shop-detail {
+          flex-direction: column;
+          gap: 6px;
+        }
+        .shop-image img {
+          width: 60px;
+          height: 60px;
+        }
+        .shop-actions .btn {
+          font-size: 11px;
+          padding: 6px 6px;
+        }
+      }
+      .btn-create-item {
+        width: 20px;
+        height: 20px;
+        font-size: 11px;
+      }
+      .btn-text {
+        font-size: 11px;
+      }
+      .items-table {
+        margin-top: 4px;
+        table {
+          th,
+          td {
+            font-size: 11px;
+            padding: 5px 2px;
+          }
+          .item-img {
+            width: 28px;
+            height: 28px;
+          }
+        }
+      }
+      .revenue-header,
+      .revenue-info {
+        gap: 0.2rem;
+        flex-direction: column;
+        label,
+        select,
+        input[type='date'] {
+          font-size: 11px;
+        }
+        div,
+        p {
+          font-size: 11px;
+        }
+      }
+    }
+  }
 }

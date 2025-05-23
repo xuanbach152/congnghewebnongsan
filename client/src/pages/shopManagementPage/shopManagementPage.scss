@@ -149,25 +149,25 @@
         }
 
         button {
-    margin-left: 20px;
-    padding: 8px 12px;
-    background-color: #dc3545; // đỏ
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+          margin-left: 20px;
+          padding: 8px 12px;
+          background-color: #dc3545; // đỏ
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 14px;
+          font-weight: bold;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
 
-    &:hover {
-      background-color: #c82333;
-    }
+          &:hover {
+            background-color: #c82333;
+          }
 
-    &:active {
-      background-color: #bd2130;
-    }
-  }
+          &:active {
+            background-color: #bd2130;
+          }
+        }
       }
 
       p {
@@ -178,6 +178,155 @@
         font-weight: bold;
         transform: translate(-50%, -50%);
         color: rgb(225, 21, 21);
+      }
+    }
+  }
+
+  @media (max-width: 992px) {
+    .shop-management .container .shop-list {
+      padding: 8px 5px;
+      .shop-list-title .title-text {
+        font-size: 17px;
+      }
+      .shop-list-title .btn-create-shop {
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+      }
+      .shop-list-title .btn-text {
+        font-size: 13px;
+      }
+      .shop {
+        padding: 10px;
+        .shop-image {
+          width: 90px;
+          height: 90px;
+          margin-right: 10px;
+        }
+        .shop-info .shop-name {
+          font-size: 15px;
+        }
+        .shop-info .shop-address {
+          font-size: 13px;
+        }
+        .shop-status {
+          font-size: 13px;
+          padding: 7px 12px;
+        }
+        button {
+          font-size: 13px;
+          padding: 7px 12px;
+          margin-left: 10px;
+        }
+      }
+      p {
+        font-size: 15px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .shop-management .container .shop-list {
+      padding: 6px 2px;
+      .shop-list-title .title-text {
+        font-size: 15px;
+      }
+      .shop-list-title .btn-create-shop {
+        width: 22px;
+        height: 22px;
+        font-size: 13px;
+      }
+      .shop-list-title .btn-text {
+        font-size: 12px;
+      }
+      .shop {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 8px;
+        .shop-image {
+          width: 60vw;
+          max-width: 120px;
+          height: 60vw;
+          max-height: 120px;
+          margin-right: 0;
+          margin-bottom: 8px;
+        }
+        .shop-info .shop-name {
+          font-size: 13px;
+        }
+        .shop-info .shop-address {
+          font-size: 12px;
+        }
+        .shop-status {
+          font-size: 12px;
+          padding: 6px 10px;
+          margin-left: 0;
+          margin-top: 6px;
+        }
+        button {
+          font-size: 12px;
+          padding: 6px 10px;
+          margin-left: 0;
+          margin-top: 6px;
+        }
+      }
+      p {
+        font-size: 13px;
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .shop-management .container .shop-list {
+      padding: 4px 0;
+      gap: 6px;
+      .shop-list-title {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        .title-text {
+          font-size: 13px;
+        }
+        .btn-create-shop {
+          width: 18px;
+          height: 18px;
+          font-size: 11px;
+        }
+        .btn-text {
+          font-size: 11px;
+        }
+      }
+      .shop {
+        padding: 6px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        .shop-image {
+          width: 90vw;
+          max-width: 90px;
+          height: 90vw;
+          max-height: 90px;
+          margin-bottom: 6px;
+        }
+        .shop-info .shop-name {
+          font-size: 12px;
+        }
+        .shop-info .shop-address {
+          font-size: 11px;
+        }
+        .shop-status {
+          font-size: 11px;
+          padding: 5px 8px;
+          margin-top: 4px;
+        }
+        button {
+          font-size: 11px;
+          padding: 5px 8px;
+          margin-top: 4px;
+        }
+      }
+      p {
+        font-size: 12px;
       }
     }
   }

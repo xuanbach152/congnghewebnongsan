@@ -646,3 +646,217 @@
     }
   }
 }
+
+@media (max-width: 992px) {
+  .item-information-management .container .item-information {
+    padding: 8px 2px;
+    .item-information-title .title-text {
+      font-size: 20px;
+    }
+  }
+  .item-detail {
+    flex-direction: column !important;
+    gap: 16px;
+    .item-image img {
+      width: 220px;
+      height: 220px;
+    }
+  }
+  .related-products {
+    margin-top: 20px;
+    .related-title {
+      font-size: 16px;
+    }
+    .related-items {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 10px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .item-information-management .container .item-information {
+    padding: 5px 0;
+    .item-information-title .title-text {
+      font-size: 17px;
+    }
+  }
+  .item-detail {
+    .item-image img {
+      width: 140px;
+      height: 140px;
+    }
+    .item-content {
+      font-size: 13px;
+      gap: 8px;
+      .item-in-shop img {
+        width: 22px;
+        height: 22px;
+      }
+      .item-quantity input {
+        width: 40px;
+        padding: 3px;
+      }
+      .item-actions .btn.add-to-cart {
+        padding: 7px 12px;
+        font-size: 13px;
+      }
+    }
+  }
+  .related-products {
+    .related-title {
+      font-size: 15px;
+    }
+    .related-items {
+      grid-template-columns: 1fr !important;
+      gap: 8px;
+      .related-img {
+        height: 90px;
+      }
+      .related-info .related-name,
+      .related-info .related-price {
+        font-size: 13px;
+      }
+    }
+  }
+  .comment-section {
+    .section-title {
+      font-size: 15px;
+      padding: 12px 10px;
+    }
+    .comments-list {
+      padding: 10px 5px;
+    }
+    .comment-form {
+      padding: 10px 5px;
+      h3 {
+        font-size: 13px;
+      }
+      .comment-textarea {
+        font-size: 12px;
+        padding: 8px 10px;
+        height: 60px;
+      }
+      .form-actions .submit-btn {
+        padding: 7px 12px;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .item-information-management .container .item-information {
+    padding: 2px 0;
+    .item-information-title .title-text {
+      font-size: 15px;
+    }
+  }
+  .item-detail {
+    .item-image img {
+      width: 90vw;
+      max-width: 180px;
+      height: 90vw;
+      max-height: 180px;
+    }
+    .item-content {
+      font-size: 12px;
+      gap: 5px;
+      .item-in-shop img {
+        width: 18px;
+        height: 18px;
+      }
+      .item-quantity input {
+        width: 32px;
+        padding: 2px;
+      }
+      .item-actions .btn.add-to-cart {
+        padding: 6px 8px;
+        font-size: 11px;
+      }
+    }
+  }
+  .related-products {
+    margin-top: 10px;
+    .related-title {
+      font-size: 13px;
+    }
+    .related-items {
+      grid-template-columns: 1fr !important;
+      gap: 6px;
+      .related-img {
+        height: 60vw;
+        max-height: 100px;
+      }
+      .related-info .related-name,
+      .related-info .related-price {
+        font-size: 12px;
+      }
+    }
+  }
+  .comment-section {
+    .section-title {
+      font-size: 13px;
+      padding: 8px 5px;
+    }
+    .comments-list {
+      padding: 6px 2px;
+    }
+    .comment-form {
+      padding: 6px 2px;
+      h3 {
+        font-size: 12px;
+      }
+      .comment-textarea {
+        font-size: 11px;
+        padding: 6px 6px;
+        height: 40px;
+      }
+      .form-actions .submit-btn {
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+    }
+    .comment-item {
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+    }
+    .user-avatar,
+    .default-avatar {
+      width: 24px;
+      height: 24px;
+      margin-right: 5px;
+    }
+    .username {
+      font-size: 12px;
+    }
+    .comment-date {
+      font-size: 10px;
+    }
+    .comment-content {
+      font-size: 12px;
+    }
+    .comment-image {
+      width: 40px;
+      height: 40px;
+    }
+    .shop-reply {
+      padding: 6px;
+      font-size: 11px;
+    }
+    .reply-header {
+      font-size: 11px;
+    }
+    .reply-content {
+      font-size: 11px;
+    }
+    .pagination {
+      padding: 6px 0;
+      .page-btn,
+      .page-info {
+        font-size: 11px;
+        padding: 4px 8px;
+      }
+    }
+  }
+}

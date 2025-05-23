@@ -139,4 +139,153 @@
       }
     }
   }
+
+  @media (max-width: 992px) {
+    .item-management .container {
+      padding: 0 10px;
+
+      .item-list {
+        padding: 8px 5px;
+
+        .item-list-title {
+          .title-text {
+            font-size: 17px;
+          }
+        }
+
+        .item {
+          padding: 10px;
+
+          .item-image {
+            width: 90px;
+            height: 90px;
+            margin-right: 10px;
+          }
+
+          .item-info {
+            padding-left: 8px;
+
+            .item-name {
+              font-size: 16px;
+            }
+
+            .item-price,
+            .item-type,
+            .item-rate,
+            .item-quantity {
+              font-size: 13px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .item-management .container {
+      padding: 0 4px;
+
+      .item-list {
+        padding: 6px 2px;
+
+        .item-list-title {
+          .title-text {
+            font-size: 15px;
+          }
+        }
+
+        .item {
+          flex-direction: column;
+          align-items: flex-start;
+          padding: 8px;
+
+          .item-image {
+            width: 70vw;
+            max-width: 120px;
+            height: 70vw;
+            max-height: 120px;
+            margin: 0 0 8px 0;
+          }
+
+          .item-info {
+            padding-left: 0;
+
+            .item-name {
+              font-size: 14px;
+              margin-bottom: 4px;
+            }
+
+            .item-price,
+            .item-type,
+            .item-rate,
+            .item-quantity {
+              font-size: 12px;
+              margin-bottom: 2px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .item-management .container {
+      padding: 0 2px;
+
+      .item-list {
+        padding: 4px 0;
+        gap: 6px;
+
+        .item-list-title {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 4px;
+
+          .title-text {
+            font-size: 13px;
+          }
+
+          .btn-create-item {
+            width: 28px;
+            height: 28px;
+            font-size: 16px;
+          }
+
+          .btn-text {
+            font-size: 12px;
+          }
+        }
+
+        .item {
+          padding: 6px;
+          border-radius: 8px;
+          margin-bottom: 10px;
+
+          .item-image {
+            width: 90vw;
+            max-width: 90px;
+            height: 90vw;
+            max-height: 90px;
+          }
+
+          .item-info {
+            .item-name {
+              font-size: 12px;
+            }
+
+            .item-price,
+            .item-type,
+            .item-rate,
+            .item-quantity {
+              font-size: 11px;
+            }
+          }
+        }
+
+        p {
+          font-size: 13px;
+        }
+      }
+    }
+  }
 }

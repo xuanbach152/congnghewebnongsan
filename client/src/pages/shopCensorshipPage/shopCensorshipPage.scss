@@ -157,4 +157,148 @@
       }
     }
   }
+
+  @media (max-width: 992px) {
+    .shop-censorship .container .shop-list {
+      padding: 8px 5px;
+
+      .shop-list-title .title-text {
+        font-size: 17px;
+      }
+
+      .shop {
+        padding: 10px;
+
+        .shop-image {
+          width: 90px;
+          height: 90px;
+          margin-right: 10px;
+        }
+
+        .shop-info .shop-name {
+          font-size: 15px;
+        }
+
+        .shop-info .shop-address {
+          font-size: 13px;
+        }
+
+        .btn-censorship button,
+        .shop-status {
+          font-size: 13px;
+          padding: 7px 12px;
+        }
+      }
+
+      p {
+        font-size: 15px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .shop-censorship .container .shop-list {
+      padding: 6px 2px;
+
+      .shop-list-title .title-text {
+        font-size: 15px;
+      }
+
+      .shop {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 8px;
+
+        .shop-image {
+          width: 60vw;
+          max-width: 120px;
+          height: 60vw;
+          max-height: 120px;
+          margin-right: 0;
+          margin-bottom: 8px;
+        }
+
+        .shop-info .shop-name {
+          font-size: 13px;
+        }
+
+        .shop-info .shop-address {
+          font-size: 12px;
+        }
+
+        .btn-censorship {
+          width: 100%;
+          gap: 8px;
+
+          button {
+            width: 48%;
+            font-size: 12px;
+            padding: 6px 0;
+          }
+        }
+
+        .shop-status {
+          font-size: 12px;
+          padding: 6px 10px;
+        }
+      }
+
+      p {
+        font-size: 13px;
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .shop-censorship .container .shop-list {
+      padding: 4px 0;
+      gap: 6px;
+
+      .shop-list-title .title-text {
+        font-size: 13px;
+      }
+
+      .shop {
+        padding: 6px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+
+        .shop-image {
+          width: 90vw;
+          max-width: 90px;
+          height: 90vw;
+          max-height: 90px;
+          margin-bottom: 6px;
+        }
+
+        .shop-info .shop-name {
+          font-size: 12px;
+        }
+
+        .shop-info .shop-address {
+          font-size: 11px;
+        }
+
+        .btn-censorship {
+          gap: 6px;
+
+          button {
+            width: 100%;
+            font-size: 11px;
+            padding: 5px 0;
+          }
+        }
+
+        .shop-status {
+          font-size: 11px;
+          padding: 5px 8px;
+        }
+      }
+
+      p {
+        font-size: 12px;
+      }
+    }
+  }
 }

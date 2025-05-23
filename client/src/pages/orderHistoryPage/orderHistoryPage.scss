@@ -55,10 +55,10 @@
     justify-content: center;
     align-items: center;
     display: flex;
-    font-size: 18px; 
+    font-size: 18px;
     font-weight: 700;
-    color: #ba0000; 
-    padding: 40px 0; 
+    color: #ba0000;
+    padding: 40px 0;
   }
 
   .orders {
@@ -406,6 +406,175 @@
 
       @media (max-width: 576px) {
         font-size: 12px;
+      }
+    }
+  }
+
+  @media (max-width: 992px) {
+    .order-history-page {
+      padding: 8px;
+      h2 {
+        font-size: 18px;
+        padding-bottom: 8px;
+      }
+      .orders {
+        gap: 10px;
+        .order {
+          padding: 10px;
+          .order-header {
+            font-size: 13px;
+          }
+          .order-items .order-item {
+            .item-image {
+              width: 44px;
+              height: 44px;
+            }
+            .item-name,
+            .item-price,
+            .item-quantity,
+            .item-total {
+              font-size: 13px;
+            }
+          }
+          .order-footer .order-summary span,
+          .order-footer .order-summary strong {
+            font-size: 13px;
+          }
+          .order-footer .order-actions button {
+            font-size: 13px;
+            padding: 7px 12px;
+          }
+        }
+      }
+      .pagination {
+        button {
+          font-size: 13px;
+          padding: 7px 12px;
+        }
+        span {
+          font-size: 13px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .order-history-page {
+      padding: 4px;
+      h2 {
+        font-size: 16px;
+        padding-bottom: 6px;
+      }
+      .status-filter {
+        gap: 10px;
+        .checkbox-label {
+          font-size: 12px;
+          input {
+            width: 14px;
+            height: 14px;
+          }
+        }
+      }
+      .orders .order {
+        padding: 7px;
+        .order-header {
+          font-size: 12px;
+          gap: 6px;
+        }
+        .order-items .order-item {
+          gap: 6px;
+          .item-image {
+            width: 36px;
+            height: 36px;
+          }
+          .item-name,
+          .item-price,
+          .item-quantity,
+          .item-total {
+            font-size: 12px;
+          }
+        }
+        .order-footer .order-summary span,
+        .order-footer .order-summary strong {
+          font-size: 12px;
+        }
+        .order-footer .order-actions button {
+          font-size: 12px;
+          padding: 6px 10px;
+        }
+      }
+      .pagination {
+        button {
+          font-size: 12px;
+          padding: 6px 10px;
+        }
+        span {
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .order-history-page {
+      padding: 2px;
+      h2 {
+        font-size: 14px;
+        padding-bottom: 4px;
+      }
+      .status-filter {
+        gap: 6px;
+        .checkbox-label {
+          font-size: 11px;
+          input {
+            width: 12px;
+            height: 12px;
+          }
+        }
+      }
+      .no-orders-message {
+        font-size: 14px;
+        padding: 20px 0;
+      }
+      .orders .order {
+        padding: 5px;
+        border-radius: 6px;
+        .order-header {
+          font-size: 11px;
+          gap: 4px;
+        }
+        .order-items .order-item {
+          gap: 4px;
+          .item-image {
+            width: 28px;
+            height: 28px;
+          }
+          .item-name,
+          .item-price,
+          .item-quantity,
+          .item-total {
+            font-size: 11px;
+          }
+        }
+        .order-footer .order-summary span,
+        .order-footer .order-summary strong {
+          font-size: 11px;
+        }
+        .order-footer .order-actions button {
+          font-size: 11px;
+          padding: 5px 8px;
+          border-radius: 14px;
+        }
+      }
+      .pagination {
+        button {
+          font-size: 11px;
+          padding: 5px 8px;
+          border-radius: 14px;
+        }
+        span {
+          font-size: 11px;
+        }
       }
     }
   }

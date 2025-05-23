@@ -155,4 +155,117 @@
       }
     }
   }
+
+  @media (max-width: 992px) {
+    .shop-registration .container .shop-registration-form {
+      padding: 8px 5px;
+
+      .title-text {
+        font-size: 17px;
+      }
+
+      .form-register .form-group {
+        label {
+          font-size: 13px;
+        }
+
+        input,
+        .suggestion-item {
+          font-size: 14px;
+          padding: 7px;
+        }
+
+        .upload-box {
+          width: 120px;
+          height: 120px;
+          font-size: 32px;
+        }
+
+        button {
+          font-size: 14px;
+          width: 150px;
+          padding: 8px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .shop-registration .container .shop-registration-form {
+      padding: 6px 2px;
+
+      .title-text {
+        font-size: 15px;
+      }
+
+      .form-register .form-group {
+        label {
+          font-size: 12px;
+        }
+
+        input,
+        .suggestion-item {
+          font-size: 13px;
+          padding: 6px;
+        }
+
+        .upload-box {
+          width: 90px;
+          height: 90px;
+          font-size: 22px;
+        }
+
+        button {
+          font-size: 13px;
+          width: 120px;
+          padding: 7px;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .shop-registration .container .shop-registration-form {
+      padding: 4px 0;
+      gap: 6px;
+
+      .title-text {
+        font-size: 13px;
+      }
+
+      .form-register {
+        gap: 8px;
+
+        .form-group {
+          gap: 3px;
+
+          label {
+            font-size: 11px;
+          }
+
+          input,
+          .suggestion-item {
+            font-size: 12px;
+            padding: 5px;
+          }
+
+          .upload-box {
+            width: 60px;
+            height: 60px;
+            font-size: 14px;
+          }
+
+          button {
+            font-size: 12px;
+            width: 90px;
+            padding: 6px;
+          }
+
+          .suggestions-list {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+  }
 }
