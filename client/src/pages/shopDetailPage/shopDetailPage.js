@@ -10,13 +10,14 @@ import { formatter } from 'utils/formatter'
 import { itemTypes } from 'utils/enums'
 import { FaPaperPlane } from 'react-icons/fa'
 
-const ShopDetailPage = ({ openChat, setShopChat }) => {
+const ShopDetailPage = ({ openChat, setShopChat, setIsShowFilter }) => {
   const { shopId } = useParams()
   const [shop, setShop] = useState(null)
   const [items, setItems] = useState([])
   const [itemTotalPages, setItemTotalPages] = useState(5)
   const [itemCurrentPage, setItemCurrentPage] = useState(1)
   const [itemLoading, setItemLoading] = useState(false)
+  setIsShowFilter(false)
 
   useEffect(() => {
     const fetchShop = async () => {

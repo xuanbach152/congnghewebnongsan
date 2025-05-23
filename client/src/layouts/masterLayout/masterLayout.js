@@ -11,6 +11,7 @@ const MasterLayout = ({
   setType,
   setMinPrice,
   setMaxPrice,
+  isShowFilter,
   ...props
 }) => {
   return (
@@ -22,6 +23,7 @@ const MasterLayout = ({
         setType={setType}
         setMinPrice={setMinPrice}
         setMaxPrice={setMaxPrice}
+        isShowFilter={isShowFilter}
       />
       <div className="main-content">{children}</div>
       <Footer />

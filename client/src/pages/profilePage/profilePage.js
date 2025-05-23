@@ -5,7 +5,7 @@ import { jwtDecode } from 'jwt-decode'
 import './profilePage.scss'
 import { toast } from 'react-toastify'
 
-const ProfilePage = () => {
+const ProfilePage = ({ setIsShowFilter }) => {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('profile')
   const [userId, setUserId] = useState(null)
@@ -35,6 +35,7 @@ const ProfilePage = () => {
     address: false,
   })
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
+  setIsShowFilter(false)
 
   // Fetch user data
   const fetchUserData = async () => {

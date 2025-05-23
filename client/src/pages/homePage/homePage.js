@@ -8,7 +8,7 @@ import { FaStar } from 'react-icons/fa'
 import { formatter } from 'utils/formatter'
 import { itemTypes } from 'utils/enums'
 
-const HomePage = ({ searchQuery, type, minPrice, maxPrice }) => {
+const HomePage = ({ searchQuery, type, minPrice, maxPrice, setIsShowFilter }) => {
   const [shops, setShops] = useState([])
   const [shopTotalPages, setShopTotalPages] = useState(1)
   const [shopCurrentPage, setShopCurrentPage] = useState(1)
@@ -18,6 +18,7 @@ const HomePage = ({ searchQuery, type, minPrice, maxPrice }) => {
   const [itemTotalPages, setItemTotalPages] = useState(1)
   const [itemCurrentPage, setItemCurrentPage] = useState(1)
   const [itemLoading, setItemLoading] = useState(false)
+  setIsShowFilter(true)
 
   useEffect(() => {
     const fetchShops = async () => {

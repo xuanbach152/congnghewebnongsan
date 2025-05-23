@@ -37,7 +37,7 @@ const ShopGroup = ({ group, deliveryFee }) => (
   </div>
 );
 
-const CheckoutPage = () => {
+const CheckoutPage = ({ setIsShowFilter }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { selectedItems = [], cartId } = location.state || {};
@@ -49,6 +49,7 @@ const CheckoutPage = () => {
   const [shopGroups, setShopGroups] = useState([]);
   const [deliveryFees, setDeliveryFees] = useState({});
   const [userId, setUserId] = useState('');
+  setIsShowFilter(false)
 
   useEffect(() => {
     const token = localStorage.getItem('accessToken');

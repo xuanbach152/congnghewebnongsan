@@ -7,10 +7,11 @@ import { default as axiosInstance } from 'utils/api'
 import { FaAngleRight, FaStar } from 'react-icons/fa'
 import { itemTypes } from 'utils/enums'
 
-const ItemPage = () => {
+const ItemPage = ({ setIsShowFilter }) => {
   const [items, setItems] = useState([])
   const [totalPages, setTotalPages] = useState(5)
   const [currentPage, setCurrentPage] = useState(1)
+  setIsShowFilter(false)
 
   useEffect(() => {
     const fetchItems = async () => {

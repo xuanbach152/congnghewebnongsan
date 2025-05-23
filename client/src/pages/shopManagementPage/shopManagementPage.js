@@ -7,11 +7,12 @@ import { default as axiosInstance } from 'utils/api'
 import { useTokenVerification } from 'utils/tokenVerification'
 import { shopStatusEnum } from 'utils/enums'
 
-const ShopManagementPage = () => {
+const ShopManagementPage = ({ setIsShowFilter }) => {
   const [shops, setShops] = useState([])
   const [totalPages, setTotalPages] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(false)
+  setIsShowFilter(false)
 
   const isVerified = useTokenVerification();
 

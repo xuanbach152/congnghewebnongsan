@@ -6,7 +6,7 @@ import { FaAngleRight } from 'react-icons/fa'
 import axiosInstance from 'utils/api'
 import { itemTypes } from 'utils/enums'
 
-const ItemUpsertPage = () => {
+const ItemUpsertPage = ({ setIsShowFilter }) => {
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -21,6 +21,7 @@ const ItemUpsertPage = () => {
   const [loadingShop, setLoadingShop] = useState(true)
   const [loadingItem, setLoadingItem] = useState(true)
   const [preview, setPreview] = useState(null);
+  setIsShowFilter(false)
 
   const navigate = useNavigate();
 

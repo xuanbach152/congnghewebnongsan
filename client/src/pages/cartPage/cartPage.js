@@ -6,12 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaShoppingCart } from 'react-icons/fa'
 
-const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
+const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount, setIsShowFilter }) => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedItems, setSelectedItems] = useState([]);
   const navigate = useNavigate();
+  setIsShowFilter(false)
 
   const fetchCart = async () => {
     try {

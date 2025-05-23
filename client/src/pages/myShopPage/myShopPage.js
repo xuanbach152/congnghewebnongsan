@@ -14,7 +14,7 @@ const getToday = () => {
   return today.toISOString().split('T')[0]
 }
 
-const MyShopPage = () => {
+const MyShopPage = ({ setIsShowFilter }) => {
   const { shopId, tab } = useParams()
   const [shop, setShop] = useState(null)
   const [items, setItems] = useState([])
@@ -29,6 +29,7 @@ const MyShopPage = () => {
   const [totalRevenue, setTotalRevenue] = useState(0)
   const [totalOrders, setTotalOrders] = useState(0)
   const isVerified = useTokenVerification()
+  setIsShowFilter(false)
 
   const navigate = useNavigate()
 

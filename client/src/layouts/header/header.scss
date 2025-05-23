@@ -131,12 +131,35 @@
   height: 100%;
 
   h1 {
-    font-size: 28px;
-    font-weight: 700;
-    color: map.get($theme-colors, 'main');
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-family: 'Pacifico', cursive, Arial, sans-serif;
+    font-size: 48px;
+    font-weight: 400;
+    letter-spacing: 2.5px;
+    margin-left: 20px;
+    text-transform: capitalize;
+    cursor: pointer;
+    background: none;
+    line-height: 1.1;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    text-shadow:
+      0 4px 18px rgba(39, 174, 96, 0.18),
+      0 1px 0 #fff;
+  }
+
+  .viet {
+    color: #276fae;
+    text-shadow:
+      0 2px 8px rgba(39, 174, 96, 0.18),
+      0 1px 0 #fff;
+  }
+  .fresh {
+    color: #34db4a;
+    text-shadow:
+      0 2px 8px rgba(52, 152, 219, 0.18),
+      0 1px 0 #fff;
   }
 
   a {
@@ -305,7 +328,6 @@
       }
     }
   }
-
 }
 
 .auth_modal {

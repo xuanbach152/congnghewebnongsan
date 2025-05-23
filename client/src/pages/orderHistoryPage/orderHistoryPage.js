@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import './orderHistoryPage.scss';
 import { useTokenVerification } from 'utils/tokenVerification';
 
-const OrderHistoryPage = () => {
+const OrderHistoryPage = ({ setIsShowFilter }) => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -15,6 +15,7 @@ const OrderHistoryPage = () => {
   const [editingOrderId, setEditingOrderId] = useState(null);
   const [editFormData, setEditFormData] = useState({ deliveryAddress: '', paymentMethod: '' });
   const isVerified = useTokenVerification();
+  setIsShowFilter(false)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const fetchOrders = async () => {

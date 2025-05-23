@@ -23,6 +23,7 @@ const renderRouter = ({
   type,
   minPrice,
   maxPrice,
+  setIsShowFilter,
 }) => {
   const allRouters = [
     {
@@ -33,12 +34,13 @@ const renderRouter = ({
           type={type}
           minPrice={minPrice}
           maxPrice={maxPrice}
+          setIsShowFilter={setIsShowFilter}
         />
       ),
     },
     {
       path: routers.PROFILE,
-      component: <ProfilePage />,
+      component: <ProfilePage setIsShowFilter={setIsShowFilter} />,
     },
     {
       path: routers.CART,
@@ -46,37 +48,42 @@ const renderRouter = ({
         <CartPage
           setDistinctItemQuantity={setDistinctItemQuantity}
           setTotalPaymentAmount={setTotalPaymentAmount}
+          setIsShowFilter={setIsShowFilter}
         />
       ),
     },
     {
       path: routers.CHECKOUT,
-      component: <CheckoutPage />,
+      component: <CheckoutPage setIsShowFilter={setIsShowFilter} />,
     },
     {
       path: routers.ORDER_HISTORY,
-      component: <OrderHistoryPage />,
+      component: <OrderHistoryPage setIsShowFilter={setIsShowFilter} />,
     },
     {
       path: routers.SHOP_MANAGEMENT,
-      component: <ShopManagementPage />,
+      component: <ShopManagementPage setIsShowFilter={setIsShowFilter} />,
     },
     {
       path: routers.SHOP_UPSERT,
-      component: <ShopUpsertPage />,
+      component: <ShopUpsertPage setIsShowFilter={setIsShowFilter} />,
     },
     {
       path: routers.ITEM_UPSERT,
-      component: <ItemUpsertPage />,
+      component: <ItemUpsertPage setIsShowFilter={setIsShowFilter} />,
     },
     {
       path: routers.ITEM,
-      component: <ItemPage />,
+      component: <ItemPage setIsShowFilter={setIsShowFilter} />,
     },
     {
       path: routers.SHOP_DETAIL,
       component: (
-        <ShopDetailPage openChat={openChat} setShopChat={setShopChat} />
+        <ShopDetailPage
+          openChat={openChat}
+          setShopChat={setShopChat}
+          setIsShowFilter={setIsShowFilter}
+        />
       ),
     },
     {
@@ -85,16 +92,17 @@ const renderRouter = ({
         <ItemDetailPage
           setDistinctItemQuantity={setDistinctItemQuantity}
           setTotalPaymentAmount={setTotalPaymentAmount}
+          setIsShowFilter={setIsShowFilter}
         />
       ),
     },
     {
       path: routers.MY_SHOP,
-      component: <MyShopPage />,
+      component: <MyShopPage setIsShowFilter={setIsShowFilter} />,
     },
     {
       path: routers.SHOP_CENSORSHIP,
-      component: <ShopCensorshipPage />,
+      component: <ShopCensorshipPage setIsShowFilter={setIsShowFilter} />,
     },
   ]
 

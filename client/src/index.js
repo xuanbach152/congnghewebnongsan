@@ -20,6 +20,7 @@ function App() {
   const [type, setType] = useState(null)
   const [minPrice, setMinPrice] = useState(null)
   const [maxPrice, setMaxPrice] = useState(null)
+  const [isShowFilter, setIsShowFilter] = useState(false)
   
   const openChat = () => setIsChatOpen(true)
 
@@ -31,6 +32,7 @@ function App() {
       setType={setType}
       setMinPrice={setMinPrice}
       setMaxPrice={setMaxPrice}
+      isShowFilter={isShowFilter}
     >
       <RouterCustom
         searchQuery={searchQuery}
@@ -41,6 +43,7 @@ function App() {
         type={type}
         minPrice={minPrice}
         maxPrice={maxPrice}
+        setIsShowFilter={setIsShowFilter}
       />
       <ToastContainer
         position="top-right"

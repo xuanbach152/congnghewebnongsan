@@ -15,7 +15,7 @@ import { toast } from 'react-toastify'
 import axios from 'axios'
 import routers from 'utils/routers'
 
-const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
+const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount, setIsShowFilter }) => {
   const navigate = useNavigate()
   const { itemId } = useParams()
   const [item, setItem] = useState(null)
@@ -35,6 +35,7 @@ const ItemDetailPage = ({ setDistinctItemQuantity, setTotalPaymentAmount }) => {
 
   const [relatedItems, setRelatedItems] = useState([])
   const [relatedLoading, setRelatedLoading] = useState(true)
+  setIsShowFilter(false)
 
   const fetchRelatedItems = useCallback(async () => {
     try {

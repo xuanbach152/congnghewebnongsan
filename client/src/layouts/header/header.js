@@ -24,6 +24,7 @@ const MainHeader = ({
   setType,
   setMinPrice,
   setMaxPrice,
+  isShowFilter,
 }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [isLogin, setIsLogin] = useState(true)
@@ -42,6 +43,8 @@ const MainHeader = ({
   const [paymentAmount, setPaymentAmount] = useState(0)
   const [error, setError] = useState('')
   const [searchInput, setSearchInput] = useState('')
+
+  console.log(isShowFilter);
 
   useEffect(() => {
     setItemQuantity(distinctItemQuantity)
@@ -317,24 +320,31 @@ const MainHeader = ({
                   setFilterPrice('all')
                 }}
               >
-                <h1>Nông sản Việt</h1>
+                <h1>
+  <span className="viet">Viet</span>
+  <span className="fresh">Fresh</span>
+</h1>
               </Link>
             </div>
           </div>
           <div className="col-xl-6">
             <div className="header_search_container">
-              <div className="header_search_form">
-                <form onSubmit={handleSubmit}>
-                  <input
-                    type="text"
-                    name="search"
-                    placeholder="Tìm kiếm sản phẩm hoặc cửa hàng..."
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                  />
-                  <button type="submit">Tìm kiếm</button>
-                </form>
-              </div>
+              {isShowFilter && (
+                <>
+                  <div className="header_search_form">
+                    <form onSubmit={handleSubmit}>
+                      <input
+                        type="text"
+                        name="search"
+                        placeholder="Tìm kiếm sản phẩm hoặc cửa hàng..."
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                      />
+                      <button type="submit">Tìm kiếm</button>
+                    </form>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -362,58 +372,61 @@ const MainHeader = ({
         <div className="row">
           <div className="filter_section">
             {/* Filters */}
+            {isShowFilter && (
+              <>
+                <div className="filter_group">
+                  <select
+                    value={filterCategory}
+                    onChange={(e) => {
+                      setFilterCategory(e.target.value)
+                      if (e.target.value === 'all') {
+                        setType(null)
+                      } else setType(e.target.value)
+                    }}
+                  >
+                    <option value="all">Tất cả danh mục</option>
+                    {Object.entries(itemTypes).map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            <div className="filter_group">
-              <select
-                value={filterCategory}
-                onChange={(e) => {
-                  setFilterCategory(e.target.value)
-                  if (e.target.value === 'all') {
-                    setType(null)
-                  } else setType(e.target.value)
-                }}
-              >
-                <option value="all">Tất cả danh mục</option>
-                {Object.entries(itemTypes).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="filter_group">
-              <select
-                value={filterPrice}
-                onChange={(e) => {
-                  const value = e.target.value
-                  setFilterPrice(value)
-                  // Thiết lập min/max price theo từng option
-                  if (value === 'all') {
-                    setMinPrice(null)
-                    setMaxPrice(null)
-                  } else if (value === 'under50k') {
-                    setMinPrice(0)
-                    setMaxPrice(49999)
-                  } else if (value === '50k-100k') {
-                    setMinPrice(50000)
-                    setMaxPrice(100000)
-                  } else if (value === '100k-200k') {
-                    setMinPrice(100000)
-                    setMaxPrice(200000)
-                  } else if (value === 'above200k') {
-                    setMinPrice(200000)
-                    setMaxPrice(null)
-                  }
-                }}
-              >
-                <option value="all">Tất cả giá</option>
-                <option value="under50k">Dưới 50k</option>
-                <option value="50k-100k">50k - 100k</option>
-                <option value="100k-200k">100k - 200k</option>
-                <option value="above200k">Trên 200k</option>
-              </select>
-            </div>
+                <div className="filter_group">
+                  <select
+                    value={filterPrice}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setFilterPrice(value)
+                      // Thiết lập min/max price theo từng option
+                      if (value === 'all') {
+                        setMinPrice(null)
+                        setMaxPrice(null)
+                      } else if (value === 'under50k') {
+                        setMinPrice(0)
+                        setMaxPrice(49999)
+                      } else if (value === '50k-100k') {
+                        setMinPrice(50000)
+                        setMaxPrice(100000)
+                      } else if (value === '100k-200k') {
+                        setMinPrice(100000)
+                        setMaxPrice(200000)
+                      } else if (value === 'above200k') {
+                        setMinPrice(200000)
+                        setMaxPrice(null)
+                      }
+                    }}
+                  >
+                    <option value="all">Tất cả giá</option>
+                    <option value="under50k">Dưới 50k</option>
+                    <option value="50k-100k">50k - 100k</option>
+                    <option value="100k-200k">100k - 200k</option>
+                    <option value="above200k">Trên 200k</option>
+                  </select>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

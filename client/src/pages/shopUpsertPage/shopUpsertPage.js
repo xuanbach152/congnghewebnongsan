@@ -7,7 +7,7 @@ import axiosInstance from 'utils/api';
 import axios from 'axios';
 import { getLocationSuggestions } from 'utils/mapquestApi';
 
-const ShopUpsertPage = () => {
+const ShopUpsertPage = ({ setIsShowFilter }) => {
   const { mode, shopId } = useParams();
   const [shop, setShop] = useState(null);
   const [preview, setPreview] = useState(null);
@@ -22,6 +22,7 @@ const ShopUpsertPage = () => {
   const [loading, setLoading] = useState(true)
   const [locationSuggestions, setLocationSuggestions] = useState([]);
   const [locationValue, setLocationValue] = useState('');
+  setIsShowFilter(false)
 
   const navigate = useNavigate();
 
