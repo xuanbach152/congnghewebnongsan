@@ -867,28 +867,34 @@
   .item-detail {
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 16px;
+    gap: 0 !important;
   }
   .item-image {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 12px;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 0 18px 0 !important; /* cách ảnh với chữ */
+    float: none !important;
+    position: static !important;
   }
   .item-image img {
-    width: 100%;
-    max-width: 220px;
-    height: auto;
-    max-height: 220px;
-    display: block;
-    margin: 0 auto;
-    object-fit: cover;
+    width: 100% !important;
+    max-width: 220px !important;
+    height: auto !important;
+    max-height: 220px !important;
+    display: block !important;
+    margin: 0 auto !important;
+    object-fit: cover !important;
+    position: static !important;
   }
   .item-content {
-    width: 100%;
-    font-size: 13px;
-    gap: 12px;
-    background: none;
-    padding: 12px 0 0 0;
+    width: 100% !important;
+    display: block !important;
+    font-size: 15px !important;
+    background: none !important;
+    padding: 12px 0 0 0 !important;
+    margin: 0 !important;
+    position: static !important;
   }
 }
