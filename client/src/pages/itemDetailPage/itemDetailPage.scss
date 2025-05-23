@@ -615,266 +615,22 @@
   }
 }
 
-// Điều chỉnh responsive
-@media (max-width: 992px) {
-  .related-items {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-
-@media (max-width: 576px) {
-  .related-items {
-    grid-template-columns: repeat(1, 1fr) !important;
-  }
-}
-// Responsive
 @media (max-width: 992px) {
   .item-container {
-    flex-direction: column;
-  }
-
-  .item-detail-column,
-  .comment-column {
-    flex: 1 1 100%;
-  }
-
-  .comment-section {
-    margin-top: 30px;
-
-    .comments-list {
-      max-height: none;
-    }
-  }
-}
-
-@media (max-width: 992px) {
-  .item-information-management .container .item-information {
-    padding: 8px 2px;
-    .item-information-title .title-text {
-      font-size: 20px;
-    }
-  }
-  .item-detail {
     flex-direction: column !important;
-    gap: 16px;
-    .item-image img {
-      width: 220px;
-      height: 220px;
-    }
-  }
-  .related-products {
-    margin-top: 20px;
-    .related-title {
-      font-size: 16px;
-    }
-    .related-items {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 10px;
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .item-information-management .container .item-information {
-    padding: 5px 0;
-    .item-information-title .title-text {
-      font-size: 17px;
-    }
-  }
-  .item-detail {
-    .item-image img {
-      width: 140px;
-      height: 140px;
-    }
-    .item-content {
-      font-size: 13px;
-      gap: 8px;
-      .item-in-shop img {
-        width: 22px;
-        height: 22px;
-      }
-      .item-quantity input {
-        width: 40px;
-        padding: 3px;
-      }
-      .item-actions .btn.add-to-cart {
-        padding: 7px 12px;
-        font-size: 13px;
-      }
-    }
-  }
-  .related-products {
-    .related-title {
-      font-size: 15px;
-    }
-    .related-items {
-      grid-template-columns: 1fr !important;
-      gap: 8px;
-      .related-img {
-        height: 90px;
-      }
-      .related-info .related-name,
-      .related-info .related-price {
-        font-size: 13px;
-      }
-    }
-  }
-  .comment-section {
-    .section-title {
-      font-size: 15px;
-      padding: 12px 10px;
-    }
-    .comments-list {
-      padding: 10px 5px;
-    }
-    .comment-form {
-      padding: 10px 5px;
-      h3 {
-        font-size: 13px;
-      }
-      .comment-textarea {
-        font-size: 12px;
-        padding: 8px 10px;
-        height: 60px;
-      }
-      .form-actions .submit-btn {
-        padding: 7px 12px;
-        font-size: 12px;
-      }
-    }
-  }
-}
-
-@media (max-width: 576px) {
-  .item-information-management .container .item-information {
-    padding: 2px 0;
-    .item-information-title .title-text {
-      font-size: 15px;
-    }
+    gap: 24px !important;
   }
   .item-detail {
     flex-direction: column !important;
     align-items: stretch !important;
-    gap: 12px;
-  }
-  .item-image {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px; // tăng khoảng cách với chữ
-  }
-  .item-image img {
-    width: 90vw;
-    max-width: 180px;
-    height: auto;
-    max-height: 180px;
-    display: block;
-    margin: 0 auto;
-    object-fit: cover;
-  }
-  .item-content {
-    width: 100%;
-    font-size: 12px;
-    gap: 8px;
-    background: none;
-    padding: 10px 0 0 0; // thêm padding-top để tránh dính sát ảnh
-  }
-  .related-products {
-    margin-top: 10px;
-    .related-title {
-      font-size: 13px;
-    }
-    .related-items {
-      grid-template-columns: 1fr !important;
-      gap: 6px;
-      .related-img {
-        height: 60vw;
-        max-height: 100px;
-      }
-      .related-info .related-name,
-      .related-info .related-price {
-        font-size: 12px;
-      }
-    }
-  }
-  .comment-section {
-    .section-title {
-      font-size: 13px;
-      padding: 8px 5px;
-    }
-    .comments-list {
-      padding: 6px 2px;
-    }
-    .comment-form {
-      padding: 6px 2px;
-      h3 {
-        font-size: 12px;
-      }
-      .comment-textarea {
-        font-size: 11px;
-        padding: 6px 6px;
-        height: 40px;
-      }
-      .form-actions .submit-btn {
-        padding: 5px 8px;
-        font-size: 11px;
-      }
-    }
-    .comment-item {
-      padding-bottom: 8px;
-      margin-bottom: 8px;
-    }
-    .user-avatar,
-    .default-avatar {
-      width: 24px;
-      height: 24px;
-      margin-right: 5px;
-    }
-    .username {
-      font-size: 12px;
-    }
-    .comment-date {
-      font-size: 10px;
-    }
-    .comment-content {
-      font-size: 12px;
-    }
-    .comment-image {
-      width: 40px;
-      height: 40px;
-    }
-    .shop-reply {
-      padding: 6px;
-      font-size: 11px;
-    }
-    .reply-header {
-      font-size: 11px;
-    }
-    .reply-content {
-      font-size: 11px;
-    }
-    .pagination {
-      padding: 6px 0;
-      .page-btn,
-      .page-info {
-        font-size: 11px;
-        padding: 4px 8px;
-      }
-    }
-  }
-}
-@media (max-width: 992px) {
-  .item-detail {
-    flex-direction: column !important;
-    align-items: stretch !important;
-    gap: 0 !important;
+    gap: 18px !important;
   }
   .item-image {
     width: 100% !important;
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
-    margin: 0 0 18px 0 !important; /* cách ảnh với chữ */
+    margin: 0 0 16px 0 !important;
     float: none !important;
     position: static !important;
   }
@@ -891,10 +647,201 @@
   .item-content {
     width: 100% !important;
     display: block !important;
-    font-size: 15px !important;
+    font-size: 14px !important;
     background: none !important;
-    padding: 12px 0 0 0 !important;
+    padding: 14px 0 0 0 !important;
     margin: 0 !important;
     position: static !important;
+    gap: 10px !important;
+  }
+  .item-information-title {
+    margin-bottom: 18px !important;
+    .title-text {
+      font-size: 20px !important;
+    }
+  }
+  .related-products {
+    margin-top: 20px !important;
+    .related-title {
+      font-size: 16px !important;
+    }
+    .related-items {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 10px !important;
+    }
+  }
+  .comment-section {
+    margin-top: 30px !important;
+    .section-title {
+      font-size: 15px !important;
+      padding: 12px 10px !important;
+    }
+    .comments-list {
+      padding: 10px 5px !important;
+      max-height: none !important;
+    }
+    .comment-form {
+      padding: 10px 5px !important;
+      h3 {
+        font-size: 13px !important;
+      }
+      .comment-textarea {
+        font-size: 12px !important;
+        padding: 8px 10px !important;
+        height: 60px !important;
+      }
+      .form-actions .submit-btn {
+        padding: 7px 12px !important;
+        font-size: 12px !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .item-image img {
+    max-width: 140px !important;
+    max-height: 140px !important;
+  }
+  .item-content {
+    font-size: 13px !important;
+    padding: 12px 0 0 0 !important;
+    gap: 8px !important;
+    .item-in-shop img {
+      width: 22px !important;
+      height: 22px !important;
+    }
+    .item-quantity input {
+      width: 40px !important;
+      padding: 3px !important;
+    }
+    .item-actions .btn.add-to-cart {
+      padding: 7px 12px !important;
+      font-size: 13px !important;
+    }
+  }
+  .related-products {
+    .related-title {
+      font-size: 15px !important;
+    }
+    .related-items {
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+      .related-img {
+        height: 90px !important;
+      }
+      .related-info .related-name,
+      .related-info .related-price {
+        font-size: 13px !important;
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .item-information-management .container .item-information {
+    padding: 2px 0 !important;
+    .item-information-title {
+      margin-bottom: 14px !important;
+      .title-text {
+        font-size: 15px !important;
+      }
+    }
+  }
+  .item-detail {
+    gap: 10px !important;
+  }
+  .item-image img {
+    width: 90vw !important;
+    max-width: 180px !important;
+    max-height: 180px !important;
+  }
+  .item-content {
+    font-size: 12px !important;
+    padding: 10px 0 0 0 !important;
+    gap: 7px !important;
+  }
+  .related-products {
+    margin-top: 10px !important;
+    .related-title {
+      font-size: 13px !important;
+    }
+    .related-items {
+      grid-template-columns: 1fr !important;
+      gap: 6px !important;
+      .related-img {
+        height: 60vw !important;
+        max-height: 100px !important;
+      }
+      .related-info .related-name,
+      .related-info .related-price {
+        font-size: 12px !important;
+      }
+    }
+  }
+  .comment-section {
+    .section-title {
+      font-size: 13px !important;
+      padding: 8px 5px !important;
+    }
+    .comments-list {
+      padding: 6px 2px !important;
+    }
+    .comment-form {
+      padding: 6px 2px !important;
+      h3 {
+        font-size: 12px !important;
+      }
+      .comment-textarea {
+        font-size: 11px !important;
+        padding: 6px 6px !important;
+        height: 40px !important;
+      }
+      .form-actions .submit-btn {
+        padding: 5px 8px !important;
+        font-size: 11px !important;
+      }
+    }
+    .comment-item {
+      padding-bottom: 8px !important;
+      margin-bottom: 8px !important;
+    }
+    .user-avatar,
+    .default-avatar {
+      width: 24px !important;
+      height: 24px !important;
+      margin-right: 5px !important;
+    }
+    .username {
+      font-size: 12px !important;
+    }
+    .comment-date {
+      font-size: 10px !important;
+    }
+    .comment-content {
+      font-size: 12px !important;
+    }
+    .comment-image {
+      width: 40px !important;
+      height: 40px !important;
+    }
+    .shop-reply {
+      padding: 6px !important;
+      font-size: 11px !important;
+    }
+    .reply-header {
+      font-size: 11px !important;
+    }
+    .reply-content {
+      font-size: 11px !important;
+    }
+    .pagination {
+      padding: 6px 0 !important;
+      .page-btn,
+      .page-info {
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+      }
+    }
   }
 }
