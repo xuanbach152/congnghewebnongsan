@@ -30,7 +30,13 @@ export const paymentMethodTypeEnum = {
 };
 
 export const shopStatusEnum = {
-  ACCEPTED: "Đã phê duyệt",
+  ACCEPTED: "Đang hoạt động",
   REJECTED: "Từ chối",
   PENDING: "Đang chờ duyệt",
+  BANNED: "Đã bị cấm",
+};
+
+export const userStatusEnum = {
+  ACTIVE: "Đang hoạt động",
+  BANNED: "Đã bị cấm",
 };

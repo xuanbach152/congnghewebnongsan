@@ -33,18 +33,15 @@ const MainHeader = ({
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [selectedItems, setSelectedItems] = useState([])
   const [cartLoading, setCartLoading] = useState(false)
-  const [filterLocation, setFilterLocation] = useState('all')
   const [filterCategory, setFilterCategory] = useState('all')
   const [filterPrice, setFilterPrice] = useState('all')
-  const [filterPromotion, setFilterPromotion] = useState(false)
-  const [filterTrend, setFilterTrend] = useState(false)
   const [user, setUser] = useState(null)
   const [itemQuantity, setItemQuantity] = useState(0)
   const [paymentAmount, setPaymentAmount] = useState(0)
   const [error, setError] = useState('')
   const [searchInput, setSearchInput] = useState('')
-
-  console.log(isShowFilter);
+  const [isBannedPopup, setIsBannedPopup] = useState(false)
+  const [bannedReason, setBannedReason] = useState('')
 
   useEffect(() => {
     setItemQuantity(distinctItemQuantity)
@@ -105,6 +102,14 @@ const MainHeader = ({
           return
         }
         const result = await login(userName, password)
+        console.log('Login result:', result)
+        if (result.status === 'BANNED') {
+          setBannedReason(
+            result.reason || 'Tài khoản đã bị khóa bởi quản trị viên.'
+          )
+          setIsBannedPopup(true)
+          return
+        }
         localStorage.setItem('accessToken', result.accessToken)
         localStorage.setItem('role', result.role)
         localStorage.setItem('userId', result._id)
@@ -291,6 +296,13 @@ const MainHeader = ({
                             </Link>
                           </li>
                         )}
+                        {user.role === 'ADMIN' && (
+                          <li>
+                            <Link to={routers.USER_CENSORSHIP}>
+                              Quản lý người dùng
+                            </Link>
+                          </li>
+                        )}
                         <li onClick={handleLogout}>Đăng xuất</li>
                       </ul>
                     </div>
@@ -321,9 +333,9 @@ const MainHeader = ({
                 }}
               >
                 <h1>
-  <span className="viet">Viet</span>
-  <span className="fresh">Fresh</span>
-</h1>
+                  <span className="viet">Viet</span>
+                  <span className="fresh">Fresh</span>
+                </h1>
               </Link>
             </div>
           </div>
@@ -502,6 +514,23 @@ const MainHeader = ({
             </p>
 
             <button className="close_button" onClick={toggleAuthModal}>
+              Đóng
+            </button>
+          </div>
+        </div>
+      )}
+      {/* Banned Popup */}
+      {isBannedPopup && (
+        <div className="auth_modal banned_modal">
+          <div className="auth_content">
+            <h2>Tài khoản đã bị khóa</h2>
+            <p>
+              Lý do: {bannedReason}
+            </p>
+            <button
+              className="auth_submit_button"
+              onClick={() => setIsBannedPopup(false)}
+            >
               Đóng
             </button>
           </div>

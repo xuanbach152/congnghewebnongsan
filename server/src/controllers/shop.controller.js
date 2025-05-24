@@ -94,7 +94,7 @@ export const getShopById = async (req, res) => {
 export const updateShop = async (req, res) => {
   try {
     const shopId = req.params.id;
-    const { name, address, description, longitude, latitude, status } = req.body;
+    const { name, address, description, longitude, latitude, status, reason } = req.body;
     const image = req.file;
     let imgUrl;
     if (image) {
@@ -108,6 +108,7 @@ export const updateShop = async (req, res) => {
       longitude,
       latitude,
       status,
+      reason,
     });
     res.status(httpStatus.OK).send({
       code: httpStatus.OK,

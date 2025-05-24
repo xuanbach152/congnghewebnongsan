@@ -29,6 +29,8 @@ const updateUser = async (userId, userData) => {
     "latitude",
     "longitude",
     "role",
+    "status",
+    "reason",
   ];
   const filteredData = {};
   Object.keys(userData).forEach((key) => {

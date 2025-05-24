@@ -10,6 +10,11 @@ const ShopCensorshipPage = ({ setIsShowFilter }) => {
   const [totalPages, setTotalPages] = useState(1)
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(false)
+  const [showPopup, setShowPopup] = useState(false)
+  const [selectedShop, setSelectedShop] = useState(null)
+  const [nextStatus, setNextStatus] = useState('')
+  const [reason, setReason] = useState('')
+  const [error, setError] = useState('')
   setIsShowFilter(false)
 
   const isVerified = useTokenVerification()
@@ -17,9 +22,7 @@ const ShopCensorshipPage = ({ setIsShowFilter }) => {
   const fetchShops = async (page) => {
     setLoading(true)
     try {
-      const response = await axiosInstance.get(
-        `/shop?page=${page}`
-      )
+      const response = await axiosInstance.get(`/shop?page=${page}`)
       const { shops, totalPages } = response.data.data
       setTotalPages(totalPages)
       setShops(shops)
@@ -33,7 +36,7 @@ const ShopCensorshipPage = ({ setIsShowFilter }) => {
     }
   }
 
-  console.log(shops);
+  console.log(shops)
 
   useEffect(() => {
     if (!isVerified) return
@@ -42,11 +45,45 @@ const ShopCensorshipPage = ({ setIsShowFilter }) => {
   }, [isVerified, currentPage])
 
   const handlCensorshipShop = async (shopId, status) => {
-    await axiosInstance.patch(
-      `/shop/censorship/${shopId}`,
-      { status }
-    )
-    fetchShops(currentPage);
+    await axiosInstance.patch(`/shop/censorship/${shopId}`, { status })
+    fetchShops(currentPage)
+  }
+
+  const handleOpenPopup = (shop, status) => {
+    setSelectedShop(shop)
+    setNextStatus(status)
+    setReason('')
+    setError('')
+    setShowPopup(true)
+  }
+
+  const handleClosePopup = () => {
+    setShowPopup(false)
+    setSelectedShop(null)
+    setNextStatus('')
+    setReason('')
+    setError('')
+  }
+
+  const handleConfirm = async () => {
+    if (
+      selectedShop.status === 'ACCEPTED' &&
+      nextStatus === 'BANNED' &&
+      !reason.trim()
+    ) {
+      setError('Vui lòng nhập lý do cấm cửa hàng!')
+      return
+    }
+    try {
+      await axiosInstance.patch(`/shop/${selectedShop._id}`, {
+        status: nextStatus,
+        reason: reason.trim(),
+      })
+      fetchShops(currentPage)
+      handleClosePopup()
+    } catch (err) {
+      setError('Có lỗi xảy ra, vui lòng thử lại!')
+    }
   }
 
   return (
@@ -62,7 +99,19 @@ const ShopCensorshipPage = ({ setIsShowFilter }) => {
             ) : shops.length > 0 ? (
               <>
                 {shops.map((shop) => (
-                  <div className="shop">
+                  <div
+                    className="shop"
+                    key={shop._id}
+                    style={{
+                      cursor: shop.status !== 'PENDING' ? 'pointer' : 'default',
+                    }}
+                    onClick={() => {
+                      if (shop.status === 'ACCEPTED')
+                        handleOpenPopup(shop, 'BANNED')
+                      else if (shop.status === 'BANNED')
+                        handleOpenPopup(shop, 'ACCEPTED')
+                    }}
+                  >
                     <div className="shop-image">
                       <img src={shop.imgUrl} alt={shop.name} />
                     </div>
@@ -70,14 +119,26 @@ const ShopCensorshipPage = ({ setIsShowFilter }) => {
                       <div className="shop-name">{shop.name}</div>
                       <div className="shop-address">{shop.address}</div>
                     </div>
-                    {shop.status !== 'PENDING' ? (
-                      <div className={`shop-status ${shop.status}`}>
-                        {shopStatusEnum[shop.status]}
+                    {shop.status === 'PENDING' ? (
+                      <div className="btn-censorship">
+                        <button
+                          onClick={() =>
+                            handlCensorshipShop(shop._id, 'ACCEPTED')
+                          }
+                        >
+                          Chấp nhận
+                        </button>
+                        <button
+                          onClick={() =>
+                            handlCensorshipShop(shop._id, 'REJECTED')
+                          }
+                        >
+                          Từ chối
+                        </button>
                       </div>
                     ) : (
-                      <div className="btn-censorship">
-                        <button onClick={() => handlCensorshipShop(shop._id, 'ACCEPTED')}>Chấp nhận</button>
-                        <button onClick={() => handlCensorshipShop(shop._id, 'REJECTED')}>Từ chối</button>
+                      <div className={`shop-status ${shop.status}`}>
+                        {shopStatusEnum[shop.status]}
                       </div>
                     )}
                   </div>
@@ -94,6 +155,51 @@ const ShopCensorshipPage = ({ setIsShowFilter }) => {
           </div>
         </div>
       </div>
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup-content">
+            <h3>
+              {nextStatus === 'BANNED'
+                ? 'Xác nhận cấm cửa hàng'
+                : 'Xác nhận mở cấm cửa hàng'}
+            </h3>
+            <p>
+              Bạn có chắc chắn muốn {nextStatus === 'BANNED' ? 'cấm' : 'mở cấm'}{' '}
+              cửa hàng <b>{selectedShop.name}</b>?
+            </p>
+            {selectedShop.status === 'ACCEPTED' && nextStatus === 'BANNED' && (
+              <div>
+                <label>
+                  Lý do cấm cửa hàng:
+                  <textarea
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    rows={3}
+                    style={{ width: '100%', marginTop: 4 }}
+                  />
+                </label>
+              </div>
+            )}
+            {error && <div style={{ color: 'red', marginTop: 8 }}>{error}</div>}
+            <div
+              style={{
+                marginTop: 16,
+                display: 'flex',
+                gap: 8,
+                justifyContent: 'flex-end',
+              }}
+            >
+              <button onClick={handleClosePopup}>Hủy</button>
+              <button
+                onClick={handleConfirm}
+                style={{ background: '#27ae60', color: '#fff' }}
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

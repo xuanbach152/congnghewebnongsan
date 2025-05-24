@@ -54,7 +54,16 @@ const userSchema = Schema(
     },
     latitude: {
       type: Number,
-    }
+    },
+    status: {
+      type: String,
+      enum: ["ACTIVE", "BANNED"],
+      default: "ACTIVE",
+    },
+    reason: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

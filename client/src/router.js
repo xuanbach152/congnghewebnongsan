@@ -13,6 +13,7 @@ import ItemDetailPage from 'pages/itemDetailPage/itemDetailPage'
 import ShopDetailPage from 'pages/shopDetailPage/shopDetailPage'
 import MyShopPage from 'pages/myShopPage/myShopPage'
 import ShopCensorshipPage from 'pages/shopCensorshipPage/shopCensorshipPage'
+import UserCensorshipPage from 'pages/userCensorshipPage/userCensorshipPage'
 
 const renderRouter = ({
   searchQuery,
@@ -103,6 +104,10 @@ const renderRouter = ({
     {
       path: routers.SHOP_CENSORSHIP,
       component: <ShopCensorshipPage setIsShowFilter={setIsShowFilter} />,
+    },
+    {
+      path: routers.USER_CENSORSHIP,
+      component: <UserCensorshipPage setIsShowFilter={setIsShowFilter} />,
     },
   ]
 

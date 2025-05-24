@@ -36,8 +36,12 @@ const shopSchema = Schema(
     },
     status: {
       type: String,
-      enum: ["REJECT", "PENDING", "DELETED", "ACCEPTED"],
+      enum: ["REJECT", "PENDING", "DELETED", "ACCEPTED", "BANNED"],
       default: "PENDING",
+    },
+    reason: {
+      type: String,
+      default: "",
     }
   },
   {

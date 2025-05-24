@@ -14,15 +14,13 @@ const ShopManagementPage = ({ setIsShowFilter }) => {
   const [loading, setLoading] = useState(false)
   setIsShowFilter(false)
 
-  const isVerified = useTokenVerification();
+  const isVerified = useTokenVerification()
 
   const fetchShops = async (page) => {
     setLoading(true)
     try {
-      const response = await axiosInstance.get(
-        `/shop/user?page=${page}`
-      )
-      const { shops, totalPages } = response.data.data;
+      const response = await axiosInstance.get(`/shop/user?page=${page}`)
+      const { shops, totalPages } = response.data.data
       setTotalPages(totalPages)
       setShops(shops)
     } catch (error) {
@@ -36,13 +34,13 @@ const ShopManagementPage = ({ setIsShowFilter }) => {
   }
 
   useEffect(() => {
-    if (!isVerified) return;
-    fetchShops(currentPage);
-  }, [isVerified, currentPage]);
+    if (!isVerified) return
+    fetchShops(currentPage)
+  }, [isVerified, currentPage])
 
   const handleDeleteShop = async (shopId) => {
     await axiosInstance.delete(`/shop/${shopId}`)
-    await fetchShops();
+    await fetchShops()
   }
 
   return (
@@ -70,8 +68,8 @@ const ShopManagementPage = ({ setIsShowFilter }) => {
             ) : shops.length > 0 ? (
               <>
                 {shops.map((shop) => {
-                  const isAccepted = shop.status === 'ACCEPTED';
-                  const isPending = shop.status === 'PENDING';
+                  const isAccepted = shop.status === 'ACCEPTED'
+                  const isPending = shop.status === 'PENDING'
                   const shopContent = (
                     <div className="shop">
                       <div className="shop-image">
@@ -80,15 +78,26 @@ const ShopManagementPage = ({ setIsShowFilter }) => {
                       <div className="shop-info">
                         <div className="shop-name">{shop.name}</div>
                         <div className="shop-address">{shop.address}</div>
+                        {shop.status === 'BANNED' && shop.reason && (
+                        <div className="shop-banned-reason">
+                          <span>Lý do bị cấm: </span>
+                          <span className="reason-text">{shop.reason}</span>
+                        </div>
+                      )}
                       </div>
+                      
                       <div className={`shop-status ${shop.status}`}>
                         {shopStatusEnum[shop.status]}
                       </div>
-                      {isPending && <button onClick={() => handleDeleteShop(shop._id)}>Hủy đăng ký</button>}
+                      {isPending && (
+                        <button onClick={() => handleDeleteShop(shop._id)}>
+                          Hủy đăng ký
+                        </button>
+                      )}
                     </div>
-                  );
+                  )
 
-                  if(shop.status === 'DELETED') return null;
+                  if (shop.status === 'DELETED') return null
 
                   return isAccepted ? (
                     <Link
@@ -101,7 +110,7 @@ const ShopManagementPage = ({ setIsShowFilter }) => {
                     <div key={shop._id} style={{ cursor: 'not-allowed' }}>
                       {shopContent}
                     </div>
-                  );
+                  )
                 })}
                 <Pagination
                   totalPages={totalPages}

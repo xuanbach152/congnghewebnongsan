@@ -345,7 +345,7 @@ const ProfilePage = ({ setIsShowFilter }) => {
       <div className="sidebar">
         <div className="sidebar_user">
           <img
-            src={previewAvatar || 'default-avatar.png'}
+            src={previewAvatar || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}
             alt="Avatar"
             className="sidebar_avatar"
           />
