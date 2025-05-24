@@ -30,12 +30,23 @@ const createShop = async (shopData) => {
   });
   return newShop;
 };
+
 const searchShops = async (searchText) => {
   const regex = new RegExp(searchText, "i");
-  return await ShopModel.find({
+  // Tìm shop đã duyệt, tên khớp, và populate status user
+  const shopsRaw = await ShopModel.find({
     status: "ACCEPTED",
     $or: [{ name: { $regex: regex } }],
-  });
+  })
+    .populate('userId', 'status')
+    .lean();
+
+  // Lọc shop có user không bị banned
+  const shops = shopsRaw.filter(
+    shop => !shop.userId || shop.userId.status !== "BANNED"
+  );
+
+  return shops;
 };
 
 const updateShop = async (shopId, shopData) => {
@@ -257,19 +268,29 @@ const getItemStatistics = async (shopId, startDate = null, endDate = null) => {
 const getAllShopAccepted = async (page = 1, limit = 10) => {
   try {
     const skip = (page - 1) * limit;
-    const [totalShops, shops] = await Promise.all([
+    // Lấy shop đã duyệt và populate status user
+    const [totalShops, shopsRaw] = await Promise.all([
       ShopModel.countDocuments({ status: "ACCEPTED" }),
-      ShopModel.find({ status: "ACCEPTED" }).skip(skip).limit(limit).lean(),
+      ShopModel.find({ status: "ACCEPTED" })
+        .skip(skip)
+        .limit(limit)
+        .populate('userId', 'status')
+        .lean(),
     ]);
+
+    // Lọc shop có user không bị banned
+    const shops = shopsRaw.filter(
+      shop => !shop.userId || shop.userId.status !== "BANNED"
+    );
 
     return {
       shops,
-      totalShops,
-      totalPages: Math.ceil(totalShops / limit),
+      totalShops: shops.length,
+      totalPages: Math.ceil(shops.length / limit),
       currentPage: parseInt(page),
     };
   } catch (error) {
-    console.error(`Error in getAllShopPending: ${error.message}`);
+    console.error(`Error in getAllShopAccepted: ${error.message}`);
     throw error;
   }
 };
