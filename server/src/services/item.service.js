@@ -209,7 +209,7 @@ const getRelatedItems = async (itemId, limit = 4) => {
 const filterItems = async (
   option = {},
   page = 1,
-  limit = 5,
+  limit = 8,
   sortField = "createdAt",
   sortType = "desc"
 ) => {

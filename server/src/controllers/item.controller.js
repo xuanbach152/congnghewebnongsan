@@ -225,7 +225,7 @@ export const getItemsByShopId = async (req, res) => {
   try {
     const shopId = req.params.shopId;
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = 12;
     const sortField = req.query.sortField || "createdAt";
     const sortType = req.query.sortType === "asc" ? 1 : -1;
 

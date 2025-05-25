@@ -265,7 +265,7 @@ const getItemStatistics = async (shopId, startDate = null, endDate = null) => {
   }
 };
 
-const getAllShopAccepted = async (page = 1, limit = 10) => {
+const getAllShopAccepted = async (page = 1, limit = 8) => {
   try {
     const skip = (page - 1) * limit;
     // Lấy shop đã duyệt và populate status user
