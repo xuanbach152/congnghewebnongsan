@@ -100,7 +100,6 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount, setIsShowFil
       setDistinctItemQuantity(response.data.data.distinctItemQuantity);
       setTotalPaymentAmount(response.data.data.totalPaymentAmount || 0);
       setSelectedItems(selectedItems.filter(id => id !== itemId));
-      window.location.reload()
     } catch (err) {
       toast.error(err.response?.data?.message || 'Xóa sản phẩm thất bại');
     }

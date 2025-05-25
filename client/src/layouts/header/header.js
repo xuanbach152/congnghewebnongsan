@@ -253,14 +253,6 @@ const MainHeader = ({
             </div>
             <div className="col-6 header_top_right">
               <ul>
-                <li>
-                  <div className="notice">
-                    <Link to={'#'}>
-                      <AiOutlineBell />
-                      <span>5</span>
-                    </Link>
-                  </div>
-                </li>
                 <li
                   onClick={() =>
                     isLoggedIn

@@ -135,28 +135,12 @@ const CheckoutPage = ({ setIsShowFilter }) => {
       if (!userId) return;
       try {
         const fees = {};
-        await Promise.all(
-          shopGroups.map(async (group) => {
-            try {
-              const response = await axiosInstance.post('/cart/calculate', {
-                shopId: group.shopId,
-                deliveryAddress: address,
-                items: group.cartItems.map(item => ({
-                  itemId: item.id,
-                  quantity: item.quantity,
-                })),
-                paymentMethod: paymentMethod === 'cod' ? 'CASH' : 'BANK_TRANSFER',
-                deliveryType: 'EXPRESS',
-              });
-              console.log(`Delivery fee for shop ${group.shopId}:`, response.data);
-              fees[group.shopId] = response.data.data.totalDeliveryFee || 0;
-            } catch (err) {
-              fees[group.shopId] = 0;
-              toast.warn(`Không thể tính phí vận chuyển cho shop ${group.shopName}`);
-              console.error(`Error calculating fee for shop ${group.shopId}:`, err.response?.data || err.message);
-            }
-          })
-        );
+        const response = await axiosInstance.post('/cart/calculate', { deliveryAddress: address });
+        const shopGr = response.data.data.shopGroup || [];
+        console.log('Delivery fees response:', shopGr);
+        shopGr.forEach(group => {
+          fees[group.shopId._id] = group.deliveryFee || 0;
+        })
         setDeliveryFees(fees);
       } catch (err) {
         toast.error('Lỗi khi tính phí vận chuyển');
@@ -165,7 +149,7 @@ const CheckoutPage = ({ setIsShowFilter }) => {
     };
 
     fetchDeliveryFees();
-  }, [userId, address, shopGroups, paymentMethod]);
+  }, [userId, address, shopGroups.length]);
 
   const handleLocationChange = async (e) => {
     const query = e.target.value;
@@ -216,23 +200,13 @@ const CheckoutPage = ({ setIsShowFilter }) => {
         cod: 'CASH',
         bank: 'BANK_TRANSFER',
       };
+      const orderData = {
+        deliveryAddress: address,
+        paymentMethod: paymentMethodMap[paymentMethod],
+        deliveryType: 'EXPRESS',
+      };
+      await axiosInstance.post('/order', orderData);
 
-      const orders = await Promise.all(
-        shopGroups.map(async (group) => {
-          const orderData = {
-            shopId: group.shopId,
-            deliveryAddress: address,
-            paymentMethod: paymentMethodMap[paymentMethod],
-            deliveryType: 'EXPRESS',
-            items: group.cartItems.map(item => ({
-              itemId: item.id,
-              quantity: item.quantity,
-            })),
-          };
-          const response = await axiosInstance.post('/order', orderData);
-          return response.data.data;
-        })
-      );
 
       if (cartId && selectedItems.length > 0) {
         await axiosInstance.delete('/cart/clear', {
