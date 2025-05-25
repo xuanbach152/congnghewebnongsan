@@ -208,11 +208,6 @@ const MyShopPage = ({ setIsShowFilter }) => {
                                 )
                               }}
                             />
-                            <FaTrash
-                              className="icon delete-icon"
-                              title="Xóa"
-                              // onClick={() => handleDelete(item._id)}
-                            />
                           </div>
                         </td>
                       </tr>

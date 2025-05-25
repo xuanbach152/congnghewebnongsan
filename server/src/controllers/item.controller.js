@@ -65,7 +65,7 @@ export const getItems = async (req, res) => {
   try {
     const { page } = req.query; //lấy page từ query params
     const { sortField, sortType } = req.query;
-    const limit = parseInt(req.query.limit) || PaginationEnum.DEFAULT_LIMIT;
+    const limit = parseInt(req.query.limit) || 12;
 
     const items = await ItemService.getItems(page, limit, sortField, sortType);
     res.status(httpStatus.OK).send({
