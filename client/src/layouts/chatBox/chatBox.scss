@@ -15,7 +15,9 @@
   z-index: 1000;
 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
 
   &:hover {
     background-color: #228200;
@@ -47,6 +49,44 @@
   border-right: 1px solid #ddd;
   display: flex;
   flex-direction: column;
+
+  .partner-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+
+    .partner-avatar {
+      flex-shrink: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin-right: 0;
+      background: #fff;
+      border: 1.5px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+    }
+
+    .partner-name {
+      font-weight: 600;
+      font-size: 15px;
+      color: #222;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 120px;
+    }
+  }
 }
 
 .sidebar-header {
@@ -58,9 +98,13 @@
 }
 
 .sidebar-item {
-  padding: 10px 15px;
+  padding: 12px 15px 10px 15px;
   cursor: pointer;
   border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: transparent;
 
   &:hover {
     background-color: #e0e0e0;
@@ -70,17 +114,21 @@
     background-color: #d0d0d0;
   }
 
-  .partner-name {
-    font-weight: 600;
-    margin-bottom: 4px;
+  .partner-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
   }
 
   .last-message {
     font-size: 14px;
     color: #555;
-    overflow: hidden;
+    margin-left: 48px; // Để căn thẳng với tên, tránh đè avatar
     white-space: nowrap;
+    overflow: hidden;
     text-overflow: ellipsis;
+    margin-top: 2px;
   }
 }
 
@@ -168,5 +216,27 @@
     &:hover {
       background-color: #45a049;
     }
+  }
+}
+
+.chatbox-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #222;
+  min-height: 38px;
+
+  img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid #e0e0e0;
+    background: #fff;
+    margin-right: 0;
+    flex-shrink: 0;
+    display: block;
   }
 }

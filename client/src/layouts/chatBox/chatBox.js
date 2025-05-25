@@ -34,7 +34,7 @@ export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
         const partner = item.users.find((user) => user._id !== userId)
         return {
           id: item._id,
-          partner: { id: partner._id, name: partner.userName },
+          partner: { id: partner._id, name: partner.userName, imgUrl: partner.imgUrl },
           messages: item.messages,
         }
       })
@@ -94,6 +94,8 @@ export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
     setContent('')
   }
 
+  console.log(selectedChat);
+
   const handleChat = async (partnerId) => {
     const response = await axiosInstance.post('/chatBox/create', { partnerId })
     const newChatBox = response.data.data
@@ -130,9 +132,14 @@ export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
             key={index}
             className={`sidebar-item ${selectedChat?.id === chatBox.id ? 'active' : ''}`}
             onClick={() => setSelectedChat(chatBox)}
-          >
+          > 
+            <div className='partner-info'> 
+              <div className="partner-avatar">
+              <img src={chatBox.partner?.imgUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} alt="Avatar" />
+            </div>
             <div className="partner-name">
               {chatBox.partner?.name || 'Người dùng'}
+            </div>
             </div>
             <div className="last-message">
               {chatBox.messages[chatBox.messages.length - 1]?.content ||
@@ -145,6 +152,7 @@ export function ChatBox({ isChatOpen, setIsChatOpen, shopChat, customerId }) {
       <div className="chatbox">
         <div className="chatbox-header">
           <div className="chatbox-title">
+            <img src={selectedChat?.partner?.imgUrl || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'} alt="Avatar" />
             {selectedChat?.partner?.name || 'Chọn một đoạn chat'}
           </div>
           <button

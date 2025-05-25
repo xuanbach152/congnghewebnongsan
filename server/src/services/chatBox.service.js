@@ -29,7 +29,7 @@ const createChatBox = async (userId, partnerId) => {
 
 const getChatBoxesByUserId = async (userId) => {
   return await ChatBoxModel.find({ users: userId }).populate([
-    { path: "users", select: "userName" },
+    { path: "users", select: "userName imgUrl" },
     { path: "messages" }
   ]);
 };
