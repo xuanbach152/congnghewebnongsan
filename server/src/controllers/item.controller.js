@@ -280,7 +280,7 @@ export const filterItems = async (req, res) => {
       maxPrice,
       searchText,
       page = 1,
-      limit = PaginationEnum.DEFAULT_LIMIT,
+      limit = 12,
       sortField = "createdAt",
       sortType = "desc",
     } = req.query;
