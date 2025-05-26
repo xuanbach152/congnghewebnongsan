@@ -47,12 +47,10 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount, setIsShowFil
         shopGroup: updatedShopGroup,
       });
       const initialSelectedItems = updatedShopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id));
-      setSelectedItems(initialSelectedItems);
       console.log('Initial selectedItems:', initialSelectedItems);
     } catch (err) {
       if (err.response?.data?.message === 'Cart not found') {
         setCart({ shopGroup: [], _id: null, totalPaymentAmount: 0 });
-        setSelectedItems([]);
       } else {
         toast.error(err.response?.data?.message || 'Không thể tải giỏ hàng');
       }
@@ -119,27 +117,10 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount, setIsShowFil
     }
   };
 
-  const toggleSelectItem = (itemId) => {
-    setSelectedItems(prev =>
-      prev.includes(itemId)
-        ? prev.filter(id => id !== itemId)
-        : [...prev, itemId]
-    );
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedItems.length === cart.shopGroup.flatMap(group => group.cartItems).length) {
-      setSelectedItems([]);
-    } else {
-      setSelectedItems(cart.shopGroup.flatMap(group => group.cartItems.map(item => item._id || item.itemId._id)));
-    }
-  };
-
   const calculateSelectedTotal = () => {
     if (!cart?.shopGroup) return 0;
     return cart.shopGroup
       .flatMap(group => group.cartItems)
-      .filter(item => selectedItems.includes(item._id || item.itemId._id))
       .reduce((total, item) => total + item.price * item.quantity, 0);
   };
 
@@ -147,7 +128,6 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount, setIsShowFil
     const itemsToCheckout = cart.shopGroup
       .map(group => {
         const selectedItemsInGroup = group.cartItems
-          .filter(item => selectedItems.includes(item._id || item.itemId._id))
           .map(item => {
             return {
               _id: item._id || item.itemId._id,
@@ -165,11 +145,6 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount, setIsShowFil
         return selectedItemsInGroup;
       })
       .flat();
-
-    if (itemsToCheckout.length === 0) {
-      toast.error('Không có sản phẩm hợp lệ để thanh toán. Vui lòng kiểm tra lại giỏ hàng.');
-      return;
-    }
     navigate('/checkout', { state: { selectedItems: itemsToCheckout, cartId: cart._id } });
   };
 
@@ -203,11 +178,6 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount, setIsShowFil
   return (
     <div className="cart-page">
       <div className="cart-header">
-        <input
-          type="checkbox"
-          checked={selectedItems.length === cart.shopGroup.flatMap(group => group.cartItems).length && cart.shopGroup.length > 0}
-          onChange={toggleSelectAll}
-        />
         <span>Sản phẩm</span>
         <span>Đơn giá</span>
         <span>Số lượng</span>
@@ -222,11 +192,6 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount, setIsShowFil
             </h3>
             {shopGroup.cartItems.map((item) => (
               <div key={item._id || item.itemId._id} className="cart-item">
-                <input
-                  type="checkbox"
-                  checked={selectedItems.includes(item._id || item.itemId._id)}
-                  onChange={() => toggleSelectItem(item._id || item.itemId._id)}
-                />
                 <div className="item-info">
                   <img
                     src={item.itemId?.imgUrl || ''}
@@ -266,22 +231,16 @@ const CartPage = ({ setDistinctItemQuantity, setTotalPaymentAmount, setIsShowFil
       </div>
       <div className="cart-footer">
         <div className="footer-left">
-          <input
-            type="checkbox"
-            checked={selectedItems.length === cart.shopGroup.flatMap(group => group.cartItems).length && cart.shopGroup.length > 0}
-            onChange={toggleSelectAll}
-          />
-          <span>Chọn tất cả ({cart.shopGroup.flatMap(group => group.cartItems).length})</span>
           <button className="clear-cart" onClick={clearCart}>
             Xóa tất cả
           </button>
         </div>
         <div className="footer-right">
           <span>
-            Tổng thanh toán ({selectedItems.length} sản phẩm):{' '}
+            Tổng thanh toán sản phẩm:{' '}
             <strong>{calculateSelectedTotal().toLocaleString()} VNĐ</strong>
           </span>
-          <button className="checkout-button" onClick={handleCheckout} disabled={selectedItems.length === 0}>
+          <button className="checkout-button" onClick={handleCheckout}>
             Đặt hàng
           </button>
         </div>

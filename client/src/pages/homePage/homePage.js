@@ -1,6 +1,6 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, use, useEffect, useState } from 'react'
 import './homePage.scss'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import routers from 'utils/routers'
 import { default as axiosInstance } from 'utils/api'
 import ArrowPagination from 'layouts/arrowPagination/arrowPagination'
@@ -8,7 +8,15 @@ import { FaStar } from 'react-icons/fa'
 import { formatter } from 'utils/formatter'
 import { itemTypes } from 'utils/enums'
 
-const HomePage = ({ searchQuery, type, minPrice, maxPrice, setIsShowFilter }) => {
+const HomePage = ({
+  searchQuery,
+  type,
+  minPrice,
+  maxPrice,
+  setIsShowFilter,
+  isLoggedIn,
+  toggleAuthModal,
+}) => {
   const [shops, setShops] = useState([])
   const [shopTotalPages, setShopTotalPages] = useState(1)
   const [shopCurrentPage, setShopCurrentPage] = useState(1)
@@ -18,6 +26,7 @@ const HomePage = ({ searchQuery, type, minPrice, maxPrice, setIsShowFilter }) =>
   const [itemTotalPages, setItemTotalPages] = useState(1)
   const [itemCurrentPage, setItemCurrentPage] = useState(1)
   const [itemLoading, setItemLoading] = useState(false)
+  const navigate = useNavigate()
   setIsShowFilter(true)
 
   useEffect(() => {
@@ -64,7 +73,11 @@ const HomePage = ({ searchQuery, type, minPrice, maxPrice, setIsShowFilter }) =>
           url += `&minPrice=${minPrice}`
         if (maxPrice !== null && maxPrice !== undefined)
           url += `&maxPrice=${maxPrice}`
-        if (searchQuery !== null && searchQuery !== undefined && searchQuery !== '') {
+        if (
+          searchQuery !== null &&
+          searchQuery !== undefined &&
+          searchQuery !== ''
+        ) {
           url += `&searchText=${searchQuery}`
         }
         const response = await axiosInstance.get(url)
@@ -83,6 +96,22 @@ const HomePage = ({ searchQuery, type, minPrice, maxPrice, setIsShowFilter }) =>
 
     fetchItems()
   }, [itemCurrentPage, maxPrice, minPrice, searchQuery, type])
+
+  const handleShopClick = (shopId) => {
+    if (!isLoggedIn) {
+      toggleAuthModal()
+      return
+    }
+    navigate(routers.getShopDetailPath(shopId))
+  }
+
+  const handleItemClick = (itemId) => {
+    if (!isLoggedIn) {
+      toggleAuthModal()
+      return
+    }
+    navigate(routers.getItemDetailPath(itemId))
+  }
 
   return (
     <>
@@ -104,9 +133,11 @@ const HomePage = ({ searchQuery, type, minPrice, maxPrice, setIsShowFilter }) =>
                   />
                   <div className="item-grid">
                     {items.map((item) => (
-                      <Link
+                      <div
                         key={item._id}
                         to={routers.getItemDetailPath(item._id)}
+                        onClick={() => handleItemClick(item._id)}
+                        style={{ cursor: 'pointer' }}
                       >
                         <div className="item">
                           <div className="item-image">
@@ -130,7 +161,7 @@ const HomePage = ({ searchQuery, type, minPrice, maxPrice, setIsShowFilter }) =>
                             </div>
                           </div>
                         </div>
-                      </Link>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -156,9 +187,11 @@ const HomePage = ({ searchQuery, type, minPrice, maxPrice, setIsShowFilter }) =>
                   />
                   <div className="shop-grid">
                     {shops.map((shop) => (
-                      <Link
+                      <div
                         key={shop._id}
                         to={routers.getShopDetailPath(shop._id)}
+                        onClick={() => handleShopClick(shop._id)}
+                        style={{ cursor: 'pointer' }}
                       >
                         <div className="shop">
                           <div className="shop-image">
@@ -171,7 +204,7 @@ const HomePage = ({ searchQuery, type, minPrice, maxPrice, setIsShowFilter }) =>
                             </div>
                           </div>
                         </div>
-                      </Link>
+                      </div>
                     ))}
                   </div>
                 </div>

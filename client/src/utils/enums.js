@@ -40,3 +40,9 @@ export const userStatusEnum = {
   ACTIVE: "Đang hoạt động",
   BANNED: "Đã bị cấm",
 };
+
+export const orderDeliveryStatusEnum = {
+  PENDING: "Đang giao hàng",
+  COMPLETED: "Đã hoàn thành",
+  CANCELLED: "Đã hủy",
+}

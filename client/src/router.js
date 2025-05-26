@@ -25,6 +25,8 @@ const renderRouter = ({
   minPrice,
   maxPrice,
   setIsShowFilter,
+  isLoggedIn, 
+  toggleAuthModal,
 }) => {
   const allRouters = [
     {
@@ -36,6 +38,8 @@ const renderRouter = ({
           minPrice={minPrice}
           maxPrice={maxPrice}
           setIsShowFilter={setIsShowFilter}
+          isLoggedIn={isLoggedIn}
+          toggleAuthModal={toggleAuthModal}
         />
       ),
     },

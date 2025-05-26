@@ -21,7 +21,12 @@ function App() {
   const [minPrice, setMinPrice] = useState(null)
   const [maxPrice, setMaxPrice] = useState(null)
   const [isShowFilter, setIsShowFilter] = useState(false)
-  
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const toggleAuthModal = () => {
+    setIsAuthModalOpen(!isAuthModalOpen)
+  }
+
   const openChat = () => setIsChatOpen(true)
 
   return (
@@ -33,6 +38,11 @@ function App() {
       setMinPrice={setMinPrice}
       setMaxPrice={setMaxPrice}
       isShowFilter={isShowFilter}
+      isLoggedIn={isLoggedIn}
+      setIsLoggedIn={setIsLoggedIn}
+      isAuthModalOpen={isAuthModalOpen}
+      setIsAuthModalOpen={setIsAuthModalOpen}
+      toggleAuthModal={toggleAuthModal}
     >
       <RouterCustom
         searchQuery={searchQuery}
@@ -44,6 +54,8 @@ function App() {
         minPrice={minPrice}
         maxPrice={maxPrice}
         setIsShowFilter={setIsShowFilter}
+        isLoggedIn={isLoggedIn}
+        toggleAuthModal={toggleAuthModal}
       />
       <ToastContainer
         position="top-right"

@@ -4,6 +4,7 @@ import { memo } from 'react';
 import { toast } from 'react-toastify';
 import './orderHistoryPage.scss';
 import { useTokenVerification } from 'utils/tokenVerification';
+import { orderDeliveryStatusEnum } from 'utils/enums';
 
 const OrderHistoryPage = ({ setIsShowFilter }) => {
   const [orders, setOrders] = useState([]);
@@ -53,7 +54,9 @@ const OrderHistoryPage = ({ setIsShowFilter }) => {
     if (!isVerified) return;
     try {
       await axiosInstance.put(`/order/cancel/${orderId}`);
-      setOrders(orders.filter(order => order._id !== orderId));
+      setOrders(orders.map(order =>
+        order._id === orderId ? { ...order, paymentStatus: 'CANCELLED' } : order
+      ));
       toast.success('Đơn hàng đã được hủy');
     } catch (err) {
       console.error('Lỗi khi hủy đơn hàng:', err.response?.data || err.message);
@@ -73,14 +76,6 @@ const OrderHistoryPage = ({ setIsShowFilter }) => {
       console.error('Lỗi khi xác nhận đơn hàng:', err.response?.data || err.message);
       toast.error(err.response?.data?.message || 'Không thể xác nhận đơn hàng');
     }
-  };
-
-  const startEditing = (order) => {
-    setEditingOrderId(order._id);
-    setEditFormData({
-      deliveryAddress: order.deliveryAddress,
-      paymentMethod: order.paymentMethod === 'CASH' ? 'cod' : 'bank',
-    });
   };
 
   const cancelEditing = () => {
@@ -139,7 +134,7 @@ const OrderHistoryPage = ({ setIsShowFilter }) => {
 
   // Filter orders based on checkbox states, excluding CANCELLED orders
   const filteredOrders = orders.filter(order => {
-    if (order.paymentStatus === 'CANCELLED') return false;
+    if (order.paymentStatus === 'CANCELLED') return true;
     if (showPending && order.paymentStatus === 'PENDING') return true;
     if (showCompleted && order.paymentStatus === 'COMPLETED') return true;
     return false;
@@ -188,7 +183,7 @@ const OrderHistoryPage = ({ setIsShowFilter }) => {
               <span>Mã đơn hàng: <b>{order.orderCode}</b></span>
               <span>Cửa hàng: <b>{order.shopId?.name || 'Không xác định'}</b></span>
               <span>Ngày đặt: {new Date(order.orderDate).toLocaleDateString()}</span>
-              <span className="status">Trạng thái: {order.paymentStatus}</span>
+              <span className={`status ${order.paymentStatus.toLowerCase()}`}>Trạng thái: {orderDeliveryStatusEnum[order.paymentStatus]}</span>
             </div>
             {editingOrderId === order._id ? (
               <div className="edit-form">
@@ -265,12 +260,6 @@ const OrderHistoryPage = ({ setIsShowFilter }) => {
                         }}
                       >
                         Đã nhận hàng
-                      </button>
-                      <button
-                        className="edit-order"
-                        onClick={() => startEditing(order)}
-                      >
-                        Sửa
                       </button>
                       <button
                         className="cancel-order"

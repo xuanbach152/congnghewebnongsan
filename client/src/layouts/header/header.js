@@ -25,10 +25,13 @@ const MainHeader = ({
   setMinPrice,
   setMaxPrice,
   isShowFilter,
+  isLoggedIn,
+  setIsLoggedIn,
+  isAuthModalOpen,
+  setIsAuthModalOpen,
+  toggleAuthModal,
 }) => {
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [isLogin, setIsLogin] = useState(true)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [selectedItems, setSelectedItems] = useState([])
@@ -208,13 +211,6 @@ const MainHeader = ({
     return () => document.removeEventListener('click', handleClickOutside)
   }, [])
 
-  const toggleAuthModal = () => {
-    setIsAuthModalOpen(!isAuthModalOpen)
-    if (isAuthModalOpen) {
-      setError('')
-    }
-  }
-
   const switchAuthMode = () => {
     setIsLogin(!isLogin)
     setError('')
@@ -244,7 +240,7 @@ const MainHeader = ({
           <div className="row">
             <div className="col-6 header_top_left">
               <ul>
-                <li>Chào mừng bạn</li>
+                <li>Chào mừng bạn đến với VietFresh</li>
                 <li>
                   <AiOutlinePhone />
                   <span> Hotline 0909 090 090</span>

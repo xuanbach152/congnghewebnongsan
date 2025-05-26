@@ -55,10 +55,10 @@
     justify-content: center;
     align-items: center;
     display: flex;
-    font-size: 18px; 
+    font-size: 18px;
     font-weight: 700;
-    color: #ba0000; 
-    padding: 40px 0; 
+    color: #ba0000;
+    padding: 40px 0;
   }
 
   .orders {
@@ -82,30 +82,66 @@
 
       .order-header {
         display: flex;
-        justify-content: space-between;
         flex-wrap: wrap;
-        gap: 12px;
-        font-size: 14px;
-        color: #666;
+        align-items: center;
+        gap: 18px 12px;
+        font-size: 15px;
+        color: #444;
         padding-bottom: 12px;
         border-bottom: 1px dashed map.get($theme-colors, 'mid-main');
+        background: transparent;
+
+        span {
+          flex: unset;
+          min-width: unset;
+          margin-right: 10px;
+          font-weight: 400;
+
+          b {
+            font-weight: 700;
+            color: #222;
+          }
+        }
+
+        .status {
+          margin-left: auto;
+          font-weight: 600;
+          padding: 6px 18px;
+          border-radius: 14px;
+          font-size: 15px;
+          display: inline-block;
+          background: #e6f9ec;
+          color: #27ae60;
+          border: 1px solid #b2f2d7;
+
+          &.pending,
+          &[data-status='PENDING'] {
+            background: #fff7e6;
+            color: #e67e22;
+            border: 1px solid #ffe0b2;
+          }
+          &.completed,
+          &[data-status='COMPLETED'] {
+            background: #e6f9ec;
+            color: #27ae60;
+            border: 1px solid #b2f2d7;
+          }
+          &.cancelled,
+          &[data-status='CANCELLED'] {
+            background: #fdeaea;
+            color: #e74c3c;
+            border: 1px solid #f5c6cb;
+          }
+        }
 
         @media (max-width: 768px) {
           flex-direction: column;
+          align-items: flex-start;
           gap: 8px;
-        }
 
-        span {
-          flex: 1;
-          min-width: 150px;
-
-          @media (max-width: 768px) {
-            min-width: 100%;
-          }
-
-          &.status {
-            font-weight: 500;
-            color: map.get($theme-colors, 'dark-main');
+          .status {
+            margin-left: 0;
+            margin-top: 6px;
           }
         }
       }

@@ -103,7 +103,7 @@
 
     .checkout-header {
       display: grid;
-      grid-template-columns: 60px 3fr 1fr 1fr;
+      grid-template-columns: 2fr 2fr 1fr 1fr;
       padding: 10px 15px;
       background-color: #f5f5f5;
       font-size: 14px;
@@ -114,6 +114,10 @@
 
       span:nth-child(1) {
         text-align: left;
+      }
+
+      span:nth-child(2) {
+        text-align: center;
       }
 
       span:last-child {
@@ -137,7 +141,7 @@
 
       .checkout-item {
         display: grid;
-        grid-template-columns: 60px 3fr 1fr 1fr;
+        grid-template-columns: 2fr 2fr 1fr 1fr;
         align-items: center;
         padding: 10px 0;
         border-bottom: 1px solid #f5f5f5;
@@ -165,9 +169,14 @@
         }
 
         .item-price {
-          text-align: right;
+          text-align: center;
           font-size: 14px;
+        }
+
+        .item-total {
+          text-align: right;
           color: #0dac02;
+          font-size: 14px;
           font-weight: bold;
         }
       }

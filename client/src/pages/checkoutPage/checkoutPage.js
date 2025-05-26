@@ -11,7 +11,7 @@ const CheckoutItem = ({ item }) => (
       {item.imgUrl && (
         <img src={item.imgUrl} alt={item.name} className="item-image" />
       )}
-      <span className="item-name">{item.name}</span>
+      <span className="item-name">{' '}{item.name}</span>
     </div>
     <span className="item-price">{item.price.toLocaleString()} VNĐ</span>
     <span className="item-quantity">x{item.quantity}</span>
